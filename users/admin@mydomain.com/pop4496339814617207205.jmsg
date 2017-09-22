@@ -1,0 +1,23 @@
+X-DeliveredTo: admin@mydomain.com
+From: Mail Delivery Subsystem <MAILER-DAEMON@mydomain.com>
+To: admin@mydomain.com
+Subject: Message Delivery Error.
+Date: Tue Jul 31 09:12:31 BRT 2012
+
+Error delivering message to: user@mydomain.com
+This message will not be delivered.
+
+------------------
+X-RecievedDate: Tue Jul 31 08:56:17 BRT 2012
+Received: by EricDaugherty's JES SMTP mydomain.com from client: 127.0.0.1
+Message-ID: <8694729.1343735371781.JavaMail.bbreder@ipanema>
+Date: Tue, 31 Jul 2012 08:49:31 -0300 (BRT)
+From: Me <admin@mydomain.com>
+To: John Doe <user@mydomain.com>
+Subject: Test message
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+This is a simple test from commons-email
+
