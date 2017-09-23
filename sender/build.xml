@@ -1,0 +1,36 @@
+<project name="Breder Email" default="dist" basedir=".">
+	<property name="src" location="src" />
+	<property name="lib" location="lib" />
+	<property name="build" location="antbin" />
+	<property name="dist" location="dist" />
+
+	<target name="init">
+		<tstamp />
+		<mkdir dir="${build}" />
+	</target>
+
+	<target name="compile" depends="init">
+		<path id="compile.path">
+			<fileset dir="${lib}">
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+		<javac srcdir="${src}" destdir="${build}" debug="true" deprecation="true" includeantruntime="false">
+			<classpath refid="compile.path" />
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile">
+		<mkdir dir="${dist}" />
+		<jar jarfile="${dist}/breder_email.jar" basedir="${build}">
+			<fileset dir="${src}" includes="**/*.java" />
+			<zipfileset excludes="META-INF/*.SF" src="${lib}/dnsjava.jar" />
+		</jar>
+		<delete dir="${build}" />
+	</target>
+
+	<target name="clean" description="clean up">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+</project>
