@@ -1,0 +1,24 @@
+frame (pack=true width=320 button="bt_cancel" location="" title="Login" resize=false) {
+	head {
+		label (id="lb_title" text="Enviando..." align="center")
+		progress (id="pb_title" max=100)
+		button (id="bt_cancel" text="Cancelar")
+		button (id="bt_hide" text="Esconder")
+	}
+	body {
+		border (space=10) {
+			north {
+				"lb_title"
+			}
+			center {
+				"pb_title"
+			}
+			south {
+				flow {
+					"bt_hide"
+					"bt_cancel"
+				}
+			}
+		}
+	}
+}
