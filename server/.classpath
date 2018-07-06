@@ -5,5 +5,12 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.11.jar"/>
+	<classpathentry kind="lib" path="lib/dsn-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/imap-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/javax.mail-api-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/javax.mail.jar"/>
+	<classpathentry kind="lib" path="lib/mailapi-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/pop3-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/smtp-1.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
