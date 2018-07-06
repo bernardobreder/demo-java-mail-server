@@ -8,7 +8,6 @@ import javax.swing.JButton;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
-import breder.dtl.el.parse.ParseException;
 import breder.dtl.swing.test.DTLFrame;
 import breder.generic.email.gui.util.RemoteTask;
 

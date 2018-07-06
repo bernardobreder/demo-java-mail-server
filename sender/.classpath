@@ -2,10 +2,13 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="lib/dsn.jar"/>
-	<classpathentry kind="lib" path="lib/imap.jar"/>
-	<classpathentry kind="lib" path="lib/mailapi.jar"/>
-	<classpathentry kind="lib" path="lib/pop3.jar"/>
-	<classpathentry kind="lib" path="lib/smtp.jar"/>
+	<classpathentry kind="lib" path="lib/javax.mail.jar"/>
+	<classpathentry kind="lib" path="lib/dsn-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/imap-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/mailapi-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/pop3-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/smtp-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/javax.mail-api-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/dnsjava-2.1.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

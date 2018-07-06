@@ -5,12 +5,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gdata.client.Query;
+import javax.management.Query;
+import javax.naming.AuthenticationException;
+
 import com.google.gdata.client.contacts.ContactsService;
 import com.google.gdata.data.contacts.ContactEntry;
 import com.google.gdata.data.contacts.ContactFeed;
 import com.google.gdata.data.extensions.Email;
-import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 
 /**

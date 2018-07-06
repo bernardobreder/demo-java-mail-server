@@ -9,7 +9,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import breder.dtl.el.parse.ParseException;
 import breder.dtl.swing.test.DTLFrame;
 import breder.generic.email.gui.logining.LoginingFrame;
 
