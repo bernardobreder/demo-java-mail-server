@@ -1,10 +1,10 @@
 /******************************************************************************
  * $Workfile: Message.java $ $Revision: 98 $ $Author: edaugherty $ $Date:
  * 2003-10-01 14:30:25 -0500 (Wed, 01 Oct 2003) $
- * 
- ****************************************************************************** 
+ *
+ ******************************************************************************
  * This program is a 100% Java Email Server.
- ****************************************************************************** 
+ ******************************************************************************
  * Copyright (C) 2001, Eric Daugherty All rights reserved.
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -17,13 +17,13 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  * 
- ****************************************************************************** 
+ ******************************************************************************
  * For current versions and more information, please visit:
  * http://www.ericdaugherty.com/java/mail
  * 
  * or contact the author at: java@ericdaugherty.com
  * 
- ****************************************************************************** 
+ ******************************************************************************
  * This program is based on the CSRMail project written by Calvin Smith.
  * http://crsemail.sourceforge.net/
  *****************************************************************************/
@@ -44,52 +44,52 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Message {
 
-	// ***************************************************************
-	// Variables
-	// ***************************************************************
+  //***************************************************************
+  // Variables
+  //***************************************************************
 
-	/** Logger Category for this class. */
-	private static Log log = LogFactory.getLog(Message.class);
+  /** Logger Category for this class. */
+  private static Log log = LogFactory.getLog(Message.class);
 
-	private File messageLocation;
-	private boolean deleted = false;
+  private File messageLocation;
+  private boolean deleted = false;
 
-	// ***************************************************************
-	// Public Interface
-	// ***************************************************************
+  //***************************************************************
+  // Public Interface
+  //***************************************************************
 
-	// ***************************************************************
-	// JavaBean Methods
+  //***************************************************************
+  //JavaBean Methods
 
-	public File getMessageLocation() {
-		return messageLocation;
-	}
+  public File getMessageLocation() {
+    return messageLocation;
+  }
 
-	public void setMessageLocation(File messageLocation) {
-		this.messageLocation = messageLocation;
-	}
+  public void setMessageLocation(File messageLocation) {
+    this.messageLocation = messageLocation;
+  }
 
-	public long getMessageSize() {
-		return messageLocation.length();
-	}
+  public long getMessageSize() {
+    return messageLocation.length();
+  }
 
-	public boolean isDeleted() {
-		return deleted;
-	}
+  public boolean isDeleted() {
+    return deleted;
+  }
 
-	public void setDeleted(boolean deleted) {
-		log.debug("Setting is deleted to: " + deleted);
-		this.deleted = deleted;
-	}
+  public void setDeleted(boolean deleted) {
+    log.debug("Setting is deleted to: " + deleted);
+    this.deleted = deleted;
+  }
 
-	public String getUniqueId() {
-		String location = messageLocation.getAbsolutePath();
+  public String getUniqueId() {
+    String location = messageLocation.getAbsolutePath();
 
-		int begin = location.lastIndexOf("pop") + 3;
-		int end = location.lastIndexOf(".jmsg");
+    int begin = location.lastIndexOf("pop") + 3;
+    int end = location.lastIndexOf(".jmsg");
 
-		return location.substring(begin, end);
-	}
+    return location.substring(begin, end);
+  }
 
 }
-// EOF
+//EOF

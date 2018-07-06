@@ -30,34 +30,32 @@ package org.apache.commons.mail;
  * @version $Id: SimpleEmail.java 480401 2006-11-29 04:40:04Z bayard $
  */
 public class SimpleEmail extends Email {
-	/**
-	 * Set the content of the mail
-	 * 
-	 * @param msg
-	 *            A String.
-	 * @return An Email.
-	 * @throws EmailException
-	 *             see javax.mail.internet.MimeBodyPart for definitions
-	 * @since 1.0
-	 */
-	@Override
-	public Email setMsg(String msg) throws EmailException {
-		if (EmailUtils.isEmpty(msg)) {
-			throw new EmailException("Invalid message supplied");
-		}
-		setContent(msg, TEXT_PLAIN);
-		return this;
-	}
+  /**
+   * Set the content of the mail
+   * 
+   * @param msg A String.
+   * @return An Email.
+   * @throws EmailException see javax.mail.internet.MimeBodyPart for definitions
+   * @since 1.0
+   */
+  @Override
+  public Email setMsg(String msg) throws EmailException {
+    if (EmailUtils.isEmpty(msg)) {
+      throw new EmailException("Invalid message supplied");
+    }
+    setContent(msg, TEXT_PLAIN);
+    return this;
+  }
 
-	public static void main(String[] args) throws EmailException {
-		SimpleEmail email = new SimpleEmail();
-		email.setHostName("localhost");
-		email.setSmtpPort(9925);
-		email.addTo("bernardobreder@vitrinii.com", "John Doe");
-		email.setFrom("bernardobreder@gmail.com", "Me");
-		email.setSubject("Test message");
-		email.setMsg("Aline enviando email falso para Guilherme");
-		email.send();
-	}
+  public static void main(String[] args) throws EmailException {
+    SimpleEmail email = new SimpleEmail();
+    email.setHostName("localhost");
+    email.setSmtpPort(9925);
+    email.addTo("bernardobreder@vitrinii.com", "John Doe");
+    email.setFrom("bernardobreder@gmail.com", "Me");
+    email.setSubject("Test message");
+    email.setMsg("Aline enviando email falso para Guilherme");
+    email.send();
+  }
 
 }

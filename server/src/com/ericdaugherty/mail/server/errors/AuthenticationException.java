@@ -1,10 +1,10 @@
 /******************************************************************************
  * $Workfile: AuthenticationException.java $ $Revision: 98 $ $Author: edaugherty
  * $ $Date: 2003-10-01 14:30:25 -0500 (Wed, 01 Oct 2003) $
- * 
- ****************************************************************************** 
+ *
+ ******************************************************************************
  * This program is a 100% Java Email Server.
- ****************************************************************************** 
+ ******************************************************************************
  * Copyright (C) 2001, Eric Daugherty All rights reserved.
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -17,13 +17,13 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  * 
- ****************************************************************************** 
+ ******************************************************************************
  * For current versions and more information, please visit:
  * http://www.ericdaugherty.com/java/mail
  * 
  * or contact the author at: java@ericdaugherty.com
  * 
- ****************************************************************************** 
+ ******************************************************************************
  * This program is based on the CSRMail project written by Calvin Smith.
  * http://crsemail.sourceforge.net/
  *****************************************************************************/
@@ -32,12 +32,12 @@ package com.ericdaugherty.mail.server.errors;
 
 /**
  * Defines an exception to be used when a login attempt fails.
- * 
+ *
  * @author Eric Daugherty
  */
 public class AuthenticationException extends Exception {
 
-	public AuthenticationException() {
-		super();
-	}
+  public AuthenticationException() {
+    super();
+  }
 }

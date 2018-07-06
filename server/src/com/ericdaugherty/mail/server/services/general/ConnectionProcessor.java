@@ -1,10 +1,10 @@
 /******************************************************************************
  * $Workfile: ConnectionProcessor.java $ $Revision: 3 $ $Author: edaugherty $
  * $Date: 2003-01-23 16:41:28 -0600 (Thu, 23 Jan 2003) $
- * 
- ****************************************************************************** 
+ *
+ ******************************************************************************
  * This program is a 100% Java Email Server.
- ****************************************************************************** 
+ ******************************************************************************
  * Copyright (C) 2001, Eric Daugherty All rights reserved.
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -17,19 +17,20 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  * 
- ****************************************************************************** 
+ ******************************************************************************
  * For current versions and more information, please visit:
  * http://www.ericdaugherty.com/java/mail
  * 
  * or contact the author at: java@ericdaugherty.com
  * 
- ****************************************************************************** 
+ ******************************************************************************
  * This program is based on the CSRMail project written by Calvin Smith.
  * http://crsemail.sourceforge.net/
  *****************************************************************************/
 
 package com.ericdaugherty.mail.server.services.general;
 
+// Java imports
 import java.net.ServerSocket;
 
 /**
@@ -41,14 +42,13 @@ import java.net.ServerSocket;
  */
 public interface ConnectionProcessor extends Runnable {
 
-	/**
-	 * Sets the socket used to communicate with the client.
-	 */
-	public void setSocket(ServerSocket serverSocket);
+  /**
+   * Sets the socket used to communicate with the client.
+   */
+  public void setSocket(ServerSocket serverSocket);
 
-	/**
-	 * Notifies the service to stop processing connections.
-	 */
-	public void shutdown();
-
+  /**
+   * Notifies the service to stop processing connections.
+   */
+  public void shutdown();
 }

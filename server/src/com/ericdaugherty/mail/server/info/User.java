@@ -1,10 +1,10 @@
 /******************************************************************************
  * $Workfile: User.java $ $Revision: 164 $ $Author: edaugherty $ $Date:
  * 2004-07-14 14:19:34 -0500 (Wed, 14 Jul 2004) $
- * 
- ****************************************************************************** 
+ *
+ ******************************************************************************
  * This program is a 100% Java Email Server.
- ****************************************************************************** 
+ ******************************************************************************
  * Copyright (C) 2001, Eric Daugherty All rights reserved.
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -17,13 +17,13 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  * 
- ****************************************************************************** 
+ ******************************************************************************
  * For current versions and more information, please visit:
  * http://www.ericdaugherty.com/java/mail
  * 
  * or contact the author at: java@ericdaugherty.com
  * 
- ****************************************************************************** 
+ ******************************************************************************
  * This program is based on the CSRMail project written by Calvin Smith.
  * http://crsemail.sourceforge.net/
  *****************************************************************************/
@@ -49,238 +49,234 @@ import com.ericdaugherty.mail.server.configuration.PasswordManager;
  */
 public class User {
 
-	// ***************************************************************
-	// Variables
-	// ***************************************************************
+  //***************************************************************
+  // Variables
+  //***************************************************************
 
-	private String username;
-	private String domain;
-	private String password;
-	private EmailAddress[] forwardAddresses;
+  private String username;
+  private String domain;
+  private String password;
+  private EmailAddress[] forwardAddresses;
 
-	private Message[] messages = null;
+  private Message[] messages = null;
 
-	private ConfigurationManager configurationManager = null;
+  private ConfigurationManager configurationManager = null;
 
-	/** Logger */
-	private Log log = LogFactory.getLog(this.getClass());
+  /** Logger */
+  private Log log = LogFactory.getLog(this.getClass());
 
-	// ***************************************************************
-	// Constructor
-	// ***************************************************************
+  //***************************************************************
+  // Constructor
+  //***************************************************************
 
-	/**
-	 * Creates a new user with the full username (user and domain).
-	 * 
-	 * @param address
-	 *            User's full email address
-	 * @param configurationManager
-	 *            Reference to the ConfigurationManager
-	 */
-	public User(EmailAddress address, ConfigurationManager configurationManager) {
-		username = address.getUsername().trim().toLowerCase();
-		domain = address.getDomain().trim().toLowerCase();
+  /**
+   * Creates a new user with the full username (user and domain).
+   *
+   * @param address User's full email address
+   * @param configurationManager Reference to the ConfigurationManager
+   */
+  public User(EmailAddress address, ConfigurationManager configurationManager) {
+    username = address.getUsername().trim().toLowerCase();
+    domain = address.getDomain().trim().toLowerCase();
 
-		this.configurationManager = configurationManager;
-	}
+    this.configurationManager = configurationManager;
+  }
 
-	/**
-	 * Creates a new user with the full username (user and domain).
-	 * 
-	 * @param address
-	 *            User's full email address
-	 */
-	public User(EmailAddress address) {
-		this(address, ConfigurationManager.getInstance());
-	}
+  /**
+   * Creates a new user with the full username (user and domain).
+   *
+   * @param address User's full email address
+   */
+  public User(EmailAddress address) {
+    this(address, ConfigurationManager.getInstance());
+  }
 
-	// ***************************************************************
-	// Public Interface
-	// ***************************************************************
+  //***************************************************************
+  // Public Interface
+  //***************************************************************
 
-	/**
-	 * Returns true if and only if the specified plain text password's hash
-	 * value matches the hashed password for this user.
-	 * 
-	 * @param plainTextPassword
-	 *            the password to validate.
-	 * @return true if it matches.
-	 */
-	public boolean isPasswordValid(String plainTextPassword) {
-		if (log.isDebugEnabled())
-			log.debug("Authenticating User: " + getFullUsername());
-		boolean result = getPassword().equals(
-				PasswordManager.encryptPassword(plainTextPassword));
-		if (log.isDebugEnabled() && !result)
-			log.debug("Authentication Failed for User: " + getFullUsername());
+  /**
+   * Returns true if and only if the specified plain text password's hash value
+   * matches the hashed password for this user.
+   *
+   * @param plainTextPassword the password to validate.
+   * @return true if it matches.
+   */
+  public boolean isPasswordValid(String plainTextPassword) {
+    if (log.isDebugEnabled())
+      log.debug("Authenticating User: " + getFullUsername());
+    boolean result = getPassword().equals(PasswordManager.encryptPassword(
+      plainTextPassword));
+    if (log.isDebugEnabled() && !result)
+      log.debug("Authentication Failed for User: " + getFullUsername());
 
-		return result;
-	}
+    return result;
+  }
 
-	// ***************************************************************
-	// JavaBean Methods
+  //***************************************************************
+  //JavaBean Methods
 
-	public String getUsername() {
-		return username;
-	}
+  public String getUsername() {
+    return username;
+  }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-	public String getFullUsername() {
-		return getFullUsername(username, domain);
-	}
+  public String getFullUsername() {
+    return getFullUsername(username, domain);
+  }
 
-	public String getDomain() {
-		return domain;
-	}
+  public String getDomain() {
+    return domain;
+  }
 
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
+  public void setDomain(String domain) {
+    this.domain = domain;
+  }
 
-	public String getPassword() {
-		return password;
-	}
+  public String getPassword() {
+    return password;
+  }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-	public EmailAddress[] getForwardAddresses() {
-		return forwardAddresses;
-	}
+  public EmailAddress[] getForwardAddresses() {
+    return forwardAddresses;
+  }
 
-	public void setForwardAddresses(EmailAddress[] forwardAddresses) {
-		this.forwardAddresses = forwardAddresses;
-	}
+  public void setForwardAddresses(EmailAddress[] forwardAddresses) {
+    this.forwardAddresses = forwardAddresses;
+  }
 
-	/**
-	 * Returns an array of Strings that represent email addresses to deliver
-	 * email to this user to. If the forwardAddresses is not null or empty, this
-	 * will return the forwardAddresses array. Otherwise, this will return the
-	 * user's email address.
-	 * 
-	 * @return array of strings that represent email addresses.
-	 */
-	public EmailAddress[] getDeliveryAddresses() {
+  /**
+   * Returns an array of Strings that represent email addresses to deliver email
+   * to this user to. If the forwardAddresses is not null or empty, this will
+   * return the forwardAddresses array. Otherwise, this will return the user's
+   * email address.
+   *
+   * @return array of strings that represent email addresses.
+   */
+  public EmailAddress[] getDeliveryAddresses() {
 
-		if (forwardAddresses != null && forwardAddresses.length > 0) {
-			return forwardAddresses;
-		} else {
-			return new EmailAddress[] { new EmailAddress(getUsername(),
-					getDomain()) };
-		}
-	}
+    if (forwardAddresses != null && forwardAddresses.length > 0) {
+      return forwardAddresses;
+    }
+    else {
+      return new EmailAddress[] { new EmailAddress(getUsername(),
+        getDomain()) };
+    }
+  }
 
-	/**
-	 * Returns an array of Message objects that represents all messaged stored
-	 * for this user.
-	 */
-	public Message[] getMessages() {
+  /**
+   * Returns an array of Message objects that represents all messaged stored for
+   * this user.
+   */
+  public Message[] getMessages() {
 
-		if (messages == null) {
+    if (messages == null) {
 
-			File directory = getUserDirectory();
+      File directory = getUserDirectory();
 
-			String[] fileNames = directory.list();
+      String[] fileNames = directory.list();
 
-			int numMessage = fileNames.length;
+      int numMessage = fileNames.length;
 
-			messages = new Message[numMessage];
-			Message currentMessage;
+      messages = new Message[numMessage];
+      Message currentMessage;
 
-			for (int index = 0; index < numMessage; index++) {
-				currentMessage = new Message();
-				currentMessage.setMessageLocation(new File(directory,
-						fileNames[index]));
-				messages[index] = currentMessage;
-			}
-		}
-		return messages;
-	}
+      for (int index = 0; index < numMessage; index++) {
+        currentMessage = new Message();
+        currentMessage.setMessageLocation(new File(directory,
+          fileNames[index]));
+        messages[index] = currentMessage;
+      }
+    }
+    return messages;
+  }
 
-	/**
-	 * Gets the specified message. Message numbers are 1 based. This method
-	 * counts on the calling method to verify that the messageNumber actually
-	 * exists.
-	 */
-	public Message getMessage(int messageNumber) {
+  /**
+   * Gets the specified message. Message numbers are 1 based. This method counts
+   * on the calling method to verify that the messageNumber actually exists.
+   */
+  public Message getMessage(int messageNumber) {
 
-		return getMessages()[messageNumber - 1];
-	}
+    return getMessages()[messageNumber - 1];
+  }
 
-	/**
-	 * Gets the total number of messages currently stored for this user.
-	 */
-	public long getNumberOfMessage() {
+  /**
+   * Gets the total number of messages currently stored for this user.
+   */
+  public long getNumberOfMessage() {
 
-		return getMessages().length;
-	}
+    return getMessages().length;
+  }
 
-	/**
-	 * Gets the total size of the messages currently stored for this user.
-	 */
-	public long getSizeOfAllMessage() {
+  /**
+   * Gets the total size of the messages currently stored for this user.
+   */
+  public long getSizeOfAllMessage() {
 
-		Message[] message = getMessages();
+    Message[] message = getMessages();
 
-		long totalSize = 0;
+    long totalSize = 0;
 
-		for (int index = 0; index < message.length; index++) {
-			totalSize += message[index].getMessageLocation().length();
-		}
+    for (int index = 0; index < message.length; index++) {
+      totalSize += message[index].getMessageLocation().length();
+    }
 
-		return totalSize;
-	}
+    return totalSize;
+  }
 
-	/**
-	 * Gets the user's directory as a file. This method also verifies that that
-	 * directory exists.
-	 */
-	public File getUserDirectory() {
+  /**
+   * Gets the user's directory as a file. This method also verifies that that
+   * directory exists.
+   */
+  public File getUserDirectory() {
 
-		String mailDirectory = configurationManager.getMailDirectory();
-		File directory = new File(mailDirectory + File.separator + "users"
-				+ File.separator + getFullUsername());
+    String mailDirectory = configurationManager.getMailDirectory();
+    File directory = new File(mailDirectory + File.separator + "users"
+      + File.separator + getFullUsername());
 
-		if (!directory.exists()) {
-			if (log.isInfoEnabled())
-				log.info("Directory for user: " + getFullUsername()
-						+ "does not exist, creating...");
-			directory.mkdirs();
-		}
+    if (!directory.exists()) {
+      if (log.isInfoEnabled())
+        log.info("Directory for user: " + getFullUsername()
+          + "does not exist, creating...");
+      directory.mkdirs();
+    }
 
-		if (!directory.isDirectory()) {
-			log.error("User Directory: " + directory.getAbsolutePath()
-					+ " for user: " + getFullUsername() + " does not exist.");
-			throw new RuntimeException("User's Directory path: "
-					+ directory.getAbsolutePath() + " is not a directory!");
-		}
+    if (!directory.isDirectory()) {
+      log.error("User Directory: " + directory.getAbsolutePath() + " for user: "
+        + getFullUsername() + " does not exist.");
+      throw new RuntimeException("User's Directory path: " + directory
+        .getAbsolutePath() + " is not a directory!");
+    }
 
-		return directory;
-	}
+    return directory;
+  }
 
-	/**
-	 * This method removes any cached message information this user may have
-	 * stored
-	 */
-	public void reset() {
+  /**
+   * This method removes any cached message information this user may have
+   * stored
+   */
+  public void reset() {
 
-		messages = null;
-	}
+    messages = null;
+  }
 
-	// ***************************************************************
-	// Private Interface
-	// ***************************************************************
+  //***************************************************************
+  // Private Interface
+  //***************************************************************
 
-	/**
-	 * Converts a username and domaing to the combined username.
-	 */
-	private static String getFullUsername(String username, String domain) {
+  /**
+   * Converts a username and domaing to the combined username.
+   */
+  private static String getFullUsername(String username, String domain) {
 
-		return username + "@" + domain;
-	}
+    return username + "@" + domain;
+  }
 
 }

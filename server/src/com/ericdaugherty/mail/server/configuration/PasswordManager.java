@@ -1,10 +1,10 @@
 /******************************************************************************
  * $Workfile: PasswordManager.java $ $Revision: 98 $ $Author: edaugherty $
  * $Date: 2003-10-01 14:30:25 -0500 (Wed, 01 Oct 2003) $
- * 
- ****************************************************************************** 
+ *
+ ******************************************************************************
  * This program is a 100% Java Email Server.
- ****************************************************************************** 
+ ******************************************************************************
  * Copyright (C) 2001, Eric Daugherty All rights reserved.
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -17,13 +17,13 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  * 
- ****************************************************************************** 
+ ******************************************************************************
  * For current versions and more information, please visit:
  * http://www.ericdaugherty.com/java/mail
  * 
  * or contact the author at: java@ericdaugherty.com
  * 
- ****************************************************************************** 
+ ******************************************************************************
  * This program is based on the CSRMail project written by Calvin Smith.
  * http://crsemail.sourceforge.net/
  *****************************************************************************/
@@ -41,58 +41,57 @@ import java.security.NoSuchAlgorithmException;
  */
 public class PasswordManager {
 
-	// ***************************************************************
-	// Public Interface
-	// ***************************************************************
+  //***************************************************************
+  // Public Interface
+  //***************************************************************
 
-	/**
-	 * Creates a one-way has of the specified password. This allows passwords to
-	 * be safely stored in the database without any way to retrieve the original
-	 * value.
-	 * 
-	 * @param password
-	 *            the string to encrypt.
-	 * 
-	 * @return the encrypted password, or null if encryption failed.
-	 */
-	public static String encryptPassword(String password) {
+  /**
+   * Creates a one-way has of the specified password. This allows passwords to
+   * be safely stored in the database without any way to retrieve the original
+   * value.
+   * 
+   * @param password the string to encrypt.
+   * 
+   * @return the encrypted password, or null if encryption failed.
+   */
+  public static String encryptPassword(String password) {
 
-		try {
-			MessageDigest md = MessageDigest.getInstance("SHA");
+    try {
+      MessageDigest md = MessageDigest.getInstance("SHA");
 
-			// Create the encrypted Byte[]
-			md.update(password.getBytes());
-			byte[] hash = md.digest();
+      //Create the encrypted Byte[]
+      md.update(password.getBytes());
+      byte[] hash = md.digest();
 
-			// Convert the byte array into a String
+      //Convert the byte array into a String
 
-			StringBuffer hashStringBuf = new StringBuffer();
-			String byteString;
-			int byteLength;
+      StringBuffer hashStringBuf = new StringBuffer();
+      String byteString;
+      int byteLength;
 
-			for (int index = 0; index < hash.length; index++) {
+      for (int index = 0; index < hash.length; index++) {
 
-				byteString = String.valueOf(hash[index] + 128);
+        byteString = String.valueOf(hash[index] + 128);
 
-				// Pad string to 3. Otherwise hash may not be unique.
-				byteLength = byteString.length();
-				switch (byteLength) {
-				case 1:
-					byteString = "00" + byteString;
-					break;
-				case 2:
-					byteString = "0" + byteString;
-					break;
-				}
-				hashStringBuf.append(byteString);
-			}
+        //Pad string to 3.  Otherwise hash may not be unique.
+        byteLength = byteString.length();
+        switch (byteLength) {
+          case 1:
+            byteString = "00" + byteString;
+            break;
+          case 2:
+            byteString = "0" + byteString;
+            break;
+        }
+        hashStringBuf.append(byteString);
+      }
 
-			return hashStringBuf.toString();
-		} catch (NoSuchAlgorithmException nsae) {
-			System.out.println("Error getting password hash - "
-					+ nsae.getMessage());
-			return null;
-		}
-	}
+      return hashStringBuf.toString();
+    }
+    catch (NoSuchAlgorithmException nsae) {
+      System.out.println("Error getting password hash - " + nsae.getMessage());
+      return null;
+    }
+  }
 }
-// EOF
+//EOF
