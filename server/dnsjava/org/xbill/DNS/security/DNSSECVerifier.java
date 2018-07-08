@@ -2,16 +2,32 @@
 
 package org.xbill.DNS.security;
 
-import java.util.*;
-import java.security.*;
-import org.xbill.DNS.*;
-import org.xbill.DNS.utils.*;
+import java.security.GeneralSecurityException;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.xbill.DNS.Cache;
+import org.xbill.DNS.DClass;
+import org.xbill.DNS.DNSSEC;
+import org.xbill.DNS.KEYRecord;
+import org.xbill.DNS.Name;
+import org.xbill.DNS.Options;
+import org.xbill.DNS.RRset;
+import org.xbill.DNS.SIGRecord;
+import org.xbill.DNS.Type;
+import org.xbill.DNS.Verifier;
 
 /**
  * A class that verifies DNS data using digital signatures contained in DNSSEC
  * SIG records. DNSSECVerifier stores a set of trusted keys. Each specific
  * verification references a cache where additional secure keys may be found.
- * 
+ *
  * @see Verifier
  * @see DNSSEC
  *
@@ -31,8 +47,9 @@ public class DNSSECVerifier implements Verifier {
   public synchronized void addTrustedKey(KEYRecord key) {
     Name name = key.getName();
     List list = (List) trustedKeys.get(name);
-    if (list == null)
+    if (list == null) {
       trustedKeys.put(name, list = new LinkedList());
+    }
     list.add(key);
   }
 
@@ -40,47 +57,54 @@ public class DNSSECVerifier implements Verifier {
   public void addTrustedKey(Name name, PublicKey key) {
     KEYRecord keyrec;
     keyrec = KEYConverter.buildRecord(name, DClass.IN, 0, 0, KEYRecord.PROTOCOL_DNSSEC, key);
-    if (keyrec != null)
+    if (keyrec != null) {
       addTrustedKey(keyrec);
+    }
   }
 
   private PublicKey findMatchingKey(Iterator it, int algorithm, int footprint) {
     while (it.hasNext()) {
       KEYRecord keyrec = (KEYRecord) it.next();
-      if (keyrec.getAlgorithm() == algorithm && keyrec.getFootprint() == footprint)
+      if (keyrec.getAlgorithm() == algorithm && keyrec.getFootprint() == footprint) {
         return KEYConverter.parseRecord(keyrec);
+      }
     }
     return null;
   }
 
   private synchronized PublicKey findTrustedKey(Name name, int algorithm, int footprint) {
     List list = (List) trustedKeys.get(name);
-    if (list == null)
+    if (list == null) {
       return null;
+    }
     return findMatchingKey(list.iterator(), algorithm, footprint);
   }
 
   private PublicKey findCachedKey(Cache cache, Name name, int algorithm, int footprint) {
     RRset[] keysets = cache.findAnyRecords(name, Type.KEY);
-    if (keysets == null)
+    if (keysets == null) {
       return null;
+    }
     RRset keys = keysets[0];
-    if (keys.getSecurity() < DNSSEC.Secure)
+    if (keys.getSecurity() < DNSSEC.Secure) {
       return null;
+    }
     return findMatchingKey(keys.rrs(), algorithm, footprint);
   }
 
   private PublicKey findKey(Cache cache, Name name, int algorithm, int footprint) {
     PublicKey key = findTrustedKey(name, algorithm, footprint);
-    if (key == null && cache != null)
+    if (key == null && cache != null) {
       return findCachedKey(cache, name, algorithm, footprint);
+    }
     return key;
   }
 
   private int verifySIG(RRset set, SIGRecord sigrec, Cache cache) {
     PublicKey key = findKey(cache, sigrec.getSigner(), sigrec.getAlgorithm(), sigrec.getFootprint());
-    if (key == null)
+    if (key == null) {
       return DNSSEC.Insecure;
+    }
 
     Date now = new Date();
     if (now.compareTo(sigrec.getExpire()) > 0 || now.compareTo(sigrec.getTimeSigned()) < 0) {
@@ -116,15 +140,16 @@ public class DNSSECVerifier implements Verifier {
       return s.verify(sig) ? DNSSEC.Secure : DNSSEC.Failed;
     }
     catch (GeneralSecurityException e) {
-      if (Options.check("verboseexceptions"))
+      if (Options.check("verboseexceptions")) {
         System.err.println("Signing data: " + e);
+      }
       return DNSSEC.Failed;
     }
   }
 
   /**
    * Attempts to verify an RRset. This does not modify the set.
-   * 
+   *
    * @param set The RRset to verify
    * @param cache The Cache where obtained secure keys are found (may be null)
    * @return The new security status of the set
@@ -132,23 +157,27 @@ public class DNSSECVerifier implements Verifier {
    */
   public int verify(RRset set, Cache cache) {
     Iterator sigs = set.sigs();
-    if (Options.check("verbosesec"))
+    if (Options.check("verbosesec")) {
       System.out.print("Verifying " + set.getName() + "/" + Type.string(set.getType()) + ": ");
+    }
     if (!sigs.hasNext()) {
-      if (Options.check("verbosesec"))
+      if (Options.check("verbosesec")) {
         System.out.println("Insecure");
+      }
       return DNSSEC.Insecure;
     }
     while (sigs.hasNext()) {
       SIGRecord sigrec = (SIGRecord) sigs.next();
       if (verifySIG(set, sigrec, cache) == DNSSEC.Secure) {
-        if (Options.check("verbosesec"))
+        if (Options.check("verbosesec")) {
           System.out.println("Secure");
+        }
         return DNSSEC.Secure;
       }
     }
-    if (Options.check("verbosesec"))
+    if (Options.check("verbosesec")) {
       System.out.println("Failed");
+    }
     return DNSSEC.Failed;
   }
 

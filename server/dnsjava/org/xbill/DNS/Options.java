@@ -2,7 +2,9 @@
 
 package org.xbill.DNS;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * Boolean options:<BR>
@@ -46,8 +48,9 @@ public final class Options {
       while (st.hasMoreTokens()) {
         String token = st.nextToken();
         int index = token.indexOf('=');
-        if (index == -1)
+        if (index == -1) {
           set(token);
+        }
         else {
           String option = token.substring(0, index);
           String value = token.substring(index + 1);
@@ -59,36 +62,41 @@ public final class Options {
 
   /** Sets an option to "true" */
   public static void set(String option) {
-    if (table == null)
+    if (table == null) {
       table = new HashMap();
+    }
     table.put(option.toLowerCase(), "true");
   }
 
   /** Sets an option to the the supplied value */
   public static void set(String option, String value) {
-    if (table == null)
+    if (table == null) {
       table = new HashMap();
+    }
     table.put(option.toLowerCase(), value.toLowerCase());
   }
 
   /** Removes an option */
   public static void unset(String option) {
-    if (table == null)
+    if (table == null) {
       return;
+    }
     table.remove(option.toLowerCase());
   }
 
   /** Checks if an option is defined */
   public static boolean check(String option) {
-    if (table == null)
+    if (table == null) {
       return false;
+    }
     return (table.get(option.toLowerCase()) != null);
   }
 
   /** Returns the value of an option */
   public static String value(String option) {
-    if (table == null)
+    if (table == null) {
       return null;
+    }
     return ((String) table.get(option.toLowerCase()));
   }
 
@@ -100,8 +108,9 @@ public final class Options {
     if (s != null) {
       try {
         int val = Integer.parseInt(s);
-        if (val > 0)
+        if (val > 0) {
           return (val);
+        }
       }
       catch (NumberFormatException e) {
       }

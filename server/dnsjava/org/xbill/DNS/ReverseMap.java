@@ -2,8 +2,8 @@
 
 package org.xbill.DNS;
 
-import java.util.*;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * A set functions designed to deal with DNS names used in reverse mappings. For
@@ -26,24 +26,27 @@ public final class ReverseMap {
    * Creates a reverse map name corresponding to an address contained in an
    * array of 4 integers between 0 and 255 (for an IPv4 address) or 16 integers
    * between 0 and 255 (for an IPv6 address).
-   * 
+   *
    * @param addr The address from which to build a name.
    * @return The name corresponding to the address in the reverse map.
    */
   public static Name fromAddress(int[] addr) {
-    if (addr.length != 4 && addr.length != 16)
+    if (addr.length != 4 && addr.length != 16) {
       throw new IllegalArgumentException("array must contain " + "4 or 16 elements");
+    }
     for (int i = 0; i < addr.length; i++) {
-      if (addr[i] < 0 || addr[i] > 0xFF)
+      if (addr[i] < 0 || addr[i] > 0xFF) {
         throw new IllegalArgumentException("array must " + "contain values " + "between 0 and 255");
+      }
     }
 
     StringBuffer sb = new StringBuffer();
     if (addr.length == 4) {
       for (int i = addr.length - 1; i >= 0; i--) {
         sb.append(addr[i]);
-        if (i > 0)
+        if (i > 0) {
           sb.append(".");
+        }
       }
     }
     else {
@@ -53,8 +56,9 @@ public final class ReverseMap {
         nibbles[1] = addr[i] &= 0xF;
         for (int j = nibbles.length - 1; j >= 0; j--) {
           sb.append(nibbles[j]);
-          if (i > 0 || j > 0)
+          if (i > 0 || j > 0) {
             sb.append(".");
+          }
         }
       }
     }
@@ -70,7 +74,7 @@ public final class ReverseMap {
   /**
    * Creates a reverse map name corresponding to an address contained in an
    * InetAddress.
-   * 
+   *
    * @param addr The address from which to build a name.
    * @return The name corresponding to the address in the reverse map.
    */
@@ -86,15 +90,16 @@ public final class ReverseMap {
   /**
    * Creates a reverse map name corresponding to an address contained in a
    * String.
-   * 
+   *
    * @param addr The address from which to build a name.
    * @return The name corresponding to the address in the reverse map.
    * @throws UnknownHostException The string does not contain a valid address.
    */
   public static Name fromAddress(String addr) throws UnknownHostException {
     int[] array = Address.toArray(addr);
-    if (array == null)
+    if (array == null) {
       throw new UnknownHostException("Invalid IP address");
+    }
     return fromAddress(array);
   }
 

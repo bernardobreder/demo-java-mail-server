@@ -2,8 +2,10 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.xbill.DNS.utils.base16;
 
 /**
  * NSAP Address Record.
@@ -18,6 +20,7 @@ public class NSAPRecord extends Record {
   NSAPRecord() {
   }
 
+  @Override
   Record getObject() {
     return new NSAPRecord();
   }
@@ -57,7 +60,7 @@ public class NSAPRecord extends Record {
 
   /**
    * Creates an NSAP Record from the given data
-   * 
+   *
    * @param address The NSAP address.
    * @throws IllegalArgumentException The address is not a valid NSAP address.
    */
@@ -69,15 +72,18 @@ public class NSAPRecord extends Record {
     }
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     address = in.readByteArray();
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     String address = st.getString();
     this.address = checkAndConvertAddress(address);
-    if (this.address == null)
+    if (this.address == null) {
       throw st.exception("invalid NSAP address " + address);
+    }
   }
 
   /**
@@ -87,10 +93,12 @@ public class NSAPRecord extends Record {
     return byteArrayToString(address, false);
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeByteArray(address);
   }
 
+  @Override
   String rrToString() {
     return "0x" + base16.toString(address);
   }

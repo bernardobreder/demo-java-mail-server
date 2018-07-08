@@ -2,9 +2,11 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Text - stores text strings
@@ -19,20 +21,22 @@ public class TXTRecord extends Record {
   TXTRecord() {
   }
 
+  @Override
   Record getObject() {
     return new TXTRecord();
   }
 
   /**
    * Creates a TXT Record from the given data
-   * 
+   *
    * @param strings The text strings
    * @throws IllegalArgumentException One of the strings has invalid escapes
    */
   public TXTRecord(Name name, int dclass, long ttl, List strings) {
     super(name, Type.TXT, dclass, ttl);
-    if (strings == null)
+    if (strings == null) {
       throw new IllegalArgumentException("TXTRecord: strings must not be null");
+    }
     this.strings = new ArrayList(strings.size());
     Iterator it = strings.iterator();
     try {
@@ -48,7 +52,7 @@ public class TXTRecord extends Record {
 
   /**
    * Creates a TXT Record from the given data
-   * 
+   *
    * @param string One text string
    * @throws IllegalArgumentException The string has invalid escapes
    */
@@ -56,6 +60,7 @@ public class TXTRecord extends Record {
     this(name, dclass, ttl, Collections.nCopies(1, string));
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     strings = new ArrayList(2);
     while (in.remaining() > 0) {
@@ -64,12 +69,14 @@ public class TXTRecord extends Record {
     }
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     strings = new ArrayList(2);
     while (true) {
       Tokenizer.Token t = st.get();
-      if (!t.isString())
+      if (!t.isString()) {
         break;
+      }
       try {
         strings.add(byteArrayFromString(t.value));
       }
@@ -82,39 +89,43 @@ public class TXTRecord extends Record {
   }
 
   /** converts to a String */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     Iterator it = strings.iterator();
     while (it.hasNext()) {
       byte[] array = (byte[]) it.next();
       sb.append(byteArrayToString(array, true));
-      if (it.hasNext())
+      if (it.hasNext()) {
         sb.append(" ");
+      }
     }
     return sb.toString();
   }
 
   /**
    * Returns the text strings
-   * 
+   *
    * @return A list of Strings corresponding to the text strings.
    */
   public List getStrings() {
     List list = new ArrayList(strings.size());
-    for (int i = 0; i < strings.size(); i++)
+    for (int i = 0; i < strings.size(); i++) {
       list.add(byteArrayToString((byte[]) strings.get(i), false));
+    }
     return list;
   }
 
   /**
    * Returns the text strings
-   * 
+   *
    * @return A list of byte arrays corresponding to the text strings.
    */
   public List getStringsAsByteArrays() {
     return strings;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     Iterator it = strings.iterator();
     while (it.hasNext()) {

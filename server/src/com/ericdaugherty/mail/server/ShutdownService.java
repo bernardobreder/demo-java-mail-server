@@ -30,9 +30,9 @@
 
 package com.ericdaugherty.mail.server;
 
+import org.apache.commons.logging.Log;
 // Log imports
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 
 /**
  * This thread runs when the JVM is shutdown.

@@ -2,14 +2,17 @@
 
 package org.xbill.DNS;
 
-import java.util.*;
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An implementation of Resolver that can send queries to multiple servers,
  * sending the queries multiple times if necessary.
- * 
+ *
  * @see Resolver
  *
  * @author Brian Wellington
@@ -39,8 +42,9 @@ public class ExtendedResolver implements Resolver {
          * is a random ordering, which is ok.
          */
         int start = eres.lbStart++ % nresolvers;
-        if (eres.lbStart > nresolvers)
+        if (eres.lbStart > nresolvers) {
           eres.lbStart %= nresolvers;
+        }
         if (start > 0) {
           Resolver[] shuffle = new Resolver[nresolvers];
           for (int i = 0; i < nresolvers; i++) {
@@ -110,16 +114,21 @@ public class ExtendedResolver implements Resolver {
         }
       }
       /* Return the response or throw an exception */
-      if (response != null)
+      if (response != null) {
         return response;
-      else if (thrown instanceof IOException)
+      }
+      else if (thrown instanceof IOException) {
         throw (IOException) thrown;
-      else if (thrown instanceof RuntimeException)
+      }
+      else if (thrown instanceof RuntimeException) {
         throw (RuntimeException) thrown;
-      else if (thrown instanceof Error)
+      }
+      else if (thrown instanceof Error) {
         throw (Error) thrown;
-      else
+      }
+      else {
         throw new IllegalStateException("ExtendedResolver failure");
+      }
     }
 
     /* Start an asynchronous resolution */
@@ -133,11 +142,13 @@ public class ExtendedResolver implements Resolver {
      * up the blocking thread or call the callback.
      */
     public void receiveMessage(Object id, Message m) {
-      if (Options.check("verbose"))
+      if (Options.check("verbose")) {
         System.err.println("ExtendedResolver: " + "received message");
+      }
       synchronized (this) {
-        if (done)
+        if (done) {
           return;
+        }
         response = m;
         done = true;
         if (listener == null) {
@@ -153,40 +164,49 @@ public class ExtendedResolver implements Resolver {
      * Otherwise make progress.
      */
     public void handleException(Object id, Exception e) {
-      if (Options.check("verbose"))
+      if (Options.check("verbose")) {
         System.err.println("ExtendedResolver: got " + e);
+      }
       synchronized (this) {
         outstanding--;
-        if (done)
+        if (done) {
           return;
+        }
         int n;
-        for (n = 0; n < inprogress.length; n++)
-          if (inprogress[n] == id)
+        for (n = 0; n < inprogress.length; n++) {
+          if (inprogress[n] == id) {
             break;
+          }
+        }
         /* If we don't know what this is, do nothing. */
-        if (n == inprogress.length)
+        if (n == inprogress.length) {
           return;
+        }
         boolean startnext = false;
         boolean waiting = false;
         /*
          * If this is the first response from server n, we should start sending
          * queries to server n + 1.
          */
-        if (sent[n] == 1 && n < resolvers.length - 1)
+        if (sent[n] == 1 && n < resolvers.length - 1) {
           startnext = true;
+        }
         if (e instanceof InterruptedIOException) {
           /* Got a timeout; resend */
-          if (sent[n] < retries)
+          if (sent[n] < retries) {
             send(n);
-          if (thrown == null)
+          }
+          if (thrown == null) {
             thrown = e;
+          }
         }
         else if (e instanceof SocketException) {
           /*
            * Problem with the socket; don't resend on it
            */
-          if (thrown == null || thrown instanceof InterruptedIOException)
+          if (thrown == null || thrown instanceof InterruptedIOException) {
             thrown = e;
+          }
         }
         else {
           /*
@@ -194,12 +214,15 @@ public class ExtendedResolver implements Resolver {
            */
           thrown = e;
         }
-        if (done)
+        if (done) {
           return;
-        if (startnext)
+        }
+        if (startnext) {
           send(n + 1);
-        if (done)
+        }
+        if (done) {
           return;
+        }
         if (outstanding == 0) {
           /*
            * If we're done and this is synchronous, wake up the blocking thread.
@@ -210,12 +233,14 @@ public class ExtendedResolver implements Resolver {
             return;
           }
         }
-        if (!done)
+        if (!done) {
           return;
+        }
       }
       /* If we're done and this is asynchronous, call the callback. */
-      if (!(thrown instanceof Exception))
+      if (!(thrown instanceof Exception)) {
         thrown = new RuntimeException(thrown.getMessage());
+      }
       listener.handleException(this, (Exception) thrown);
     }
   }
@@ -234,7 +259,7 @@ public class ExtendedResolver implements Resolver {
   /**
    * Creates a new Extended Resolver. FindServer is used to locate the servers
    * for which SimpleResolver contexts should be initialized.
-   * 
+   *
    * @see SimpleResolver
    * @see FindServer
    * @exception UnknownHostException Failure occured initializing
@@ -250,13 +275,14 @@ public class ExtendedResolver implements Resolver {
         resolvers.add(r);
       }
     }
-    else
+    else {
       resolvers.add(new SimpleResolver());
+    }
   }
 
   /**
    * Creates a new Extended Resolver
-   * 
+   *
    * @param servers An array of server names for which SimpleResolver contexts
    *        should be initialized.
    * @see SimpleResolver
@@ -274,7 +300,7 @@ public class ExtendedResolver implements Resolver {
 
   /**
    * Creates a new Extended Resolver
-   * 
+   *
    * @param res An array of pre-initialized Resolvers is provided.
    * @see SimpleResolver
    * @exception UnknownHostException Failure occured initializing
@@ -282,60 +308,70 @@ public class ExtendedResolver implements Resolver {
    */
   public ExtendedResolver(Resolver[] res) throws UnknownHostException {
     init();
-    for (int i = 0; i < res.length; i++)
+    for (int i = 0; i < res.length; i++) {
       resolvers.add(res[i]);
+    }
   }
 
   public void setPort(int port) {
-    for (int i = 0; i < resolvers.size(); i++)
+    for (int i = 0; i < resolvers.size(); i++) {
       ((Resolver) resolvers.get(i)).setPort(port);
+    }
   }
 
   public void setTCP(boolean flag) {
-    for (int i = 0; i < resolvers.size(); i++)
+    for (int i = 0; i < resolvers.size(); i++) {
       ((Resolver) resolvers.get(i)).setTCP(flag);
+    }
   }
 
   public void setIgnoreTruncation(boolean flag) {
-    for (int i = 0; i < resolvers.size(); i++)
+    for (int i = 0; i < resolvers.size(); i++) {
       ((Resolver) resolvers.get(i)).setIgnoreTruncation(flag);
+    }
   }
 
   public void setEDNS(int level) {
-    for (int i = 0; i < resolvers.size(); i++)
+    for (int i = 0; i < resolvers.size(); i++) {
       ((Resolver) resolvers.get(i)).setEDNS(level);
+    }
   }
 
   public void setTSIGKey(TSIG key) {
-    for (int i = 0; i < resolvers.size(); i++)
+    for (int i = 0; i < resolvers.size(); i++) {
       ((Resolver) resolvers.get(i)).setTSIGKey(key);
+    }
   }
 
   public void setTSIGKey(Name name, byte[] key) {
-    for (int i = 0; i < resolvers.size(); i++)
+    for (int i = 0; i < resolvers.size(); i++) {
       ((Resolver) resolvers.get(i)).setTSIGKey(name, key);
+    }
   }
 
   public void setTSIGKey(String name, String key) {
-    for (int i = 0; i < resolvers.size(); i++)
+    for (int i = 0; i < resolvers.size(); i++) {
       ((Resolver) resolvers.get(i)).setTSIGKey(name, key);
+    }
   }
 
   public void setTSIGKey(String key) throws UnknownHostException {
-    for (int i = 0; i < resolvers.size(); i++)
+    for (int i = 0; i < resolvers.size(); i++) {
       ((Resolver) resolvers.get(i)).setTSIGKey(key);
+    }
   }
 
   public void setTimeout(int secs) {
-    for (int i = 0; i < resolvers.size(); i++)
+    for (int i = 0; i < resolvers.size(); i++) {
       ((Resolver) resolvers.get(i)).setTimeout(secs);
+    }
   }
 
   /**
    * Sends a message and waits for a response. Multiple servers are queried, and
    * queries are sent multiple times until either a successful response is
    * received, or it is clear that there is no successful response.
-   * 
+   *
    * @param query The query to send.
    * @return The response.
    * @throws IOException An error occurred while sending or receiving.
@@ -351,7 +387,7 @@ public class ExtendedResolver implements Resolver {
    * exception. Multiple asynchronous lookups can be performed in parallel.
    * Since the callback may be invoked before the function returns, external
    * synchronization is necessary.
-   * 
+   *
    * @param query The query to send
    * @param listener The object containing the callbacks.
    * @return An identifier, which is also a parameter in the callback
@@ -364,8 +400,9 @@ public class ExtendedResolver implements Resolver {
 
   /** Returns the nth resolver used by this ExtendedResolver */
   public Resolver getResolver(int n) {
-    if (n < resolvers.size())
+    if (n < resolvers.size()) {
       return (Resolver) resolvers.get(n);
+    }
     return null;
   }
 
@@ -386,7 +423,7 @@ public class ExtendedResolver implements Resolver {
 
   /**
    * Sets whether the servers should be load balanced.
-   * 
+   *
    * @param flag If true, servers will be tried in round-robin order. If false,
    *        servers will always be queried in the same order.
    */

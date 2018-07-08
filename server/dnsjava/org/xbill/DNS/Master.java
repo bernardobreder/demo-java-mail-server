@@ -2,8 +2,13 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A DNS master file parser. This incrementally parses the file, returning one
@@ -41,7 +46,7 @@ public class Master {
 
   /**
    * Initializes the master file reader and opens the specified master file.
-   * 
+   *
    * @param filename The master file.
    * @param origin The initial origin to append to relative names.
    * @param ttl The initial default TTL.
@@ -53,7 +58,7 @@ public class Master {
 
   /**
    * Initializes the master file reader and opens the specified master file.
-   * 
+   *
    * @param filename The master file.
    * @param origin The initial origin to append to relative names.
    * @throws IOException The master file could not be opened.
@@ -64,7 +69,7 @@ public class Master {
 
   /**
    * Initializes the master file reader and opens the specified master file.
-   * 
+   *
    * @param filename The master file.
    * @throws IOException The master file could not be opened.
    */
@@ -74,7 +79,7 @@ public class Master {
 
   /**
    * Initializes the master file reader.
-   * 
+   *
    * @param in The input stream containing a master file.
    * @param origin The initial origin to append to relative names.
    * @param ttl The initial default TTL.
@@ -90,7 +95,7 @@ public class Master {
 
   /**
    * Initializes the master file reader.
-   * 
+   *
    * @param in The input stream containing a master file.
    * @param origin The initial origin to append to relative names.
    */
@@ -100,7 +105,7 @@ public class Master {
 
   /**
    * Initializes the master file reader.
-   * 
+   *
    * @param in The input stream containing a master file.
    */
   public Master(InputStream in) {
@@ -138,12 +143,15 @@ public class Master {
       s = st.getString();
     }
     catch (NumberFormatException e) {
-      if (last == null && defaultTTL < 0)
+      if (last == null && defaultTTL < 0) {
         throw st.exception("missing TTL");
-      else if (defaultTTL >= 0)
+      }
+      else if (defaultTTL >= 0) {
         currentTTL = defaultTTL;
-      else
+      }
+      else {
         currentTTL = last.getTTL();
+      }
     }
 
     if (!seen_class) {
@@ -155,17 +163,20 @@ public class Master {
       }
     }
 
-    if ((currentType = Type.value(s)) < 0)
+    if ((currentType = Type.value(s)) < 0) {
       throw st.exception("Invalid type '" + s + "'");
+    }
   }
 
   private long parseUInt32(String s) {
-    if (!Character.isDigit(s.charAt(0)))
+    if (!Character.isDigit(s.charAt(0))) {
       return -1;
+    }
     try {
       long l = Long.parseLong(s);
-      if (l < 0 || l > 0xFFFFFFFFL)
+      if (l < 0 || l > 0xFFFFFFFFL) {
         return -1;
+      }
       return l;
     }
     catch (NumberFormatException e) {
@@ -181,8 +192,9 @@ public class Master {
     // Regexes would be useful here.
     s = st.getIdentifier();
     n = s.indexOf("-");
-    if (n < 0)
+    if (n < 0) {
       throw st.exception("Invalid $GENERATE range specifier: " + s);
+    }
     String startstr = s.substring(0, n);
     String endstr = s.substring(n + 1);
     String stepstr = null;
@@ -194,12 +206,15 @@ public class Master {
     long start = parseUInt32(startstr);
     long end = parseUInt32(endstr);
     long step;
-    if (stepstr != null)
+    if (stepstr != null) {
       step = parseUInt32(stepstr);
-    else
+    }
+    else {
       step = 1;
-    if (start < 0 || end < 0 || start > end || step <= 0)
+    }
+    if (start < 0 || end < 0 || start > end || step <= 0) {
       throw st.exception("Invalid $GENERATE range specifier: " + s);
+    }
 
     // The next field is the name specification.
     String nameSpec = st.getIdentifier();
@@ -207,8 +222,9 @@ public class Master {
     // Then the ttl/class/type, in the same form as a normal record.
     // Only some types are supported.
     parseTTLClassAndType();
-    if (!Generator.supportedType(currentType))
+    if (!Generator.supportedType(currentType)) {
       throw st.exception("$GENERATE does not support " + Type.string(currentType) + " records");
+    }
 
     // Next comes the rdata specification.
     String rdataSpec = st.getIdentifier();
@@ -219,8 +235,9 @@ public class Master {
     st.unget();
 
     generator = new Generator(start, end, step, nameSpec, currentType, currentDClass, currentTTL, rdataSpec, origin);
-    if (generators == null)
+    if (generators == null) {
       generators = new ArrayList(1);
+    }
     generators.add(generator);
   }
 
@@ -246,7 +263,7 @@ public class Master {
   /**
    * Returns the next record in the master file. This will process any
    * directives before the next record.
-   * 
+   *
    * @return The next record.
    * @throws IOException The master file could not be read, or was syntactically
    *         invalid.
@@ -257,14 +274,16 @@ public class Master {
 
     if (included != null) {
       Record rec = included.nextRecord();
-      if (rec != null)
+      if (rec != null) {
         return rec;
+      }
       included = null;
     }
     if (generator != null) {
       Record rec = nextGenerated();
-      if (rec != null)
+      if (rec != null) {
         return rec;
+      }
       endGenerate();
     }
     while (true) {
@@ -273,21 +292,27 @@ public class Master {
       token = st.get(true, false);
       if (token.type == Tokenizer.WHITESPACE) {
         Tokenizer.Token next = st.get();
-        if (token.type == Tokenizer.EOL)
+        if (token.type == Tokenizer.EOL) {
           continue;
-        else if (token.type == Tokenizer.EOF)
+        }
+        else if (token.type == Tokenizer.EOF) {
           return null;
-        else
+        }
+        else {
           st.unget();
-        if (last == null)
+        }
+        if (last == null) {
           throw st.exception("no owner");
+        }
         name = last.getName();
       }
-      else if (token.type == Tokenizer.EOL)
+      else if (token.type == Tokenizer.EOL) {
         continue;
-      else if (token.type == Tokenizer.EOF)
+      }
+      else if (token.type == Tokenizer.EOF) {
         return null;
-      else if (((String) token.value).charAt(0) == '$') {
+      }
+      else if (token.value.charAt(0) == '$') {
         s = token.value;
 
         if (s.equalsIgnoreCase("$ORIGIN")) {
@@ -318,8 +343,9 @@ public class Master {
           return nextRecord();
         }
         else if (s.equalsIgnoreCase("$GENERATE")) {
-          if (generator != null)
+          if (generator != null) {
             throw new IllegalStateException("cannot nest $GENERATE");
+          }
           startGenerate();
           if (noExpandGenerate) {
             endGenerate();
@@ -348,7 +374,7 @@ public class Master {
   /**
    * Returns the next record in the master file. This will process any
    * directives before the next record.
-   * 
+   *
    * @return The next record.
    * @throws IOException The master file could not be read, or was syntactically
    *         invalid.
@@ -379,16 +405,19 @@ public class Master {
   /**
    * Returns an iterator over the generators specified in the master file; that
    * is, the parsed contents of $GENERATE statements.
-   * 
+   *
    * @see Generator
    */
   public Iterator generators() {
-    if (generators != null)
+    if (generators != null) {
       return Collections.unmodifiableList(generators).iterator();
-    else
+    }
+    else {
       return Collections.EMPTY_LIST.iterator();
+    }
   }
 
+  @Override
   protected void finalize() {
     st.close();
   }

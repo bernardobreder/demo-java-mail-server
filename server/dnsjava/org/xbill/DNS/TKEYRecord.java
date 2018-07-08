@@ -2,14 +2,15 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+import java.util.Date;
+
+import org.xbill.DNS.utils.base64;
 
 /**
  * Transaction Key - used to compute and/or securely transport a shared secret
  * to be used with TSIG.
- * 
+ *
  * @see TSIG
  *
  * @author Brian Wellington
@@ -42,13 +43,14 @@ public class TKEYRecord extends Record {
   TKEYRecord() {
   }
 
+  @Override
   Record getObject() {
     return new TKEYRecord();
   }
 
   /**
    * Creates a TKEY Record from the given data.
-   * 
+   *
    * @param alg The shared key's algorithm
    * @param timeInception The beginning of the validity period of the shared
    *        secret or keying material
@@ -71,6 +73,7 @@ public class TKEYRecord extends Record {
     this.other = other;
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     alg = new Name(in);
     timeInception = new Date(1000 * in.readU32());
@@ -79,18 +82,23 @@ public class TKEYRecord extends Record {
     error = in.readU16();
 
     int keylen = in.readU16();
-    if (keylen > 0)
+    if (keylen > 0) {
       key = in.readByteArray(keylen);
-    else
+    }
+    else {
       key = null;
+    }
 
     int otherlen = in.readU16();
-    if (otherlen > 0)
+    if (otherlen > 0) {
       other = in.readByteArray(otherlen);
-    else
+    }
+    else {
       other = null;
+    }
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     throw st.exception("no text format defined for TKEY");
   }
@@ -113,12 +121,14 @@ public class TKEYRecord extends Record {
   }
 
   /** Converts rdata to a String */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(alg);
     sb.append(" ");
-    if (Options.check("multiline"))
+    if (Options.check("multiline")) {
       sb.append("(\n\t");
+    }
     sb.append(FormattedTime.format(timeInception));
     sb.append(" ");
     sb.append(FormattedTime.format(timeExpire));
@@ -132,8 +142,9 @@ public class TKEYRecord extends Record {
         sb.append(base64.formatString(key, 64, "\t", false));
         sb.append("\n");
       }
-      if (other != null)
+      if (other != null) {
         sb.append(base64.formatString(other, 64, "\t", false));
+      }
       sb.append(" )");
     }
     else {
@@ -142,8 +153,9 @@ public class TKEYRecord extends Record {
         sb.append(base64.toString(key));
         sb.append(" ");
       }
-      if (other != null)
+      if (other != null) {
         sb.append(base64.toString(other));
+      }
     }
     return sb.toString();
   }
@@ -189,6 +201,7 @@ public class TKEYRecord extends Record {
     return other;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     alg.toWire(out, null, canonical);
 
@@ -202,15 +215,17 @@ public class TKEYRecord extends Record {
       out.writeU16(key.length);
       out.writeByteArray(key);
     }
-    else
+    else {
       out.writeU16(0);
+    }
 
     if (other != null) {
       out.writeU16(other.length);
       out.writeByteArray(other);
     }
-    else
+    else {
       out.writeU16(0);
+    }
   }
 
 }

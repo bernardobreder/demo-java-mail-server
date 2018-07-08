@@ -2,8 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * A6 Record - maps a domain name to an IPv6 address (experimental)
@@ -20,13 +19,14 @@ public class A6Record extends Record {
   A6Record() {
   }
 
+  @Override
   Record getObject() {
     return new A6Record();
   }
 
   /**
    * Creates an A6 Record from the given data
-   * 
+   *
    * @param prefixBits The number of bits in the address prefix
    * @param suffix The address suffix
    * @param prefix The name of the prefix
@@ -35,10 +35,12 @@ public class A6Record extends Record {
     super(name, Type.A6, dclass, ttl);
     this.prefixBits = checkU8("prefixBits", prefixBits);
     this.suffix = suffix;
-    if (prefix != null)
+    if (prefix != null) {
       this.prefix = checkName("prefix", prefix);
+    }
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     prefixBits = in.readU8();
     int suffixbits = 128 - prefixBits;
@@ -46,10 +48,12 @@ public class A6Record extends Record {
     if (prefixBits < 128) {
       suffix = new Inet6Address(128 - prefixBits, in.readByteArray(suffixbytes));
     }
-    if (prefixBits > 0)
+    if (prefixBits > 0) {
       prefix = new Name(in);
+    }
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     prefixBits = st.getUInt8();
     if (prefixBits > 128) {
@@ -63,11 +67,13 @@ public class A6Record extends Record {
         throw st.exception(e.getMessage());
       }
     }
-    if (prefixBits > 0)
+    if (prefixBits > 0) {
       prefix = st.getName(origin);
+    }
   }
 
   /** Converts rdata to a String */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(prefixBits);
@@ -97,6 +103,7 @@ public class A6Record extends Record {
     return prefix;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeU8(prefixBits);
     if (suffix != null) {
@@ -105,8 +112,9 @@ public class A6Record extends Record {
       byte[] data = suffix.toBytes();
       out.writeByteArray(data, 16 - suffixbytes, suffixbytes);
     }
-    if (prefix != null)
+    if (prefix != null) {
       prefix.toWire(out, null, canonical);
+    }
   }
 
 }

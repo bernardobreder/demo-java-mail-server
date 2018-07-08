@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -19,7 +19,7 @@ package org.apache.commons.mail;
 /**
  * This class is used to send simple internet email messages without
  * attachments.
- * 
+ *
  * @since 1.0
  * @author <a href="mailto:quintonm@bellsouth.net">Quinton McCombs</a>
  * @author <a href="mailto:colin.chalmers@maxware.nl">Colin Chalmers</a>
@@ -32,7 +32,7 @@ package org.apache.commons.mail;
 public class SimpleEmail extends Email {
   /**
    * Set the content of the mail
-   * 
+   *
    * @param msg A String.
    * @return An Email.
    * @throws EmailException see javax.mail.internet.MimeBodyPart for definitions

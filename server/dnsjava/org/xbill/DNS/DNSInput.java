@@ -2,8 +2,6 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-
 /**
  * An class for parsing DNS messages.
  *
@@ -20,7 +18,7 @@ public class DNSInput {
 
   /**
    * Creates a new DNSInput
-   * 
+   *
    * @param input The byte array to read from
    */
   public DNSInput(byte[] input) {
@@ -54,7 +52,7 @@ public class DNSInput {
 
   /**
    * Marks the following bytes in the stream as active.
-   * 
+   *
    * @param len The number of bytes in the active region.
    * @throws IllegalArgumentException The number of bytes in the active region
    *         is longer than the remainder of the input.
@@ -77,7 +75,7 @@ public class DNSInput {
   /**
    * Resets the current position of the input stream to the specified index, and
    * clears the active region.
-   * 
+   *
    * @param index The position to continue parsing at.
    * @throws IllegalArgumentException The index is not within the input.
    */
@@ -92,7 +90,7 @@ public class DNSInput {
   /**
    * Saves the current state of the input stream. Both the current position and
    * the end of the active region are saved.
-   * 
+   *
    * @throws IllegalArgumentException The index is not within the input.
    */
   public void save() {
@@ -115,7 +113,7 @@ public class DNSInput {
 
   /**
    * Reads an unsigned 8 bit value from the stream, as an int.
-   * 
+   *
    * @return An unsigned 8 bit value.
    * @throws WireParseException The end of the stream was reached.
    */
@@ -126,7 +124,7 @@ public class DNSInput {
 
   /**
    * Reads an unsigned 16 bit value from the stream, as an int.
-   * 
+   *
    * @return An unsigned 16 bit value.
    * @throws WireParseException The end of the stream was reached.
    */
@@ -139,7 +137,7 @@ public class DNSInput {
 
   /**
    * Reads an unsigned 32 bit value from the stream, as a long.
-   * 
+   *
    * @return An unsigned 32 bit value.
    * @throws WireParseException The end of the stream was reached.
    */
@@ -155,7 +153,7 @@ public class DNSInput {
   /**
    * Reads a byte array of a specified length from the stream into an existing
    * array.
-   * 
+   *
    * @param b The array to read into.
    * @param off The offset of the array to start copying data into.
    * @param len The number of bytes to copy.
@@ -169,7 +167,7 @@ public class DNSInput {
 
   /**
    * Reads a byte array of a specified length from the stream.
-   * 
+   *
    * @return The byte array.
    * @throws WireParseException The end of the stream was reached.
    */
@@ -184,7 +182,7 @@ public class DNSInput {
   /**
    * Reads a byte array consisting of the remainder of the stream (or the active
    * region, if one is set.
-   * 
+   *
    * @return The byte array.
    */
   public byte[] readByteArray() {
@@ -198,7 +196,7 @@ public class DNSInput {
   /**
    * Reads a counted string from the stream. A counted string is a one byte
    * value indicating string length, followed by bytes of data.
-   * 
+   *
    * @return A byte array containing the string.
    * @throws WireParseException The end of the stream was reached.
    */

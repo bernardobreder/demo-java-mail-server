@@ -72,6 +72,7 @@ public class DefaultSmtpServer {
     this.password = password;
   }
 
+  @Override
   public String toString() {
     return host + ":" + port;
   }

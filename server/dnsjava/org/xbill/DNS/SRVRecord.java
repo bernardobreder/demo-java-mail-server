@@ -2,8 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * Server Selection Record - finds hosts running services in a domain. An SRV
@@ -21,13 +20,14 @@ public class SRVRecord extends Record {
   SRVRecord() {
   }
 
+  @Override
   Record getObject() {
     return new SRVRecord();
   }
 
   /**
    * Creates an SRV Record from the given data
-   * 
+   *
    * @param priority The priority of this SRV. Records with lower priority are
    *        preferred.
    * @param weight The weight, used to select between records at the same
@@ -43,6 +43,7 @@ public class SRVRecord extends Record {
     this.target = checkName("target", target);
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     priority = in.readU16();
     weight = in.readU16();
@@ -50,6 +51,7 @@ public class SRVRecord extends Record {
     target = new Name(in);
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     priority = st.getUInt16();
     weight = st.getUInt16();
@@ -58,6 +60,7 @@ public class SRVRecord extends Record {
   }
 
   /** Converts rdata to a String */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(priority + " ");
@@ -87,6 +90,7 @@ public class SRVRecord extends Record {
     return target;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeU16(priority);
     out.writeU16(weight);
@@ -94,6 +98,7 @@ public class SRVRecord extends Record {
     target.toWire(out, null, canonical);
   }
 
+  @Override
   public Name getAdditionalName() {
     return target;
   }

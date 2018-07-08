@@ -2,9 +2,9 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+
+import org.xbill.DNS.utils.base16;
 
 /**
  * SSH Fingerprint - stores the fingerprint of an SSH host key.
@@ -36,13 +36,14 @@ public class SSHFPRecord extends Record {
   SSHFPRecord() {
   }
 
+  @Override
   Record getObject() {
     return new SSHFPRecord();
   }
 
   /**
    * Creates an SSHFP Record from the given data.
-   * 
+   *
    * @param alg The public key's algorithm.
    * @param digestType The public key's digest type.
    * @param fingerprint The public key's fingerprint.
@@ -54,18 +55,21 @@ public class SSHFPRecord extends Record {
     this.fingerprint = fingerprint;
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     alg = in.readU8();
     digestType = in.readU8();
     fingerprint = in.readByteArray();
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     alg = st.getUInt8();
     digestType = st.getUInt8();
     fingerprint = st.getHex(true);
   }
 
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(alg);
@@ -91,6 +95,7 @@ public class SSHFPRecord extends Record {
     return fingerprint;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeU8(alg);
     out.writeU8(digestType);

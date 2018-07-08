@@ -79,6 +79,7 @@ public class EmailAddress implements Serializable {
   /**
    * Override tostring to return the full address
    */
+  @Override
   public String toString() {
     return getAddress();
   }

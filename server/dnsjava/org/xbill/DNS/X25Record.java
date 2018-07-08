@@ -2,8 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * X25 - identifies the PSDN (Public Switched Data Network) address in the X.121
@@ -19,6 +18,7 @@ public class X25Record extends Record {
   X25Record() {
   }
 
+  @Override
   Record getObject() {
     return new X25Record();
   }
@@ -28,8 +28,9 @@ public class X25Record extends Record {
     byte[] out = new byte[length];
     for (int i = 0; i < length; i++) {
       char c = address.charAt(i);
-      if (!Character.isDigit(c))
+      if (!Character.isDigit(c)) {
         return null;
+      }
       out[i] = (byte) c;
     }
     return out;
@@ -37,7 +38,7 @@ public class X25Record extends Record {
 
   /**
    * Creates an X25 Record from the given data
-   * 
+   *
    * @param address The X.25 PSDN address.
    * @throws IllegalArgumentException The address is not a valid PSDN address.
    */
@@ -49,15 +50,18 @@ public class X25Record extends Record {
     }
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     address = in.readCountedString();
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     String address = st.getString();
     this.address = checkAndConvertAddress(address);
-    if (this.address == null)
+    if (this.address == null) {
       throw st.exception("invalid PSDN address " + address);
+    }
   }
 
   /**
@@ -67,10 +71,12 @@ public class X25Record extends Record {
     return byteArrayToString(address, false);
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeCountedString(address);
   }
 
+  @Override
   String rrToString() {
     return byteArrayToString(address, true);
   }

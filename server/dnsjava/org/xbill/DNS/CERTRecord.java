@@ -2,13 +2,14 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+
+import org.xbill.DNS.utils.base64;
 
 /**
  * Certificate Record - Stores a certificate associated with a name. The
  * certificate might also be associated with a KEYRecord.
- * 
+ *
  * @see KEYRecord
  *
  * @author Brian Wellington
@@ -60,7 +61,7 @@ public class CERTRecord extends Record {
     /**
      * Converts a textual representation of an certificate type into its numeric
      * code. Integers in the range 0..65535 are also accepted.
-     * 
+     *
      * @param s The textual representation of the algorithm
      * @return The algorithm code, or -1 on error.
      */
@@ -91,13 +92,14 @@ public class CERTRecord extends Record {
   CERTRecord() {
   }
 
+  @Override
   Record getObject() {
     return new CERTRecord();
   }
 
   /**
    * Creates a CERT Record from the given data
-   * 
+   *
    * @param certType The type of certificate (see constants)
    * @param keyTag The ID of the associated KEYRecord, if present
    * @param alg The algorithm of the associated KEYRecord, if present
@@ -111,6 +113,7 @@ public class CERTRecord extends Record {
     this.cert = cert;
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     certType = in.readU16();
     keyTag = in.readU16();
@@ -118,22 +121,26 @@ public class CERTRecord extends Record {
     cert = in.readByteArray();
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     String certTypeString = st.getString();
     certType = CertificateType.value(certTypeString);
-    if (certType < 0)
+    if (certType < 0) {
       throw st.exception("Invalid certificate type: " + certTypeString);
+    }
     keyTag = st.getUInt16();
     String algString = st.getString();
     alg = DNSSEC.Algorithm.value(algString);
-    if (alg < 0)
+    if (alg < 0) {
       throw st.exception("Invalid algorithm: " + algString);
+    }
     cert = st.getBase64();
   }
 
   /**
    * Converts rdata to a String
    */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(certType);
@@ -182,6 +189,7 @@ public class CERTRecord extends Record {
     return cert;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeU16(certType);
     out.writeU16(keyTag);

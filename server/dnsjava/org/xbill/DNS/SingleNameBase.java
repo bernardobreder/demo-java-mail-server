@@ -2,8 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * Implements common functionality for the many record types whose format is a
@@ -28,14 +27,17 @@ abstract class SingleNameBase extends Record {
     this.singleName = checkName(description, singleName);
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     singleName = new Name(in);
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     singleName = st.getName(origin);
   }
 
+  @Override
   String rrToString() {
     return singleName.toString();
   }
@@ -44,6 +46,7 @@ abstract class SingleNameBase extends Record {
     return singleName;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     singleName.toWire(out, null, canonical);
   }

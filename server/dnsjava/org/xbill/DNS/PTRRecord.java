@@ -2,9 +2,6 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
-
 /**
  * Pointer Record - maps a domain name representing an Internet Address to a
  * hostname.
@@ -17,13 +14,14 @@ public class PTRRecord extends SingleCompressedNameBase {
   PTRRecord() {
   }
 
+  @Override
   Record getObject() {
     return new PTRRecord();
   }
 
   /**
    * Creates a new PTR Record with the given data
-   * 
+   *
    * @param target The name of the machine with this address
    */
   public PTRRecord(Name name, int dclass, long ttl, Name target) {

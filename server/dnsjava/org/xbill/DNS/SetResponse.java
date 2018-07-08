@@ -2,11 +2,12 @@
 
 package org.xbill.DNS;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Response from a query to Cache.lookupRecords() or Zone.findRecords()
- * 
+ *
  * @see Cache
  * @see Zone
  *
@@ -39,14 +40,14 @@ public class SetResponse {
 
   /**
    * The Cache/Zone found a CNAME when looking for the name.
-   * 
+   *
    * @see CNAMERecord
    */
   static final int CNAME = 4;
 
   /**
    * The Cache/Zone found a DNAME when looking for the name.
-   * 
+   *
    * @see DNAMERecord
    */
   static final int DNAME = 5;
@@ -68,15 +69,17 @@ public class SetResponse {
   }
 
   SetResponse(int type, RRset rrset) {
-    if (type < 0 || type > 6)
+    if (type < 0 || type > 6) {
       throw new IllegalArgumentException("invalid type");
+    }
     this.type = type;
     this.data = rrset;
   }
 
   SetResponse(int type) {
-    if (type < 0 || type > 6)
+    if (type < 0 || type > 6) {
       throw new IllegalArgumentException("invalid type");
+    }
     this.type = type;
     this.data = null;
   }
@@ -103,8 +106,9 @@ public class SetResponse {
   }
 
   void addRRset(RRset rrset) {
-    if (data == null)
+    if (data == null) {
       data = new ArrayList();
+    }
     List l = (List) data;
     l.add(rrset);
   }
@@ -146,8 +150,9 @@ public class SetResponse {
 
   /** If the query was successful, return the answers */
   public RRset[] answers() {
-    if (type != SUCCESSFUL)
+    if (type != SUCCESSFUL) {
       return null;
+    }
     List l = (List) data;
     return (RRset[]) l.toArray(new RRset[l.size()]);
   }
@@ -174,6 +179,7 @@ public class SetResponse {
   }
 
   /** Prints the value of the SetResponse */
+  @Override
   public String toString() {
     switch (type) {
       case UNKNOWN:

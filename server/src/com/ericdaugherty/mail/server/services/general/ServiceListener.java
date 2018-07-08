@@ -30,13 +30,15 @@
 
 package com.ericdaugherty.mail.server.services.general;
 
+import java.io.IOException;
 // Java imports
-import java.net.*;
-import java.io.*;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 
 // Log4j imports
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import com.ericdaugherty.mail.server.configuration.ConfigurationManager;
 
 // Local imports
@@ -102,8 +104,9 @@ public class ServiceListener implements Runnable {
    */
   public void run() {
 
-    if (log.isDebugEnabled())
+    if (log.isDebugEnabled()) {
       log.debug("Starting ServiceListener on port: " + port);
+    }
 
     InetAddress listenAddress = ConfigurationManager.getInstance().getListenAddress();
     try {

@@ -2,9 +2,6 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
-
 /**
  * Implements common functionality for the many record types whose format is a
  * single compressed name.
@@ -21,6 +18,7 @@ abstract class SingleCompressedNameBase extends SingleNameBase {
     super(name, type, dclass, ttl, singleName, description);
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     singleName.toWire(out, c, canonical);
   }

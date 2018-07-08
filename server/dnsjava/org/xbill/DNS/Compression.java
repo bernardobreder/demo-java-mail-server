@@ -4,7 +4,7 @@ package org.xbill.DNS;
 
 /**
  * DNS Name Compression object.
- * 
+ *
  * @see Name
  *
  * @author Brian Wellington
@@ -37,8 +37,9 @@ class Compression {
     entry.pos = pos;
     entry.next = table[row];
     table[row] = entry;
-    if (verbose)
+    if (verbose) {
       System.err.println("Adding " + name + " at " + pos);
+    }
   }
 
   /**
@@ -49,11 +50,13 @@ class Compression {
     int row = (name.hashCode() & 0x7FFFFFFF) % TABLE_SIZE;
     int pos = -1;
     for (Entry entry = table[row]; entry != null; entry = entry.next) {
-      if (entry.name.equals(name))
+      if (entry.name.equals(name)) {
         pos = entry.pos;
+      }
     }
-    if (verbose)
+    if (verbose) {
       System.err.println("Looking for " + name + ", found " + pos);
+    }
     return pos;
   }
 

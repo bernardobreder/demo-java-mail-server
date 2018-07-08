@@ -31,21 +31,24 @@
 package com.ericdaugherty.mail.server.services.smtp;
 
 // Java imports
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Date;
-import java.util.Vector;
 import java.util.List;
+import java.util.Vector;
 
+import org.apache.commons.logging.Log;
 // Log imports
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 
+import com.ericdaugherty.mail.server.configuration.ConfigurationManager;
+import com.ericdaugherty.mail.server.errors.NotFoundException;
+import com.ericdaugherty.mail.server.info.EmailAddress;
 // Local imports
 import com.ericdaugherty.mail.server.info.User;
-import com.ericdaugherty.mail.server.info.EmailAddress;
-import com.ericdaugherty.mail.server.errors.NotFoundException;
 import com.ericdaugherty.mail.server.services.general.DeliveryService;
-import com.ericdaugherty.mail.server.configuration.ConfigurationManager;
 
 /**
  * This class (thread) is responsible for checking the disk for unsent message
@@ -159,9 +162,10 @@ public class SMTPSender implements Runnable {
 
     // If the next scheduled delivery attempt is still in the future, skip.
     if (message.getScheduledDelivery().getTime() > System.currentTimeMillis()) {
-      if (log.isDebugEnabled())
+      if (log.isDebugEnabled()) {
         log.debug("Skipping delivery of message " + message.getMessageLocation().getName()
           + " because the scheduled delivery time is still in the future: " + message.getScheduledDelivery());
+      }
       return;
     }
 
@@ -288,8 +292,9 @@ public class SMTPSender implements Runnable {
         EmailAddress defaultAddress = configurationManager.getDefaultUser();
         //If this throws a NotFoundException, go ahead and let it bounce.
         user = configurationManager.getUser(defaultAddress);
-        if (user == null)
+        if (user == null) {
           throw new NotFoundException();
+        }
         if (log.isDebugEnabled()) {
           log.info("Delivering message addressed to: " + address + " to default user: " + defaultAddress);
         }

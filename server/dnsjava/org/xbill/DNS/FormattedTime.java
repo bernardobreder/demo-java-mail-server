@@ -2,14 +2,18 @@
 
 package org.xbill.DNS;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 /**
  * Routines for converting time values to and from YYYYMMDDHHMMSS format.
  *
  * @author Brian Wellington
  */
-
-import java.util.*;
-import java.text.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 final class FormattedTime {
 
@@ -29,7 +33,7 @@ final class FormattedTime {
 
   /**
    * Converts a Date into a formatted string.
-   * 
+   *
    * @param date The Date to convert.
    * @return The formatted string.
    */
@@ -49,7 +53,7 @@ final class FormattedTime {
 
   /**
    * Parses a formatted time string into a Date.
-   * 
+   *
    * @param s The string, in the form YYYYMMDDHHMMSS.
    * @return The Date object.
    * @throws TextParseExcetption The string was invalid.

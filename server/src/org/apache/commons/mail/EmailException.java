@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -26,7 +26,7 @@ import java.io.PrintWriter;
  * Supports nesting, emulating JDK 1.4 behavior if necessary.
  * <p>
  * Adapted from FunctorException in Commons Collections.
- * 
+ *
  * @author jakarta-commons
  * @since 1.0
  * @version $Id: EmailException.java 510812 2007-02-23 04:32:22Z dion $
@@ -69,7 +69,7 @@ public class EmailException extends Exception {
 
   /**
    * Constructs a new <code>EmailException</code> with specified detail message.
-   * 
+   *
    * @param msg the error message.
    */
   public EmailException(String msg) {
@@ -80,7 +80,7 @@ public class EmailException extends Exception {
   /**
    * Constructs a new <code>EmailException</code> with specified nested
    * <code>Throwable</code> root cause.
-   * 
+   *
    * @param rootCause the exception or error that caused this exception to be
    *        thrown.
    */
@@ -92,7 +92,7 @@ public class EmailException extends Exception {
   /**
    * Constructs a new <code>EmailException</code> with specified detail message
    * and nested <code>Throwable</code> root cause.
-   * 
+   *
    * @param msg the error message.
    * @param rootCause the exception or error that caused this exception to be
    *        thrown.
@@ -104,9 +104,10 @@ public class EmailException extends Exception {
 
   /**
    * Gets the cause of this throwable.
-   * 
+   *
    * @return the cause of this throwable, or <code>null</code>
    */
+  @Override
   public Throwable getCause() {
     return rootCause;
   }
@@ -114,15 +115,17 @@ public class EmailException extends Exception {
   /**
    * Prints the stack trace of this exception to the standard error stream.
    */
+  @Override
   public void printStackTrace() {
     printStackTrace(System.err);
   }
 
   /**
    * Prints the stack trace of this exception to the specified stream.
-   * 
+   *
    * @param out the <code>PrintStream</code> to use for output
    */
+  @Override
   public void printStackTrace(PrintStream out) {
     synchronized (out) {
       PrintWriter pw = new PrintWriter(out, false);
@@ -135,9 +138,10 @@ public class EmailException extends Exception {
 
   /**
    * Prints the stack trace of this exception to the specified writer.
-   * 
+   *
    * @param out the <code>PrintWriter</code> to use for output
    */
+  @Override
   public void printStackTrace(PrintWriter out) {
     synchronized (out) {
       super.printStackTrace(out);

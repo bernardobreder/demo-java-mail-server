@@ -2,8 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * The NULL Record. This has no defined purpose, but can be used to hold
@@ -19,13 +18,14 @@ public class NULLRecord extends Record {
   NULLRecord() {
   }
 
+  @Override
   Record getObject() {
     return new NULLRecord();
   }
 
   /**
    * Creates a NULL record from the given data.
-   * 
+   *
    * @param data The contents of the record.
    */
   public NULLRecord(Name name, int dclass, long ttl, byte[] data) {
@@ -37,14 +37,17 @@ public class NULLRecord extends Record {
     this.data = data;
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     data = in.readByteArray();
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     throw st.exception("no defined text format for NULL records");
   }
 
+  @Override
   String rrToString() {
     return unknownToString(data);
   }
@@ -54,6 +57,7 @@ public class NULLRecord extends Record {
     return data;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeByteArray(data);
   }

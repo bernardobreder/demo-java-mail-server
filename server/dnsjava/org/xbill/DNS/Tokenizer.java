@@ -17,10 +17,17 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PushbackInputStream;
 
-import org.xbill.DNS.utils.*;
+import org.xbill.DNS.utils.base16;
+import org.xbill.DNS.utils.base64;
 
 /**
  * Tokenizer is used to parse DNS records and zones from text format,
@@ -77,8 +84,9 @@ public class Tokenizer {
     }
 
     private Token set(int type, StringBuffer value) {
-      if (type < 0)
+      if (type < 0) {
         throw new IllegalArgumentException();
+      }
       this.type = type;
       this.value = value == null ? null : value.toString();
       return this;
@@ -88,6 +96,7 @@ public class Tokenizer {
      * Converts the token to a string containing a representation useful for
      * debugging.
      */
+    @Override
     public String toString() {
       switch (type) {
         case EOF:
@@ -133,12 +142,13 @@ public class Tokenizer {
 
   /**
    * Creates a Tokenizer from an arbitrary input stream.
-   * 
+   *
    * @param is The InputStream to tokenize.
    */
   public Tokenizer(InputStream is) {
-    if (!(is instanceof BufferedInputStream))
+    if (!(is instanceof BufferedInputStream)) {
       is = new BufferedInputStream(is);
+    }
     this.is = new PushbackInputStream(is, 2);
     ungottenToken = false;
     multiline = 0;
@@ -152,7 +162,7 @@ public class Tokenizer {
 
   /**
    * Creates a Tokenizer from a string.
-   * 
+   *
    * @param s The String to tokenize.
    */
   public Tokenizer(String s) {
@@ -161,7 +171,7 @@ public class Tokenizer {
 
   /**
    * Creates a Tokenizer from a file.
-   * 
+   *
    * @param f The File to tokenize.
    */
   public Tokenizer(File f) throws FileNotFoundException {
@@ -174,21 +184,25 @@ public class Tokenizer {
     int c = is.read();
     if (c == '\r') {
       int next = is.read();
-      if (next != '\n')
+      if (next != '\n') {
         is.unread(next);
+      }
       c = '\n';
     }
-    if (c == '\n')
+    if (c == '\n') {
       line++;
+    }
     return c;
   }
 
   private void ungetChar(int c) throws IOException {
-    if (c == -1)
+    if (c == -1) {
       return;
+    }
     is.unread(c);
-    if (c == '\n')
+    if (c == '\n') {
       line--;
+    }
   }
 
   private int skipWhitespace() throws IOException {
@@ -206,13 +220,14 @@ public class Tokenizer {
   }
 
   private void checkUnbalancedParens() throws TextParseException {
-    if (multiline > 0)
+    if (multiline > 0) {
       throw exception("unbalanced parentheses");
+    }
   }
 
   /**
    * Gets the next token from a tokenizer.
-   * 
+   *
    * @param wantWhitespace If true, leading whitespace will be returned as a
    *        token.
    * @param wantComment If true, comments are returned as tokens.
@@ -227,34 +242,41 @@ public class Tokenizer {
     if (ungottenToken) {
       ungottenToken = false;
       if (current.type == WHITESPACE) {
-        if (wantWhitespace)
+        if (wantWhitespace) {
           return current;
+        }
       }
       else if (current.type == COMMENT) {
-        if (wantComment)
+        if (wantComment) {
           return current;
+        }
       }
       else {
-        if (current.type == EOL)
+        if (current.type == EOL) {
           line++;
+        }
         return current;
       }
     }
     int skipped = skipWhitespace();
-    if (skipped > 0 && wantWhitespace)
+    if (skipped > 0 && wantWhitespace) {
       return current.set(WHITESPACE, null);
+    }
     type = IDENTIFIER;
     sb.setLength(0);
     while (true) {
       c = getChar();
       if (c == -1 || delimiters.indexOf(c) != -1) {
         if (c == -1) {
-          if (quoting)
+          if (quoting) {
             throw exception("EOF in " + "quoted string");
-          else if (sb.length() == 0)
+          }
+          else if (sb.length() == 0) {
             return current.set(EOF, null);
-          else
+          }
+          else {
             return current.set(type, sb);
+          }
         }
         if (sb.length() == 0 && type != QUOTED_STRING) {
           if (c == '(') {
@@ -263,8 +285,9 @@ public class Tokenizer {
             continue;
           }
           else if (c == ')') {
-            if (multiline <= 0)
+            if (multiline <= 0) {
               throw exception("invalid " + "close " + "parenthesis");
+            }
             multiline--;
             skipWhitespace();
             continue;
@@ -288,8 +311,9 @@ public class Tokenizer {
           else if (c == ';') {
             while (true) {
               c = getChar();
-              if (c == '\n' || c == -1)
+              if (c == '\n' || c == -1) {
                 break;
+              }
               sb.append((char) c);
             }
             if (wantComment) {
@@ -305,20 +329,24 @@ public class Tokenizer {
               sb.setLength(0);
               continue;
             }
-            else
+            else {
               return current.set(EOL, null);
+            }
           }
-          else
+          else {
             throw new IllegalStateException();
+          }
         }
-        else
+        else {
           ungetChar(c);
+        }
         break;
       }
       else if (c == '\\') {
         c = getChar();
-        if (c == -1)
+        if (c == -1) {
           throw exception("unterminated escape sequence");
+        }
         sb.append('\\');
       }
       else if (quoting && c == '\n') {
@@ -335,7 +363,7 @@ public class Tokenizer {
 
   /**
    * Gets the next token from a tokenizer, ignoring whitespace and comments.
-   * 
+   *
    * @return The next token in the stream.
    * @throws TextParseException The input was invalid.
    * @throws IOException An I/O error occurred.
@@ -347,20 +375,22 @@ public class Tokenizer {
   /**
    * Returns a token to the stream, so that it will be returned by the next call
    * to get().
-   * 
+   *
    * @throws IllegalStateException There are already ungotten tokens.
    */
   public void unget() {
-    if (ungottenToken)
+    if (ungottenToken) {
       throw new IllegalStateException("Cannot unget multiple tokens");
-    if (current.type == EOL)
+    }
+    if (current.type == EOL) {
       line--;
+    }
     ungottenToken = true;
   }
 
   /**
    * Gets the next token from a tokenizer and converts it to a string.
-   * 
+   *
    * @return The next token in the stream, as a string.
    * @throws TextParseException The input was invalid or not a string.
    * @throws IOException An I/O error occurred.
@@ -376,7 +406,7 @@ public class Tokenizer {
   /**
    * Gets the next token from a tokenizer, ensures it is an unquoted string, and
    * converts it to a string.
-   * 
+   *
    * @return The next token in the stream, as a string.
    * @throws TextParseException The input was invalid or not an unquoted string.
    * @throws IOException An I/O error occurred.
@@ -391,15 +421,16 @@ public class Tokenizer {
 
   /**
    * Gets the next token from a tokenizer and converts it to a long.
-   * 
+   *
    * @return The next token in the stream, as a long.
    * @throws TextParseException The input was invalid or not a long.
    * @throws IOException An I/O error occurred.
    */
   public long getLong() throws IOException {
     String next = getIdentifier();
-    if (!Character.isDigit(next.charAt(0)))
+    if (!Character.isDigit(next.charAt(0))) {
       throw exception("expecting an integer");
+    }
     try {
       return Long.parseLong(next);
     }
@@ -411,7 +442,7 @@ public class Tokenizer {
   /**
    * Gets the next token from a tokenizer and converts it to an unsigned 32 bit
    * integer.
-   * 
+   *
    * @return The next token in the stream, as an unsigned 32 bit integer.
    * @throws TextParseException The input was invalid or not an unsigned 32 bit
    *         integer.
@@ -419,15 +450,16 @@ public class Tokenizer {
    */
   public long getUInt32() throws IOException {
     long l = getLong();
-    if (l < 0 || l > 0xFFFFFFFFL)
+    if (l < 0 || l > 0xFFFFFFFFL) {
       throw exception("expecting an 32 bit unsigned integer");
+    }
     return l;
   }
 
   /**
    * Gets the next token from a tokenizer and converts it to an unsigned 16 bit
    * integer.
-   * 
+   *
    * @return The next token in the stream, as an unsigned 16 bit integer.
    * @throws TextParseException The input was invalid or not an unsigned 16 bit
    *         integer.
@@ -435,15 +467,16 @@ public class Tokenizer {
    */
   public int getUInt16() throws IOException {
     long l = getLong();
-    if (l < 0 || l > 0xFFFFL)
+    if (l < 0 || l > 0xFFFFL) {
       throw exception("expecting an 16 bit unsigned integer");
+    }
     return (int) l;
   }
 
   /**
    * Gets the next token from a tokenizer and converts it to an unsigned 8 bit
    * integer.
-   * 
+   *
    * @return The next token in the stream, as an unsigned 8 bit integer.
    * @throws TextParseException The input was invalid or not an unsigned 8 bit
    *         integer.
@@ -451,15 +484,16 @@ public class Tokenizer {
    */
   public int getUInt8() throws IOException {
     long l = getLong();
-    if (l < 0 || l > 0xFFL)
+    if (l < 0 || l > 0xFFL) {
       throw exception("expecting an 8 bit unsigned integer");
+    }
     return (int) l;
   }
 
   /**
    * Gets the next token from a tokenizer and converts it to a 32 bit unsigned
    * integer which may be encoded in the BIND TTL format.
-   * 
+   *
    * @return The next token in the stream, as an unsigned 32 bit integer.
    * @throws TextParseException The input was not valid.
    * @throws IOException An I/O error occurred.
@@ -477,7 +511,7 @@ public class Tokenizer {
 
   /**
    * Gets the next token from a tokenizer and converts it to a name.
-   * 
+   *
    * @param origin The origin to append to relative names.
    * @return The next token in the stream, as a name.
    * @throws TextParseException The input was invalid or not a valid name.
@@ -489,8 +523,9 @@ public class Tokenizer {
   public Name getName(Name origin) throws IOException {
     try {
       Name name = Name.fromString(getIdentifier(), origin);
-      if (!name.isAbsolute())
+      if (!name.isAbsolute()) {
         throw new RelativeNameException(name);
+      }
       return name;
     }
     catch (TextParseException e) {
@@ -500,7 +535,7 @@ public class Tokenizer {
 
   /**
    * Gets the next token from a tokenizer, which must be an EOL or EOF.
-   * 
+   *
    * @throws TextParseException The input was invalid or not an EOL or EOF
    *         token.
    * @throws IOException An I/O error occurred.
@@ -519,22 +554,25 @@ public class Tokenizer {
     StringBuffer sb = null;
     while (true) {
       Tokenizer.Token t = get();
-      if (!t.isString())
+      if (!t.isString()) {
         break;
-      if (sb == null)
+      }
+      if (sb == null) {
         sb = new StringBuffer();
+      }
       sb.append(t.value);
     }
     unget();
-    if (sb == null)
+    if (sb == null) {
       return null;
+    }
     return sb.toString();
   }
 
   /**
    * Gets the remaining string tokens until an EOL/EOF is seen, concatenates
    * them together, and converts the base64 encoded data to a byte array.
-   * 
+   *
    * @param required If true, an exception will be thrown if no strings remain;
    *        otherwise null be be returned.
    * @return The byte array containing the decoded strings, or null if there
@@ -545,21 +583,24 @@ public class Tokenizer {
   public byte[] getBase64(boolean required) throws IOException {
     String s = remainingStrings();
     if (s == null) {
-      if (required)
+      if (required) {
         throw exception("expected base64 encoded string");
-      else
+      }
+      else {
         return null;
+      }
     }
     byte[] array = base64.fromString(s);
-    if (array == null)
+    if (array == null) {
       throw exception("invalid base64 encoding");
+    }
     return array;
   }
 
   /**
    * Gets the remaining string tokens until an EOL/EOF is seen, concatenates
    * them together, and converts the base64 encoded data to a byte array.
-   * 
+   *
    * @return The byte array containing the decoded strings, or null if there
    *         were no strings to decode.
    * @throws TextParseException The input was invalid.
@@ -572,7 +613,7 @@ public class Tokenizer {
   /**
    * Gets the remaining string tokens until an EOL/EOF is seen, concatenates
    * them together, and converts the hex encoded data to a byte array.
-   * 
+   *
    * @param required If true, an exception will be thrown if no strings remain;
    *        otherwise null be be returned.
    * @return The byte array containing the decoded strings, or null if there
@@ -583,21 +624,24 @@ public class Tokenizer {
   public byte[] getHex(boolean required) throws IOException {
     String s = remainingStrings();
     if (s == null) {
-      if (required)
+      if (required) {
         throw exception("expected hex encoded string");
-      else
+      }
+      else {
         return null;
+      }
     }
     byte[] array = base16.fromString(s);
-    if (array == null)
+    if (array == null) {
       throw exception("invalid hex encoding");
+    }
     return array;
   }
 
   /**
    * Gets the remaining string tokens until an EOL/EOF is seen, concatenates
    * them together, and converts the hex encoded data to a byte array.
-   * 
+   *
    * @return The byte array containing the decoded strings, or null if there
    *         were no strings to decode.
    * @throws TextParseException The input was invalid.
@@ -609,7 +653,7 @@ public class Tokenizer {
 
   /**
    * Creates an exception which includes the current state in the error message
-   * 
+   *
    * @param s The error message to include.
    * @return The exception to be thrown
    */
@@ -630,6 +674,7 @@ public class Tokenizer {
     }
   }
 
+  @Override
   protected void finalize() {
     close();
   }

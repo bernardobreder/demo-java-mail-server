@@ -2,8 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * Implements common functionality for the many record types whose format is an
@@ -31,16 +30,19 @@ abstract class U16NameBase extends Record {
     this.nameField = checkName(nameDescription, nameField);
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     u16Field = in.readU16();
     nameField = new Name(in);
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     u16Field = st.getUInt16();
     nameField = st.getName(origin);
   }
 
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(u16Field);
@@ -57,6 +59,7 @@ abstract class U16NameBase extends Record {
     return nameField;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeU16(u16Field);
     nameField.toWire(out, null, canonical);

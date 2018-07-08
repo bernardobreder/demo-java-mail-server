@@ -30,19 +30,30 @@
 
 package com.ericdaugherty.mail.server.services.pop3;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
+import java.io.PrintWriter;
 // Java imports
-import java.net.*;
-import java.io.*;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
 
+import org.apache.commons.logging.Log;
 // Log imports
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 
-// Local imports
-import com.ericdaugherty.mail.server.info.*;
-import com.ericdaugherty.mail.server.services.general.DeliveryService;
-import com.ericdaugherty.mail.server.services.general.ConnectionProcessor;
 import com.ericdaugherty.mail.server.configuration.ConfigurationManager;
+// Local imports
+import com.ericdaugherty.mail.server.info.EmailAddress;
+import com.ericdaugherty.mail.server.info.Message;
+import com.ericdaugherty.mail.server.info.User;
+import com.ericdaugherty.mail.server.services.general.ConnectionProcessor;
+import com.ericdaugherty.mail.server.services.general.DeliveryService;
 
 /**
  * Handles an incoming Pop3 connection. See rfc 1939 for details.
@@ -97,6 +108,7 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
    * Entrypoint for the Thread, this method handles the interaction with the
    * client socket.
    */
+  @Override
   public void run() {
 
     try {
@@ -305,8 +317,9 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
       deliveryService.ipAuthenticated(clientIp);
       deliveryService.lockMailbox(address);
       write(MESSAGE_LOGIN_SUCCESSFUL);
-      if (log.isInfoEnabled())
+      if (log.isInfoEnabled()) {
         log.info("User: " + address.getAddress() + " logged in successfully.");
+      }
       return user;
     }
     else {

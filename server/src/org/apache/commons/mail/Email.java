@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -45,7 +45,7 @@ import javax.naming.NamingException;
  * The base class for all email messages. This class sets the sender's email &
  * name, receiver's email & name, subject, and the sent date. Subclasses are
  * responsible for setting the message body.
- * 
+ *
  * @since 1.0
  * @author <a href="mailto:quintonm@bellsouth.net">Quinton McCombs</a>
  * @author <a href="mailto:jon@latchkey.com">Jon S. Stevens</a>
@@ -106,14 +106,14 @@ public abstract class Email {
   /**
    * Socket connection timeout value in milliseconds. Default is infinite
    * timeout.
-   * 
+   *
    * @since 1.2
    */
   public static final String MAIL_SMTP_CONNECTIONTIMEOUT = "mail.smtp.connectiontimeout";
 
   /**
    * Socket I/O timeout value in milliseconds. Default is infinite timeout.
-   * 
+   *
    * @since 1.2
    */
   public static final String MAIL_SMTP_TIMEOUT = "mail.smtp.timeout";
@@ -210,7 +210,7 @@ public abstract class Email {
 
   /**
    * Used to specify the mail headers. Example:
-   * 
+   *
    * X-Mailer: Sendmail, X-Priority: 1( highest ) or 2( high ) 3( normal ) 4(
    * low ) and 5( lowest ) Disposition-Notification-To: user@domain.net
    */
@@ -242,7 +242,7 @@ public abstract class Email {
 
   /**
    * Setting to true will enable the display of debug information.
-   * 
+   *
    * @param d A boolean.
    * @since 1.0
    */
@@ -256,7 +256,7 @@ public abstract class Email {
    * <p>
    * This method will create a new instance of <code>DefaultAuthenticator</code>
    * using the supplied parameters.
-   * 
+   *
    * @param userName User name for the SMTP server
    * @param password password for the SMTP server
    * @see DefaultAuthenticator
@@ -274,7 +274,7 @@ public abstract class Email {
    * <p>
    * This method should be used when your outgoing mail server requires
    * authentication. Your mail server must also support RFC2554.
-   * 
+   *
    * @param newAuthenticator the <code>Authenticator</code> object.
    * @see Authenticator
    * @since 1.0
@@ -285,7 +285,7 @@ public abstract class Email {
 
   /**
    * Set the charset of the message.
-   * 
+   *
    * @param newCharset A String.
    * @throws java.nio.charset.IllegalCharsetNameException if the charset name is
    *         invalid
@@ -300,7 +300,7 @@ public abstract class Email {
 
   /**
    * Set the emailBody to a MimeMultiPart
-   * 
+   *
    * @param aMimeMultipart aMimeMultipart
    * @since 1.0
    */
@@ -310,7 +310,7 @@ public abstract class Email {
 
   /**
    * Set the content & contentType
-   * 
+   *
    * @param aObject aObject
    * @param aContentType aContentType
    * @since 1.0
@@ -322,7 +322,7 @@ public abstract class Email {
 
   /**
    * Update the contentType.
-   * 
+   *
    * @param aContentType aContentType
    * @since 1.2
    */
@@ -365,7 +365,7 @@ public abstract class Email {
 
   /**
    * Set the hostname of the outgoing mail server
-   * 
+   *
    * @param aHostName aHostName
    * @since 1.0
    */
@@ -375,7 +375,7 @@ public abstract class Email {
 
   /**
    * Set or disable the TLS encryption
-   * 
+   *
    * @param withTLS true if TLS needed, false otherwise
    * @since 1.1
    */
@@ -385,7 +385,7 @@ public abstract class Email {
 
   /**
    * Set the port number of the outgoing mail server.
-   * 
+   *
    * @param aPortNumber aPortNumber
    * @since 1.0
    */
@@ -402,11 +402,11 @@ public abstract class Email {
    * and password (in the case of mail authentication) will create a new mail
    * session with a DefaultAuthenticator. This is a convience but might come
    * unexpected.
-   * 
+   *
    * If mail authentication is used but NO username and password is supplied the
    * implementation assumes that you have set a authenticator and will use the
    * existing mail session (as expected).
-   * 
+   *
    * @param aSession mail session to be used
    * @since 1.0
    */
@@ -439,7 +439,7 @@ public abstract class Email {
 
   /**
    * Supply a mail Session object from a JNDI directory
-   * 
+   *
    * @param jndiName name of JNDI ressource (javax.mail.Session type), ressource
    *        if searched in java:comp/env if name dont start with "java:"
    * @throws IllegalArgumentException JNDI name null or empty
@@ -463,7 +463,7 @@ public abstract class Email {
 
   /**
    * Initialise a mailsession object
-   * 
+   *
    * @return A Session.
    * @throws EmailException thrown when host name was not set.
    * @since 1.0
@@ -518,7 +518,7 @@ public abstract class Email {
 
   /**
    * Creates a InternetAddress.
-   * 
+   *
    * @param email An email address.
    * @param name A name.
    * @param charsetName The name of the charset to encode the name with.
@@ -567,7 +567,7 @@ public abstract class Email {
    * the charset of {@link #setCharset(java.lang.String) setCharset()}. If it is
    * not set, it will be encoded using the Java platform's default charset
    * (UTF-16) if it contains non-ASCII characters; otherwise, it is used as is.
-   * 
+   *
    * @param email A String.
    * @return An Email.
    * @throws EmailException Indicates an invalid email address.
@@ -583,7 +583,7 @@ public abstract class Email {
    * {@link #setCharset(java.lang.String) setCharset()}. If it is not set, it
    * will be encoded using the Java platform's default charset (UTF-16) if it
    * contains non-ASCII characters; otherwise, it is used as is.
-   * 
+   *
    * @param email A String.
    * @param name A String.
    * @throws EmailException Indicates an invalid email address.
@@ -597,7 +597,7 @@ public abstract class Email {
   /**
    * Set the FROM field of the email to use the specified address, personal
    * name, and charset encoding for the name.
-   * 
+   *
    * @param email A String.
    * @param name A String.
    * @param charset The charset to encode the name with.
@@ -616,7 +616,7 @@ public abstract class Email {
    * {@link #setCharset(java.lang.String) setCharset()}. If it is not set, it
    * will be encoded using the Java platform's default charset (UTF-16) if it
    * contains non-ASCII characters; otherwise, it is used as is.
-   * 
+   *
    * @param email A String.
    * @throws EmailException Indicates an invalid email address.
    * @return An Email.
@@ -632,7 +632,7 @@ public abstract class Email {
    * {@link #setCharset(java.lang.String) setCharset()}. If it is not set, it
    * will be encoded using the Java platform's default charset (UTF-16) if it
    * contains non-ASCII characters; otherwise, it is used as is.
-   * 
+   *
    * @param email A String.
    * @param name A String.
    * @throws EmailException Indicates an invalid email address.
@@ -646,7 +646,7 @@ public abstract class Email {
   /**
    * Add a recipient TO to the email using the specified address, personal name,
    * and charset encoding for the name.
-   * 
+   *
    * @param email A String.
    * @param name A String.
    * @param charset The charset to encode the name with.
@@ -663,7 +663,7 @@ public abstract class Email {
    * Set a list of "TO" addresses. All elements in the specified
    * <code>Collection</code> are expected to be of type
    * <code>java.mail.internet.InternetAddress</code>.
-   * 
+   *
    * @param aCollection collection of <code>InternetAddress</code> objects.
    * @throws EmailException Indicates an invalid email address.
    * @return An Email.
@@ -685,7 +685,7 @@ public abstract class Email {
    * {@link #setCharset(java.lang.String) setCharset()}. If it is not set, it
    * will be encoded using the Java platform's default charset (UTF-16) if it
    * contains non-ASCII characters; otherwise, it is used as is.
-   * 
+   *
    * @param email A String.
    * @return An Email.
    * @throws EmailException Indicates an invalid email address.
@@ -701,7 +701,7 @@ public abstract class Email {
    * {@link #setCharset(java.lang.String) setCharset()}. If it is not set, it
    * will be encoded using the Java platform's default charset (UTF-16) if it
    * contains non-ASCII characters; otherwise, it is used as is.
-   * 
+   *
    * @param email A String.
    * @param name A String.
    * @throws EmailException Indicates an invalid email address.
@@ -715,7 +715,7 @@ public abstract class Email {
   /**
    * Add a recipient CC to the email using the specified address, personal name,
    * and charset encoding for the name.
-   * 
+   *
    * @param email A String.
    * @param name A String.
    * @param charset The charset to encode the name with.
@@ -732,7 +732,7 @@ public abstract class Email {
    * Set a list of "CC" addresses. All elements in the specified
    * <code>Collection</code> are expected to be of type
    * <code>java.mail.internet.InternetAddress</code>.
-   * 
+   *
    * @param aCollection collection of <code>InternetAddress</code> objects.
    * @return An Email.
    * @throws EmailException Indicates an invalid email address.
@@ -754,7 +754,7 @@ public abstract class Email {
    * {@link #setCharset(java.lang.String) setCharset()}. If it is not set, it
    * will be encoded using the Java platform's default charset (UTF-16) if it
    * contains non-ASCII characters; otherwise, it is used as is.
-   * 
+   *
    * @param email A String.
    * @return An Email.
    * @throws EmailException Indicates an invalid email address
@@ -770,7 +770,7 @@ public abstract class Email {
    * {@link #setCharset(java.lang.String) setCharset()}. If it is not set, it
    * will be encoded using the Java platform's default charset (UTF-16) if it
    * contains non-ASCII characters; otherwise, it is used as is.
-   * 
+   *
    * @param email A String.
    * @param name A String.
    * @return An Email.
@@ -784,7 +784,7 @@ public abstract class Email {
   /**
    * Add a blind BCC recipient to the email using the specified address,
    * personal name, and charset encoding for the name.
-   * 
+   *
    * @param email A String.
    * @param name A String.
    * @param charset The charset to encode the name with.
@@ -801,7 +801,7 @@ public abstract class Email {
    * Set a list of "BCC" addresses. All elements in the specified
    * <code>Collection</code> are expected to be of type
    * <code>java.mail.internet.InternetAddress</code>.
-   * 
+   *
    * @param aCollection collection of <code>InternetAddress</code> objects
    * @return An Email.
    * @throws EmailException Indicates an invalid email address
@@ -823,7 +823,7 @@ public abstract class Email {
    * {@link #setCharset(java.lang.String) setCharset()}. If it is not set, it
    * will be encoded using the Java platform's default charset (UTF-16) if it
    * contains non-ASCII characters; otherwise, it is used as is.
-   * 
+   *
    * @param email A String.
    * @return An Email.
    * @throws EmailException Indicates an invalid email address
@@ -839,7 +839,7 @@ public abstract class Email {
    * {@link #setCharset(java.lang.String) setCharset()}. If it is not set, it
    * will be encoded using the Java platform's default charset (UTF-16) if it
    * contains non-ASCII characters; otherwise, it is used as is.
-   * 
+   *
    * @param email A String.
    * @param name A String.
    * @return An Email.
@@ -853,7 +853,7 @@ public abstract class Email {
   /**
    * Add a reply to address to the email using the specified address, personal
    * name, and charset encoding for the name.
-   * 
+   *
    * @param email A String.
    * @param name A String.
    * @param charset The charset to encode the name with.
@@ -870,7 +870,7 @@ public abstract class Email {
    * Set a list of reply to addresses. All elements in the specified
    * <code>Collection</code> are expected to be of type
    * <code>java.mail.internet.InternetAddress</code>.
-   * 
+   *
    * @param aCollection collection of <code>InternetAddress</code> objects
    * @return An Email.
    * @throws EmailException Indicates an invalid email address
@@ -888,10 +888,10 @@ public abstract class Email {
 
   /**
    * Used to specify the mail headers. Example:
-   * 
+   *
    * X-Mailer: Sendmail, X-Priority: 1( highest ) or 2( high ) 3( normal ) 4(
    * low ) and 5( lowest ) Disposition-Notification-To: user@domain.net
-   * 
+   *
    * @param map A Map.
    * @since 1.0
    */
@@ -917,7 +917,7 @@ public abstract class Email {
 
   /**
    * Adds a header ( name, value ) to the headers Map.
-   * 
+   *
    * @param name A String with the name.
    * @param value A String with the value.
    * @since 1.0
@@ -935,7 +935,7 @@ public abstract class Email {
 
   /**
    * Set the email subject.
-   * 
+   *
    * @param aSubject A String.
    * @return An Email.
    * @since 1.0
@@ -950,7 +950,7 @@ public abstract class Email {
    * be returned. If this value is never set, then the message will be sent to
    * the address specified with the System property "mail.smtp.from", or if that
    * value is not set, then to the "from" address.
-   * 
+   *
    * @param email A String.
    * @return An Email.
    * @since 1.0
@@ -962,7 +962,7 @@ public abstract class Email {
 
   /**
    * Define the content of the mail. It should be overidden by the subclasses.
-   * 
+   *
    * @param msg A String.
    * @return An Email.
    * @throws EmailException generic exception.
@@ -972,7 +972,7 @@ public abstract class Email {
 
   /**
    * Build the internal MimeMessage to be sent.
-   * 
+   *
    * @throws EmailException if there was an error.
    * @since 1.0
    */
@@ -1063,7 +1063,7 @@ public abstract class Email {
   /**
    * Factory method to create a customized MimeMessage which can be implemented
    * by a derived class, e.g. to set the message id.
-   * 
+   *
    * @param aSession mail session to be used
    * @return the newly created message
    */
@@ -1073,7 +1073,7 @@ public abstract class Email {
 
   /**
    * Sends the previously created MimeMessage to the SMTP server.
-   * 
+   *
    * @return the message id of the underlying MimeMessage
    * @throws EmailException the sending failed
    */
@@ -1095,7 +1095,7 @@ public abstract class Email {
   /**
    * Returns the internal MimeMessage. Please not that the MimeMessage is build
    * by the buildMimeMessage() method.
-   * 
+   *
    * @return the MimeMessage
    */
   public MimeMessage getMimeMessage() {
@@ -1105,7 +1105,7 @@ public abstract class Email {
   /**
    * Sends the email. Internally we build a MimeMessage which is afterwards sent
    * to the SMTP server.
-   * 
+   *
    * @return the message id of the underlying MimeMessage
    * @throws EmailException the sending failed
    */
@@ -1117,7 +1117,7 @@ public abstract class Email {
   /**
    * Sets the sent date for the email. The sent date will default to the current
    * date if not explictly set.
-   * 
+   *
    * @param date Date to use as the sent date on the email
    * @since 1.0
    */
@@ -1130,7 +1130,7 @@ public abstract class Email {
 
   /**
    * Gets the sent date for the email.
-   * 
+   *
    * @return date to be used as the sent date for the email
    * @since 1.0
    */
@@ -1143,7 +1143,7 @@ public abstract class Email {
 
   /**
    * Gets the subject of the email.
-   * 
+   *
    * @return email subject
    */
   public String getSubject() {
@@ -1152,7 +1152,7 @@ public abstract class Email {
 
   /**
    * Gets the sender of the email.
-   * 
+   *
    * @return from address
    */
   public InternetAddress getFromAddress() {
@@ -1161,7 +1161,7 @@ public abstract class Email {
 
   /**
    * Gets the host name of the SMTP server,
-   * 
+   *
    * @return host name
    */
   public String getHostName() {
@@ -1176,7 +1176,7 @@ public abstract class Email {
 
   /**
    * Gets the listening port of the SMTP server.
-   * 
+   *
    * @return smtp port
    */
   public String getSmtpPort() {
@@ -1191,7 +1191,7 @@ public abstract class Email {
 
   /**
    * Gets encryption mode for authentication
-   * 
+   *
    * @return true if using TLS for authentication, false otherwise
    * @since 1.1
    */
@@ -1201,7 +1201,7 @@ public abstract class Email {
 
   /**
    * Utility to copy List of known InternetAddress objects into an array.
-   * 
+   *
    * @param list A List.
    * @return An InternetAddress[].
    * @since 1.0
@@ -1214,7 +1214,7 @@ public abstract class Email {
 
   /**
    * Set details regarding "pop3 before smtp" authentication.
-   * 
+   *
    * @param newPopBeforeSmtp Wether or not to log into pop3 server before
    *        sending mail.
    * @param newPopHost The pop3 host to use.
@@ -1232,7 +1232,7 @@ public abstract class Email {
 
   /**
    * Returns whether SSL encryption for the transport is currently enabled.
-   * 
+   *
    * @return true if SSL enabled for the transport
    */
   public boolean isSSL() {
@@ -1241,7 +1241,7 @@ public abstract class Email {
 
   /**
    * Sets whether SSL encryption should be enabled for the SMTP transport.
-   * 
+   *
    * @param ssl whether to enable the SSL transport
    */
   public void setSSL(boolean ssl) {
@@ -1250,7 +1250,7 @@ public abstract class Email {
 
   /**
    * Returns the current SSL port used by the SMTP transport.
-   * 
+   *
    * @return the current SSL port used by the SMTP transport
    */
   public String getSslSmtpPort() {
@@ -1266,7 +1266,7 @@ public abstract class Email {
   /**
    * Sets the SSL port to use for the SMTP transport. Defaults to the standard
    * port, 465.
-   * 
+   *
    * @param sslSmtpPort the SSL port to use for the SMTP transport
    */
   public void setSslSmtpPort(String sslSmtpPort) {
@@ -1275,7 +1275,7 @@ public abstract class Email {
 
   /**
    * Get the list of "To" addresses.
-   * 
+   *
    * @return List addresses
    */
   public List getToAddresses() {
@@ -1284,7 +1284,7 @@ public abstract class Email {
 
   /**
    * Get the list of "CC" addresses.
-   * 
+   *
    * @return List addresses
    */
   public List getCcAddresses() {
@@ -1293,7 +1293,7 @@ public abstract class Email {
 
   /**
    * Get the list of "Bcc" addresses.
-   * 
+   *
    * @return List addresses
    */
   public List getBccAddresses() {
@@ -1302,7 +1302,7 @@ public abstract class Email {
 
   /**
    * Get the list of "Reply-To" addresses.
-   * 
+   *
    * @return List addresses
    */
   public List getReplyToAddresses() {
@@ -1311,7 +1311,7 @@ public abstract class Email {
 
   /**
    * Get the socket connection timeout value in milliseconds.
-   * 
+   *
    * @return the timeout in milliseconds.
    * @since 1.2
    */
@@ -1322,7 +1322,7 @@ public abstract class Email {
   /**
    * Set the socket connection timeout value in milliseconds. Default is
    * infinite timeout.
-   * 
+   *
    * @param socketConnectionTimeout the connection timeout
    * @since 1.2
    */
@@ -1332,7 +1332,7 @@ public abstract class Email {
 
   /**
    * Get the socket I/O timeout value in milliseconds.
-   * 
+   *
    * @return the socket I/O timeout
    * @since 1.2
    */
@@ -1343,7 +1343,7 @@ public abstract class Email {
   /**
    * Set the socket I/O timeout value in milliseconds. Default is infinite
    * timeout.
-   * 
+   *
    * @param socketTimeout the socket I/O timeout
    * @since 1.2
    */

@@ -2,11 +2,13 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.text.*;
-import java.lang.reflect.*;
-import java.util.*;
-import org.xbill.DNS.utils.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.text.DecimalFormat;
+import java.util.Arrays;
+
+import org.xbill.DNS.utils.base16;
 
 /**
  * A generic DNS resource record. The specific record types extend this class. A
@@ -37,8 +39,9 @@ public abstract class Record implements Cloneable, Comparable {
   }
 
   Record(Name name, int type, int dclass, long ttl) {
-    if (!name.isAbsolute())
+    if (!name.isAbsolute()) {
       throw new RelativeNameException(name);
+    }
     Type.check(type);
     DClass.check(dclass);
     TTL.check(ttl);
@@ -54,10 +57,12 @@ public abstract class Record implements Cloneable, Comparable {
   abstract Record getObject();
 
   private static final Record getTypedObject(int type) {
-    if (type < 0 || type > knownRecords.length)
+    if (type < 0 || type > knownRecords.length) {
       return unknownRecord.getObject();
-    if (knownRecords[type] != null)
+    }
+    if (knownRecords[type] != null) {
       return knownRecords[type];
+    }
 
     /* Construct the class name by putting the type before "Record". */
     String s = Record.class.getPackage().getName() + "." + Type.string(type).replace('-', '_') + "Record";
@@ -70,11 +75,13 @@ public abstract class Record implements Cloneable, Comparable {
       /* This is normal; do nothing */
     }
     catch (Exception e) {
-      if (Options.check("verbose"))
+      if (Options.check("verbose")) {
         System.err.println(e);
+      }
     }
-    if (knownRecords[type] == null)
+    if (knownRecords[type] == null) {
       knownRecords[type] = unknownRecord.getObject();
+    }
     return knownRecords[type];
   }
 
@@ -99,18 +106,21 @@ public abstract class Record implements Cloneable, Comparable {
     int recstart;
     rec = getEmptyRecord(name, type, dclass, ttl);
     if (in != null) {
-      if (in.remaining() < length)
+      if (in.remaining() < length) {
         throw new WireParseException("truncated record");
+      }
       in.setActive(length);
     }
-    else
+    else {
       rec.empty = true;
+    }
 
     rec.rrFromWire(in);
 
     if (in != null) {
-      if (in.remaining() > 0)
+      if (in.remaining() > 0) {
         throw new WireParseException("invalid record length");
+      }
       in.clearActive();
     }
     return rec;
@@ -118,7 +128,7 @@ public abstract class Record implements Cloneable, Comparable {
 
   /**
    * Creates a new record, with the given parameters.
-   * 
+   *
    * @param name The owner name of the record.
    * @param type The record's type.
    * @param dclass The record's class.
@@ -128,17 +138,20 @@ public abstract class Record implements Cloneable, Comparable {
    *        the first length bytes are used.
    */
   public static Record newRecord(Name name, int type, int dclass, long ttl, int length, byte[] data) {
-    if (!name.isAbsolute())
+    if (!name.isAbsolute()) {
       throw new RelativeNameException(name);
+    }
     Type.check(type);
     DClass.check(dclass);
     TTL.check(ttl);
 
     DNSInput in;
-    if (data != null)
+    if (data != null) {
       in = new DNSInput(data);
-    else
+    }
+    else {
       in = null;
+    }
     try {
       return newRecord(name, type, dclass, ttl, length, in);
     }
@@ -149,7 +162,7 @@ public abstract class Record implements Cloneable, Comparable {
 
   /**
    * Creates a new record, with the given parameters.
-   * 
+   *
    * @param name The owner name of the record.
    * @param type The record's type.
    * @param dclass The record's class.
@@ -163,7 +176,7 @@ public abstract class Record implements Cloneable, Comparable {
 
   /**
    * Creates a new empty record, with the given parameters.
-   * 
+   *
    * @param name The owner name of the record.
    * @param type The record's type.
    * @param dclass The record's class.
@@ -171,8 +184,9 @@ public abstract class Record implements Cloneable, Comparable {
    * @return An object of a subclass of Record
    */
   public static Record newRecord(Name name, int type, int dclass, long ttl) {
-    if (!name.isAbsolute())
+    if (!name.isAbsolute()) {
       throw new RelativeNameException(name);
+    }
     Type.check(type);
     DClass.check(dclass);
     TTL.check(ttl);
@@ -186,7 +200,7 @@ public abstract class Record implements Cloneable, Comparable {
    * Creates a new empty record, with the given parameters. This method is
    * designed to create records that will be added to the QUERY section of a
    * message.
-   * 
+   *
    * @param name The owner name of the record.
    * @param type The record's type.
    * @param dclass The record's class.
@@ -207,13 +221,15 @@ public abstract class Record implements Cloneable, Comparable {
     type = in.readU16();
     dclass = in.readU16();
 
-    if (section == Section.QUESTION)
+    if (section == Section.QUESTION) {
       return newRecord(name, type, dclass);
+    }
 
     ttl = in.readU32();
     length = in.readU16();
-    if (length == 0 && isUpdate)
+    if (length == 0 && isUpdate) {
       return newRecord(name, type, dclass, ttl);
+    }
     rec = newRecord(name, type, dclass, ttl, length, in);
     return rec;
   }
@@ -234,13 +250,15 @@ public abstract class Record implements Cloneable, Comparable {
     name.toWire(out, c);
     out.writeU16(type);
     out.writeU16(dclass);
-    if (section == Section.QUESTION)
+    if (section == Section.QUESTION) {
       return;
+    }
     out.writeU32(ttl);
     int lengthPosition = out.current();
     out.writeU16(0); /* until we know better */
-    if (!empty)
+    if (!empty) {
       rrToWire(out, c, false);
+    }
     int rrlength = out.current() - lengthPosition - 2;
     out.save();
     out.jump(lengthPosition);
@@ -269,8 +287,9 @@ public abstract class Record implements Cloneable, Comparable {
     }
     int lengthPosition = out.current();
     out.writeU16(0); /* until we know better */
-    if (!empty)
+    if (!empty) {
       rrToWire(out, null, true);
+    }
     int rrlength = out.current() - lengthPosition - 2;
     out.save();
     out.jump(lengthPosition);
@@ -301,8 +320,9 @@ public abstract class Record implements Cloneable, Comparable {
    * (all names are converted to lowercase).
    */
   public byte[] rdataToWireCanonical() {
-    if (empty)
+    if (empty) {
       return new byte[0];
+    }
     DNSOutput out = new DNSOutput();
     rrToWire(out, null, true);
     return out.toByteArray();
@@ -317,26 +337,32 @@ public abstract class Record implements Cloneable, Comparable {
    * Converts the rdata portion of a Record into a String representation
    */
   public String rdataToString() {
-    if (empty)
+    if (empty) {
       return "";
+    }
     return rrToString();
   }
 
   /**
    * Converts a Record into a String representation
    */
+  @Override
   public String toString() {
     StringBuffer sb = new StringBuffer();
     sb.append(name);
-    if (sb.length() < 8)
+    if (sb.length() < 8) {
       sb.append("\t");
-    if (sb.length() < 16)
+    }
+    if (sb.length() < 16) {
       sb.append("\t");
+    }
     sb.append("\t");
-    if (Options.check("BINDTTL"))
+    if (Options.check("BINDTTL")) {
       sb.append(TTL.format(ttl));
-    else
+    }
+    else {
       sb.append(ttl);
+    }
     sb.append("\t");
     if (dclass != DClass.IN || !Options.check("noPrintIN")) {
       sb.append(DClass.string(dclass));
@@ -388,14 +414,17 @@ public abstract class Record implements Cloneable, Comparable {
           digits++;
           intval *= 10;
           intval += (b - '0');
-          if (intval > 255)
+          if (intval > 255) {
             throw new TextParseException("bad escape");
-          if (digits < 3)
+          }
+          if (digits < 3) {
             continue;
+          }
           b = (byte) intval;
         }
-        else if (digits > 0 && digits < 3)
+        else if (digits > 0 && digits < 3) {
           throw new TextParseException("bad escape");
+        }
         os.write(b);
         escaped = false;
       }
@@ -404,11 +433,13 @@ public abstract class Record implements Cloneable, Comparable {
         digits = 0;
         intval = 0;
       }
-      else
+      else {
         os.write(array[i]);
+      }
     }
-    if (digits > 0 && digits < 3)
+    if (digits > 0 && digits < 3) {
       throw new TextParseException("bad escape");
+    }
     array = os.toByteArray();
     if (array.length > 255) {
       throw new TextParseException("text string too long");
@@ -422,8 +453,9 @@ public abstract class Record implements Cloneable, Comparable {
    */
   protected static String byteArrayToString(byte[] array, boolean quote) {
     StringBuffer sb = new StringBuffer();
-    if (quote)
+    if (quote) {
       sb.append('"');
+    }
     for (int i = 0; i < array.length; i++) {
       short b = (short) (array[i] & 0xFF);
       if (b < 0x20 || b >= 0x7f) {
@@ -434,11 +466,13 @@ public abstract class Record implements Cloneable, Comparable {
         sb.append('\\');
         sb.append((char) b);
       }
-      else
+      else {
         sb.append((char) b);
+      }
     }
-    if (quote)
+    if (quote) {
       sb.append('"');
+    }
     return sb.toString();
   }
 
@@ -456,7 +490,7 @@ public abstract class Record implements Cloneable, Comparable {
 
   /**
    * Builds a new Record from its textual representation
-   * 
+   *
    * @param name The owner name of the record.
    * @param type The record's type.
    * @param dclass The record's class.
@@ -470,8 +504,9 @@ public abstract class Record implements Cloneable, Comparable {
     throws IOException {
     Record rec;
 
-    if (!name.isAbsolute())
+    if (!name.isAbsolute()) {
       throw new RelativeNameException(name);
+    }
     Type.check(type);
     DClass.check(dclass);
     TTL.check(ttl);
@@ -483,8 +518,9 @@ public abstract class Record implements Cloneable, Comparable {
       if (data == null) {
         data = new byte[0];
       }
-      if (length != data.length)
+      if (length != data.length) {
         throw st.exception("invalid unknown RR encoding: " + "length mismatch");
+      }
       DNSInput in = new DNSInput(data);
       return newRecord(name, type, dclass, ttl, length, in);
     }
@@ -500,7 +536,7 @@ public abstract class Record implements Cloneable, Comparable {
 
   /**
    * Builds a new Record from its textual representation
-   * 
+   *
    * @param name The owner name of the record.
    * @param type The record's type.
    * @param dclass The record's class.
@@ -516,7 +552,7 @@ public abstract class Record implements Cloneable, Comparable {
 
   /**
    * Returns the record's name
-   * 
+   *
    * @see Name
    */
   public Name getName() {
@@ -525,7 +561,7 @@ public abstract class Record implements Cloneable, Comparable {
 
   /**
    * Returns the record's type
-   * 
+   *
    * @see Type
    */
   public int getType() {
@@ -535,7 +571,7 @@ public abstract class Record implements Cloneable, Comparable {
   /**
    * Returns the type of RRset that this record would belong to. For all types
    * except SIGRecord, this is equivalent to getType().
-   * 
+   *
    * @return The type of record, if not SIGRecord. If the type is SIGRecord, the
    *         type covered is returned.
    * @see Type
@@ -572,20 +608,25 @@ public abstract class Record implements Cloneable, Comparable {
   /**
    * Determines if two Records are identical. This compares the name, type,
    * class, and rdata (with names canonicalized). The TTLs are not compared.
-   * 
+   *
    * @param arg The record to compare to
    * @return true if the records are equal, false otherwise.
    */
+  @Override
   public boolean equals(Object arg) {
-    if (arg == null || !(arg instanceof Record))
+    if (arg == null || !(arg instanceof Record)) {
       return false;
+    }
     Record r = (Record) arg;
-    if (type != r.type || dclass != r.dclass || !name.equals(r.name))
+    if (type != r.type || dclass != r.dclass || !name.equals(r.name)) {
       return false;
-    if (empty && r.empty)
+    }
+    if (empty && r.empty) {
       return true;
-    else if (empty || r.empty)
+    }
+    else if (empty || r.empty) {
       return false;
+    }
     byte[] array1 = rdataToWireCanonical();
     byte[] array2 = r.rdataToWireCanonical();
     return Arrays.equals(array1, array2);
@@ -594,11 +635,13 @@ public abstract class Record implements Cloneable, Comparable {
   /**
    * Generates a hash code based on the Record's data.
    */
+  @Override
   public int hashCode() {
     byte[] array = toWireCanonical(true);
     int code = 0;
-    for (int i = 0; i < array.length; i++)
+    for (int i = 0; i < array.length; i++) {
       code += ((code << 3) + (array[i] & 0xFF));
+    }
     return code;
   }
 
@@ -616,8 +659,9 @@ public abstract class Record implements Cloneable, Comparable {
    * name. This is most useful for replacing the name of a wildcard record.
    */
   public Record withName(Name name) {
-    if (!name.isAbsolute())
+    if (!name.isAbsolute()) {
       throw new RelativeNameException(name);
+    }
     Record rec = cloneRecord();
     rec.name = name;
     return rec;
@@ -636,7 +680,7 @@ public abstract class Record implements Cloneable, Comparable {
 
   /**
    * Compares this Record to another Object.
-   * 
+   *
    * @param o The Object to be compared.
    * @return The value 0 if the argument is a record equivalent to this record;
    *         a value less than 0 if the argument is less than this record in the
@@ -648,30 +692,38 @@ public abstract class Record implements Cloneable, Comparable {
   public int compareTo(Object o) {
     Record arg = (Record) o;
 
-    if (this == arg)
+    if (this == arg) {
       return (0);
+    }
 
     int n = name.compareTo(arg.name);
-    if (n != 0)
+    if (n != 0) {
       return (n);
+    }
     n = dclass - arg.dclass;
-    if (n != 0)
+    if (n != 0) {
       return (n);
+    }
     n = type - arg.type;
-    if (n != 0)
+    if (n != 0) {
       return (n);
-    if (empty && arg.empty)
+    }
+    if (empty && arg.empty) {
       return 0;
-    else if (empty)
+    }
+    else if (empty) {
       return -1;
-    else if (arg.empty)
+    }
+    else if (arg.empty) {
       return 1;
+    }
     byte[] rdata1 = rdataToWireCanonical();
     byte[] rdata2 = arg.rdataToWireCanonical();
     for (int i = 0; i < rdata1.length && i < rdata2.length; i++) {
       n = (rdata1[i] & 0xFF) - (rdata2[i] & 0xFF);
-      if (n != 0)
+      if (n != 0) {
         return (n);
+      }
     }
     return (rdata1.length - rdata2.length);
   }
@@ -680,7 +732,7 @@ public abstract class Record implements Cloneable, Comparable {
    * Returns the name for which additional data processing should be done for
    * this record. This can be used both for building responses and parsing
    * responses.
-   * 
+   *
    * @return The name to used for additional data processing, or null if this
    *         record type does not require additional data processing.
    */
@@ -690,29 +742,33 @@ public abstract class Record implements Cloneable, Comparable {
 
   /* Checks that an int contains an unsigned 8 bit value */
   static int checkU8(String field, int val) {
-    if (val < 0 || val > 0xFF)
+    if (val < 0 || val > 0xFF) {
       throw new IllegalArgumentException("\"" + field + "\" " + val + "must be an unsigned 8 " + "bit value");
+    }
     return val;
   }
 
   /* Checks that an int contains an unsigned 16 bit value */
   static int checkU16(String field, int val) {
-    if (val < 0 || val > 0xFFFF)
+    if (val < 0 || val > 0xFFFF) {
       throw new IllegalArgumentException("\"" + field + "\" " + val + "must be an unsigned 16 " + "bit value");
+    }
     return val;
   }
 
   /* Checks that a long contains an unsigned 32 bit value */
   static long checkU32(String field, long val) {
-    if (val < 0 || val > 0xFFFFFFFFL)
+    if (val < 0 || val > 0xFFFFFFFFL) {
       throw new IllegalArgumentException("\"" + field + "\" " + val + "must be an unsigned 32 " + "bit value");
+    }
     return val;
   }
 
   /* Checks that a name is absolute */
   static Name checkName(String field, Name name) {
-    if (!name.isAbsolute())
+    if (!name.isAbsolute()) {
       throw new RelativeNameException(name);
+    }
     return name;
   }
 

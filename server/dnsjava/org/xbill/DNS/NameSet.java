@@ -2,7 +2,10 @@
 
 package org.xbill.DNS;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * The shared superclass of Zone and Cache. All names are stored in a map. Each
@@ -44,22 +47,25 @@ class NameSet {
   }
 
   private final Object lookupType(Object typelist, int type) {
-    if (type == Type.ANY)
+    if (type == Type.ANY) {
       throw new IllegalArgumentException("type ANY passed to NameSet.lookupType()");
+    }
     synchronized (typelist) {
       if (typelist instanceof LinkedList) {
         LinkedList list = (LinkedList) typelist;
         for (int i = 0; i < list.size(); i++) {
           TypedObject obj = (TypedObject) list.get(i);
-          if (obj.getType() == type)
+          if (obj.getType() == type) {
             return (obj);
+          }
         }
         return (null);
       }
       else {
         TypedObject obj = (TypedObject) typelist;
-        if (obj.getType() == type)
+        if (obj.getType() == type) {
           return (obj);
+        }
         return (null);
       }
     }
@@ -67,10 +73,12 @@ class NameSet {
 
   private final Object[] lookupAll(Object typelist) {
     synchronized (typelist) {
-      if (typelist instanceof LinkedList)
+      if (typelist instanceof LinkedList) {
         return ((LinkedList) typelist).toArray();
-      else
+      }
+      else {
         return (new Object[] { typelist });
+      }
     }
   }
 
@@ -84,8 +92,9 @@ class NameSet {
     int olabels;
     int tlabels;
 
-    if (!name.subdomain(origin))
+    if (!name.subdomain(origin)) {
       return null;
+    }
     labels = name.labels();
     olabels = origin.labels();
 
@@ -95,31 +104,38 @@ class NameSet {
       Name tname;
       Object typelist;
 
-      if (isorigin)
+      if (isorigin) {
         tname = origin;
-      else if (isexact)
+      }
+      else if (isexact) {
         tname = name;
-      else
+      }
+      else {
         tname = new Name(name, labels - tlabels);
+      }
 
       synchronized (this) {
         typelist = data.get(tname);
       }
-      if (typelist == null)
+      if (typelist == null) {
         continue;
+      }
 
       /* If this is an ANY lookup, return everything. */
-      if (isexact && type == Type.ANY)
+      if (isexact && type == Type.ANY) {
         return lookupAll(typelist);
+      }
 
       /* Look for an NS */
       if (!isorigin || isCache) {
         o = lookupType(typelist, Type.NS);
         if (o != null) {
-          if (isCache)
+          if (isCache) {
             bestns = o;
-          else
+          }
+          else {
             return o;
+          }
         }
       }
 
@@ -129,15 +145,18 @@ class NameSet {
        */
       if (isexact) {
         o = lookupType(typelist, type);
-        if (o == null)
+        if (o == null) {
           o = lookupType(typelist, Type.CNAME);
-        if (o != null)
+        }
+        if (o != null) {
           return o;
+        }
       }
       else {
         o = lookupType(typelist, Type.DNAME);
-        if (o != null)
+        if (o != null) {
           return o;
+        }
       }
 
       /*
@@ -145,16 +164,18 @@ class NameSet {
        */
       if (isexact && isCache) {
         o = lookupType(typelist, 0);
-        if (o != null)
+        if (o != null) {
           return o;
+        }
       }
 
       /*
        * If this is the name and we haven't matched anything, return the special
        * NXRRSET object.
        */
-      if (isexact)
+      if (isexact) {
         return NXRRSET;
+      }
     }
     return bestns;
   }
@@ -168,8 +189,9 @@ class NameSet {
     synchronized (this) {
       typelist = data.get(name);
     }
-    if (typelist == null)
+    if (typelist == null) {
       return (null);
+    }
     return lookupType(typelist, type);
   }
 
@@ -181,8 +203,9 @@ class NameSet {
     synchronized (this) {
       typelist = data.get(name);
     }
-    if (typelist == null)
+    if (typelist == null) {
       return (new Object[0]);
+    }
     return lookupAll(typelist);
   }
 
@@ -245,11 +268,13 @@ class NameSet {
     Object typelist;
     synchronized (this) {
       typelist = data.get(name);
-      if (typelist == null)
+      if (typelist == null) {
         return;
+      }
       else if (!(typelist instanceof LinkedList)) {
-        if (typelist == set)
+        if (typelist == set) {
           data.remove(name);
+        }
         return;
       }
     }
@@ -281,6 +306,7 @@ class NameSet {
   }
 
   /** Converts the NameSet to a String */
+  @Override
   public String toString() {
     StringBuffer sb = new StringBuffer();
     synchronized (this) {

@@ -2,13 +2,19 @@
 
 package org.xbill.DNS.security;
 
-import java.io.*;
-import java.security.cert.*;
-import org.xbill.DNS.*;
+import java.io.ByteArrayInputStream;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+
+import org.xbill.DNS.CERTRecord;
+import org.xbill.DNS.Name;
+import org.xbill.DNS.Options;
 
 /**
  * Routines to convert between a DNS CERT record and a Java Certificate.
- * 
+ *
  * @see CERTRecord
  * @see java.security.cert.Certificate
  *
@@ -39,8 +45,9 @@ public class CERTConverter {
       return cert;
     }
     catch (CertificateException e) {
-      if (Options.check("verboseexceptions"))
+      if (Options.check("verboseexceptions")) {
         System.err.println("Cert parse exception:" + e);
+      }
       return null;
     }
   }
@@ -57,14 +64,16 @@ public class CERTConverter {
         type = CERTRecord.PKIX;
         data = cert.getEncoded();
       }
-      else
+      else {
         return null;
+      }
 
       return new CERTRecord(name, dclass, ttl, type, tag, alg, data);
     }
     catch (CertificateException e) {
-      if (Options.check("verboseexceptions"))
+      if (Options.check("verboseexceptions")) {
         System.err.println("Cert build exception:" + e);
+      }
       return null;
     }
   }

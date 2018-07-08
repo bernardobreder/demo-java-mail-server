@@ -2,9 +2,6 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
-
 /**
  * A helper class that tries to locate name servers and the search path to be
  * appended to unqualified names. Currently, this works if either the

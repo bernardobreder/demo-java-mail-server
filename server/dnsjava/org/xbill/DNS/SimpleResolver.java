@@ -2,15 +2,23 @@
 
 package org.xbill.DNS;
 
-import java.util.*;
-import java.io.*;
-import java.net.*;
-import org.xbill.DNS.utils.*;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Iterator;
+import java.util.List;
+
+import org.xbill.DNS.utils.hexdump;
 
 /**
  * An implementation of Resolver that sends one query to one server.
  * SimpleResolver handles TCP retries, transaction security (TSIG), and EDNS 0.
- * 
+ *
  * @see Resolver
  * @see TSIG
  * @see OPTRecord
@@ -38,25 +46,28 @@ public class SimpleResolver implements Resolver {
 
   /**
    * Creates a SimpleResolver that will query the specified host
-   * 
+   *
    * @exception UnknownHostException Failure occurred while finding the host
    */
   public SimpleResolver(String hostname) throws UnknownHostException {
     if (hostname == null) {
       hostname = FindServer.server();
-      if (hostname == null)
+      if (hostname == null) {
         hostname = defaultResolver;
+      }
     }
-    if (hostname.equals("0"))
+    if (hostname.equals("0")) {
       addr = InetAddress.getLocalHost();
-    else
+    }
+    else {
       addr = InetAddress.getByName(hostname);
+    }
   }
 
   /**
    * Creates a SimpleResolver. The host to query is either found by FindServer,
    * or the default host is used.
-   * 
+   *
    * @see FindServer
    * @exception UnknownHostException Failure occurred while finding the host
    */
@@ -82,8 +93,9 @@ public class SimpleResolver implements Resolver {
   }
 
   public void setEDNS(int level) {
-    if (level != 0 && level != -1)
+    if (level != 0 && level != -1) {
       throw new UnsupportedOperationException("invalid EDNS level " + "- must be 0 or -1");
+    }
     this.EDNSlevel = (byte) level;
   }
 
@@ -112,14 +124,16 @@ public class SimpleResolver implements Resolver {
     s.receive(dp);
     byte[] in = new byte[dp.getLength()];
     System.arraycopy(dp.getData(), 0, in, 0, in.length);
-    if (Options.check("verbosemsg"))
+    if (Options.check("verbosemsg")) {
       System.err.println(hexdump.dump("UDP read", in));
+    }
     return (in);
   }
 
   private void writeUDP(DatagramSocket s, byte[] out, InetAddress addr, int port) throws IOException {
-    if (Options.check("verbosemsg"))
+    if (Options.check("verbosemsg")) {
       System.err.println(hexdump.dump("UDP write", out));
+    }
     s.send(new DatagramPacket(out, out.length, addr, port));
   }
 
@@ -130,14 +144,16 @@ public class SimpleResolver implements Resolver {
     int inLength = dataIn.readUnsignedShort();
     byte[] in = new byte[inLength];
     dataIn.readFully(in);
-    if (Options.check("verbosemsg"))
+    if (Options.check("verbosemsg")) {
       System.err.println(hexdump.dump("TCP read", in));
+    }
     return (in);
   }
 
   private void writeTCP(Socket s, byte[] out) throws IOException {
-    if (Options.check("verbosemsg"))
+    if (Options.check("verbosemsg")) {
       System.err.println(hexdump.dump("TCP write", out));
+    }
     OutputStream outStream = s.getOutputStream();
     byte[] lengthArray = new byte[2];
     lengthArray[0] = (byte) (out.length >>> 8);
@@ -151,63 +167,75 @@ public class SimpleResolver implements Resolver {
       return (new Message(b));
     }
     catch (IOException e) {
-      if (Options.check("verbose"))
+      if (Options.check("verbose")) {
         e.printStackTrace();
-      if (!(e instanceof WireParseException))
+      }
+      if (!(e instanceof WireParseException)) {
         e = new WireParseException("Error parsing message");
+      }
       throw (WireParseException) e;
     }
   }
 
   private void verifyTSIG(Message query, Message response, byte[] b, TSIG tsig) {
-    if (tsig == null)
+    if (tsig == null) {
       return;
+    }
     int error = tsig.verify(response, b, query.getTSIG());
-    if (error == Rcode.NOERROR)
+    if (error == Rcode.NOERROR) {
       response.tsigState = Message.TSIG_VERIFIED;
-    else
+    }
+    else {
       response.tsigState = Message.TSIG_FAILED;
-    if (Options.check("verbose"))
+    }
+    if (Options.check("verbose")) {
       System.err.println("TSIG verify: " + Rcode.string(error));
+    }
   }
 
   private void applyEDNS(Message query) {
-    if (EDNSlevel < 0 || query.getOPT() != null)
+    if (EDNSlevel < 0 || query.getOPT() != null) {
       return;
+    }
     OPTRecord opt = new OPTRecord(EDNS_UDPSIZE, Rcode.NOERROR, (byte) 0);
     query.addRecord(opt, Section.ADDITIONAL);
   }
 
   private int maxUDPSize(Message query) {
     OPTRecord opt = query.getOPT();
-    if (opt == null)
+    if (opt == null) {
       return DEFAULT_UDPSIZE;
-    else
+    }
+    else {
       return opt.getPayloadSize();
+    }
   }
 
   /**
    * Sends a message to a single server and waits for a response. No checking is
    * done to ensure that the response is associated with the query.
-   * 
+   *
    * @param query The query to send.
    * @return The response.
    * @throws IOException An error occurred while sending or receiving.
    */
   public Message send(Message query) throws IOException {
-    if (Options.check("verbose"))
+    if (Options.check("verbose")) {
       System.err.println("Sending to " + addr.getHostAddress() + ":" + port);
+    }
 
     if (query.getHeader().getOpcode() == Opcode.QUERY) {
       Record question = query.getQuestion();
-      if (question != null && question.getType() == Type.AXFR)
+      if (question != null && question.getType() == Type.AXFR) {
         return sendAXFR(query);
+      }
     }
 
     query = (Message) query.clone();
     applyEDNS(query);
-    if (tsig != null)
+    if (tsig != null) {
       tsig.apply(query, null);
+    }
 
     byte[] out = query.toWire(Message.MAXLENGTH);
     int udpSize = maxUDPSize(query);
@@ -216,8 +244,9 @@ public class SimpleResolver implements Resolver {
     do {
       byte[] in;
 
-      if (useTCP || out.length > udpSize)
+      if (useTCP || out.length > udpSize) {
         tcp = true;
+      }
       if (tcp) {
         Socket s = new Socket(addr, port);
         s.setSoTimeout(timeoutValue);
@@ -283,7 +312,7 @@ public class SimpleResolver implements Resolver {
    * to receive a callback on success or exception. Multiple asynchronous
    * lookups can be performed in parallel. Since the callback may be invoked
    * before the function returns, external synchronization is necessary.
-   * 
+   *
    * @param query The query to send
    * @param listener The object containing the callbacks.
    * @return An identifier, which is also a parameter in the callback
@@ -295,10 +324,12 @@ public class SimpleResolver implements Resolver {
     }
     Record question = query.getQuestion();
     String qname;
-    if (question != null)
+    if (question != null) {
       qname = question.getName().toString();
-    else
+    }
+    else {
       qname = "(none)";
+    }
     String name = this.getClass() + ": " + qname;
     Thread thread = new ResolveThread(this, query, id, listener);
     thread.setName(name);
@@ -322,8 +353,9 @@ public class SimpleResolver implements Resolver {
     response.getHeader().setFlag(Flags.QR);
     response.addRecord(query.getQuestion(), Section.QUESTION);
     Iterator it = records.iterator();
-    while (it.hasNext())
+    while (it.hasNext()) {
       response.addRecord((Record) it.next(), Section.ANSWER);
+    }
     return response;
   }
 
@@ -353,18 +385,22 @@ public class SimpleResolver implements Resolver {
     Message next() throws IOException {
       byte[] in = res.readTCP(sock);
       Message response = res.parseMessage(in);
-      if (response.getHeader().getRcode() != Rcode.NOERROR)
+      if (response.getHeader().getRcode() != Rcode.NOERROR) {
         return response;
+      }
       if (verifier != null) {
         TSIGRecord tsigrec = response.getTSIG();
 
         int error = verifier.verify(response, in);
-        if (error == Rcode.NOERROR && tsigrec != null)
+        if (error == Rcode.NOERROR && tsigrec != null) {
           response.tsigState = Message.TSIG_VERIFIED;
-        else if (error == Rcode.NOERROR)
+        }
+        else if (error == Rcode.NOERROR) {
           response.tsigState = Message.TSIG_INTERMEDIATE;
-        else
+        }
+        else {
           response.tsigState = Message.TSIG_FAILED;
+        }
       }
       return response;
     }

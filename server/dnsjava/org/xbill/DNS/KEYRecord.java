@@ -2,14 +2,13 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+import java.util.StringTokenizer;
 
 /**
  * Key - contains a cryptographic public key. The data can be converted to
  * objects implementing java.security.interfaces.PublicKey
- * 
+ *
  * @see DNSSEC
  *
  * @author Brian Wellington
@@ -67,7 +66,7 @@ public class KEYRecord extends KEYBase {
     /**
      * Converts a textual representation of a KEY protocol into its numeric
      * code. Integers in the range 0..255 are also accepted.
-     * 
+     *
      * @param s The textual representation of the protocol
      * @return The protocol code, or -1 on error.
      */
@@ -225,7 +224,7 @@ public class KEYRecord extends KEYBase {
     /**
      * Converts a textual representation of KEY flags into its numeric code.
      * Integers in the range 0..65535 are also accepted.
-     * 
+     *
      * @param s The textual representation of the protocol
      * @return The protocol code, or -1 on error.
      */
@@ -291,13 +290,14 @@ public class KEYRecord extends KEYBase {
   KEYRecord() {
   }
 
+  @Override
   Record getObject() {
     return new KEYRecord();
   }
 
   /**
    * Creates a KEY Record from the given data
-   * 
+   *
    * @param flags Flags describing the key's properties
    * @param proto The protocol that the key was created for
    * @param alg The key's algorithm
@@ -311,24 +311,30 @@ public class KEYRecord extends KEYBase {
     return ((flags & FLAG_NOKEY) == FLAG_NOKEY);
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     String flagString = st.getIdentifier();
     flags = Flags.value(flagString);
-    if (flags < 0)
+    if (flags < 0) {
       throw st.exception("Invalid flags: " + flagString);
+    }
     String protoString = st.getIdentifier();
     proto = Protocol.value(protoString);
-    if (proto < 0)
+    if (proto < 0) {
       throw st.exception("Invalid protocol: " + protoString);
+    }
     String algString = st.getIdentifier();
     alg = DNSSEC.Algorithm.value(algString);
-    if (alg < 0)
+    if (alg < 0) {
       throw st.exception("Invalid algorithm: " + algString);
+    }
     /* If this is a null KEY, there's no key data */
-    if ((flags & Flags.USE_MASK) == Flags.NOKEY)
+    if ((flags & Flags.USE_MASK) == Flags.NOKEY) {
       key = null;
-    else
+    }
+    else {
       key = st.getBase64();
+    }
   }
 
 }

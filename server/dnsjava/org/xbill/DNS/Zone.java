@@ -2,8 +2,10 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * A DNS Zone. This encapsulates all data related to a Zone, and provides
@@ -27,12 +29,15 @@ public class Zone extends NameSet {
       current = new Object[sets.length];
       for (int i = 0, j = 2; i < sets.length; i++) {
         int type = ((RRset) sets[i]).getType();
-        if (type == Type.SOA)
+        if (type == Type.SOA) {
           current[0] = sets[i];
-        else if (type == Type.NS)
+        }
+        else if (type == Type.NS) {
           current[1] = sets[i];
-        else
+        }
+        else {
           current[j++] = sets[i];
+        }
       }
     }
 
@@ -46,18 +51,20 @@ public class Zone extends NameSet {
       }
       if (current == null && wantLastSOA) {
         wantLastSOA = false;
-        return (RRset) findExactSet(origin, Type.SOA);
+        return findExactSet(origin, Type.SOA);
       }
       Object set = current[count++];
       if (count == current.length) {
         current = null;
         while (znames.hasNext()) {
           Name name = (Name) znames.next();
-          if (name.equals(origin))
+          if (name.equals(origin)) {
             continue;
+          }
           Object[] sets = findExactSets(name);
-          if (sets.length == 0)
+          if (sets.length == 0) {
             continue;
+          }
           current = sets;
           count = 0;
           break;
@@ -86,13 +93,15 @@ public class Zone extends NameSet {
 
   private void validate() throws IOException {
     RRset rrset = (RRset) findExactSet(origin, Type.SOA);
-    if (rrset == null || rrset.size() != 1)
+    if (rrset == null || rrset.size() != 1) {
       throw new IOException(origin + ": exactly 1 SOA must be specified");
+    }
     Iterator it = rrset.rrs();
     SOA = (SOARecord) it.next();
     NS = (RRset) findExactSet(origin, Type.NS);
-    if (NS == null)
+    if (NS == null) {
       throw new IOException(origin + ": no NS set specified");
+    }
   }
 
   private final void maybeAddRecord(Record record, Cache cache, Object source) throws IOException {
@@ -111,17 +120,19 @@ public class Zone extends NameSet {
     if (type == Type.SOA && !name.equals(origin)) {
       throw new IOException("SOA owner " + name + " does not match zone origin " + origin);
     }
-    if (name.subdomain(origin))
+    if (name.subdomain(origin)) {
       addRecord(record);
-    else if (cache != null)
+    }
+    else if (cache != null) {
       cache.addRecord(record, Credibility.GLUE, source);
+    }
   }
 
   /**
    * Creates a Zone from the records in the specified master file. All records
    * that do not belong in the Zone are added to the specified Cache, if the
    * Cache is not null.
-   * 
+   *
    * @see Cache
    * @see Master
    */
@@ -131,17 +142,19 @@ public class Zone extends NameSet {
     Record record;
 
     origin = initialOrigin;
-    if (origin != null)
+    if (origin != null) {
       setOrigin(origin);
-    while ((record = m.nextRecord()) != null)
+    }
+    while ((record = m.nextRecord()) != null) {
       maybeAddRecord(record, cache, file);
+    }
     validate();
   }
 
   /**
    * Creates a Zone from an array of records. All records that do not belong in
    * the Zone are added to the specified Cache, if the Cache is not null.
-   * 
+   *
    * @see Cache
    * @see Master
    */
@@ -149,8 +162,9 @@ public class Zone extends NameSet {
     super(false);
 
     origin = initialOrigin;
-    if (origin != null)
+    if (origin != null) {
       setOrigin(origin);
+    }
     for (int i = 0; i < records.length; i++) {
       maybeAddRecord(records[i], cache, records);
     }
@@ -161,7 +175,7 @@ public class Zone extends NameSet {
    * Creates a Zone from the records in the specified master file. All records
    * that do not belong in the Zone are added to the specified Cache, if the
    * Cache is not null.
-   * 
+   *
    * @see Cache
    * @see Master
    */
@@ -170,8 +184,9 @@ public class Zone extends NameSet {
   }
 
   public void fromXFR(Name zone, int dclass, String remote) throws IOException, ZoneTransferException {
-    if (!zone.isAbsolute())
+    if (!zone.isAbsolute()) {
       throw new RelativeNameException(zone);
+    }
     DClass.check(dclass);
 
     origin = zone;
@@ -183,8 +198,9 @@ public class Zone extends NameSet {
     for (Iterator it = records.iterator(); it.hasNext();) {
       Record rec = (Record) it.next();
       if (!rec.getName().subdomain(origin)) {
-        if (Options.check("verbose"))
+        if (Options.check("verbose")) {
           System.err.println(rec.getName() + "is not in zone " + origin);
+        }
         continue;
       }
       addRecord(rec);
@@ -194,7 +210,7 @@ public class Zone extends NameSet {
 
   /**
    * Creates a Zone by performing a zone transfer to the specified host.
-   * 
+   *
    * @see Master
    */
   public Zone(Name zone, int dclass, String remote) throws IOException, ZoneTransferException {
@@ -205,7 +221,7 @@ public class Zone extends NameSet {
   /**
    * Creates a Zone by performing a zone transfer to the specified host. The
    * cache is unused.
-   * 
+   *
    * @see Master
    */
   public Zone(Name zone, int dclass, String remote, Cache cache) throws IOException {
@@ -241,7 +257,7 @@ public class Zone extends NameSet {
 
   /**
    * Looks up Records in the Zone. This follows CNAMEs and wildcards.
-   * 
+   *
    * @param name The name to look up
    * @param type The type to look up
    * @return A SetResponse object
@@ -253,16 +269,18 @@ public class Zone extends NameSet {
     Object o = lookup(name, type);
     if (o == null) {
       /* The name does not exist */
-      if (name.isWild() || !hasWild)
+      if (name.isWild() || !hasWild) {
         return SetResponse.ofType(SetResponse.NXDOMAIN);
+      }
 
       int labels = name.labels() - origin.labels();
       SetResponse sr;
       Name tname = name;
       do {
         sr = findRecords(tname.wild(1), type);
-        if (!sr.isNXDOMAIN())
+        if (!sr.isNXDOMAIN()) {
           return sr;
+        }
         tname = new Name(tname, 1);
       } while (labels-- >= 1);
       return SetResponse.ofType(SetResponse.NXDOMAIN);
@@ -285,33 +303,39 @@ public class Zone extends NameSet {
     }
 
     if (name.equals(rrset.getName())) {
-      if (type != Type.CNAME && type != Type.ANY && rrset.getType() == Type.CNAME)
+      if (type != Type.CNAME && type != Type.ANY && rrset.getType() == Type.CNAME) {
         zr = new SetResponse(SetResponse.CNAME, rrset);
-      else if (rrset.getType() == Type.NS && !name.equals(origin))
+      }
+      else if (rrset.getType() == Type.NS && !name.equals(origin)) {
         zr = new SetResponse(SetResponse.DELEGATION, rrset);
+      }
       else {
         zr = new SetResponse(SetResponse.SUCCESSFUL);
         zr.addRRset(rrset);
         if (objects != null) {
-          for (int i = 1; i < objects.length; i++)
+          for (int i = 1; i < objects.length; i++) {
             zr.addRRset((RRset) objects[i]);
+          }
         }
       }
     }
     else {
-      if (rrset.getType() == Type.CNAME)
+      if (rrset.getType() == Type.CNAME) {
         zr = SetResponse.ofType(SetResponse.NXDOMAIN);
-      else if (rrset.getType() == Type.DNAME)
+      }
+      else if (rrset.getType() == Type.DNAME) {
         zr = new SetResponse(SetResponse.DNAME, rrset);
-      else if (rrset.getType() == Type.NS)
+      }
+      else if (rrset.getType() == Type.NS) {
         zr = new SetResponse(SetResponse.DELEGATION, rrset);
+      }
     }
     return zr;
   }
 
   /**
    * Looks up Records in the zone, finding exact matches only.
-   * 
+   *
    * @param name The name to look up
    * @param type The type to look up
    * @return The matching RRset
@@ -323,7 +347,7 @@ public class Zone extends NameSet {
 
   /**
    * Adds a record to the Zone
-   * 
+   *
    * @param r The record to be added
    * @see Record
    */
@@ -331,8 +355,9 @@ public class Zone extends NameSet {
     Name name = r.getName();
     int type = r.getRRsetType();
     RRset rrset = (RRset) findExactSet(name, type);
-    if (rrset == null)
+    if (rrset == null) {
       addSet(name, type, rrset = new RRset());
+    }
     rrset.addRR(r);
   }
 
@@ -340,15 +365,17 @@ public class Zone extends NameSet {
    * Adds a set associated with a name/type. The data contained in the set is
    * abstract.
    */
+  @Override
   protected void addSet(Name name, int type, TypedObject set) {
-    if (!hasWild && name.isWild())
+    if (!hasWild && name.isWild()) {
       hasWild = true;
+    }
     super.addSet(name, type, set);
   }
 
   /**
    * Removes a record from the Zone
-   * 
+   *
    * @param r The record to be removed
    * @see Record
    */
@@ -358,8 +385,9 @@ public class Zone extends NameSet {
     RRset rrset = (RRset) findExactSet(name, type);
     if (rrset != null) {
       rrset.deleteRR(r);
-      if (rrset.size() == 0)
+      if (rrset.size() == 0) {
         removeSet(name, type, rrset);
+      }
     }
   }
 
@@ -391,11 +419,13 @@ public class Zone extends NameSet {
       for (int i = 0; i < sets.length; i++) {
         RRset rrset = (RRset) sets[i];
         Iterator it = rrset.rrs();
-        while (it.hasNext())
+        while (it.hasNext()) {
           sb.append(it.next() + "\n");
+        }
         it = rrset.sigs();
-        while (it.hasNext())
+        while (it.hasNext()) {
           sb.append(it.next() + "\n");
+        }
       }
     }
     return sb.toString();

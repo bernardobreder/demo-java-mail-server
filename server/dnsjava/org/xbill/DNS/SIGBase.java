@@ -2,9 +2,10 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+import java.util.Date;
+
+import org.xbill.DNS.utils.base64;
 
 /**
  * The base class for SIG/RRSIG records, which have identical formats
@@ -33,8 +34,9 @@ abstract class SIGBase extends Record {
     this.covered = covered;
     this.alg = checkU8("alg", alg);
     this.labels = name.labels() - 1;
-    if (name.isWild())
+    if (name.isWild()) {
       this.labels--;
+    }
     this.origttl = origttl;
     this.expire = expire;
     this.timeSigned = timeSigned;
@@ -43,6 +45,7 @@ abstract class SIGBase extends Record {
     this.signature = signature;
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     covered = in.readU16();
     alg = in.readU8();
@@ -55,15 +58,18 @@ abstract class SIGBase extends Record {
     signature = in.readByteArray();
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     String typeString = st.getString();
     covered = Type.value(typeString);
-    if (covered < 0)
+    if (covered < 0) {
       throw st.exception("Invalid type: " + typeString);
+    }
     String algString = st.getString();
     alg = DNSSEC.Algorithm.value(algString);
-    if (alg < 0)
+    if (alg < 0) {
       throw st.exception("Invalid algorithm: " + algString);
+    }
     labels = st.getUInt8();
     origttl = st.getTTL();
     expire = FormattedTime.parse(st.getString());
@@ -74,6 +80,7 @@ abstract class SIGBase extends Record {
   }
 
   /** Converts the RRSIG/SIG Record to a String */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(Type.string(covered));
@@ -84,8 +91,9 @@ abstract class SIGBase extends Record {
     sb.append(" ");
     sb.append(origttl);
     sb.append(" ");
-    if (Options.check("multiline"))
+    if (Options.check("multiline")) {
       sb.append("(\n\t");
+    }
     sb.append(FormattedTime.format(expire));
     sb.append(" ");
     sb.append(FormattedTime.format(timeSigned));
@@ -154,6 +162,7 @@ abstract class SIGBase extends Record {
     return signature;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeU16(covered);
     out.writeU8(alg);

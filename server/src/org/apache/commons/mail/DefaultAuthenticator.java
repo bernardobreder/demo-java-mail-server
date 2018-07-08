@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -22,7 +22,7 @@ import javax.mail.PasswordAuthentication;
 /**
  * This is a very simple authentication object that can be used for any
  * transport needing basic userName and password type authentication.
- * 
+ *
  * @since 1.0
  * @author <a href="mailto:quintonm@bellsouth.net">Quinton McCombs</a>
  * @version $Id: DefaultAuthenticator.java 480401 2006-11-29 04:40:04Z bayard $
@@ -33,7 +33,7 @@ public class DefaultAuthenticator extends Authenticator {
 
   /**
    * Default constructor
-   * 
+   *
    * @param userName user name to use when authentication is requested
    * @param password password to use when authentication is requested
    * @since 1.0
@@ -45,11 +45,12 @@ public class DefaultAuthenticator extends Authenticator {
   /**
    * Gets the authentication object that will be used to login to the mail
    * server.
-   * 
+   *
    * @return A <code>PasswordAuthentication</code> object containing the login
    *         information.
    * @since 1.0
    */
+  @Override
   protected PasswordAuthentication getPasswordAuthentication() {
     return this.authentication;
   }

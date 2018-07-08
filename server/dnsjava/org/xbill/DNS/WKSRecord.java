@@ -2,10 +2,12 @@
 
 package org.xbill.DNS;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Well Known Services - Lists services offered by this host.
@@ -209,7 +211,7 @@ public class WKSRecord extends Record {
     /**
      * Converts a textual representation of an IP protocol into its numeric
      * code. Integers in the range 0..255 are also accepted.
-     * 
+     *
      * @param s The textual representation of the protocol
      * @return The protocol code, or -1 on error.
      */
@@ -562,7 +564,7 @@ public class WKSRecord extends Record {
     /**
      * Converts a textual representation of a TCP/UDP service into its port
      * number. Integers in the range 0..65535 are also accepted.
-     * 
+     *
      * @param s The textual representation of the service.
      * @return The port number, or -1 on error.
      */
@@ -578,13 +580,14 @@ public class WKSRecord extends Record {
   WKSRecord() {
   }
 
+  @Override
   Record getObject() {
     return new WKSRecord();
   }
 
   /**
    * Creates a WKS Record from the given data
-   * 
+   *
    * @param address The IP address
    * @param protocol The IP protocol number
    * @param services An array of supported services, represented by port number.
@@ -601,6 +604,7 @@ public class WKSRecord extends Record {
     Arrays.sort(this.services);
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     address = in.readByteArray(4);
     protocol = in.readU8();
@@ -620,11 +624,13 @@ public class WKSRecord extends Record {
     }
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     String s = st.getString();
     int[] array = Address.toArray(s);
-    if (array == null)
+    if (array == null) {
       throw st.exception("invalid address");
+    }
     address = new byte[4];
     for (int i = 0; i < 4; i++) {
       address[i] = (byte) array[i];
@@ -639,8 +645,9 @@ public class WKSRecord extends Record {
     List list = new ArrayList();
     while (true) {
       Tokenizer.Token t = st.get();
-      if (!t.isString())
+      if (!t.isString()) {
         break;
+      }
       int service = Service.value(t.value);
       if (service < 0) {
         throw st.exception("Invalid TCP/UDP service: " + t.value);
@@ -657,6 +664,7 @@ public class WKSRecord extends Record {
   /**
    * Converts rdata to a String
    */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(Address.toDottedQuad(address));
@@ -694,6 +702,7 @@ public class WKSRecord extends Record {
     return services;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeByteArray(address);
     out.writeU8(protocol);

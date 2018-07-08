@@ -30,25 +30,26 @@
 
 package com.ericdaugherty.mail.server.configuration;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
-import com.ericdaugherty.mail.server.info.User;
-import com.ericdaugherty.mail.server.info.EmailAddress;
+import org.apache.commons.logging.LogFactory;
+
 import com.ericdaugherty.mail.server.errors.InvalidAddressException;
+import com.ericdaugherty.mail.server.info.EmailAddress;
+import com.ericdaugherty.mail.server.info.User;
 
 /**
  * Provides a centralized repository for all configuration information.
@@ -259,7 +260,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
   /**
    * Get the max number of delivvery attempts before message is considered
    * 'undeliverable' and moved to 'failed' folder
-   * 
+   *
    * @return int
    */
   public int getDeliveryAttemptThreshold() {
@@ -388,8 +389,9 @@ public class ConfigurationManager implements ConfigurationParameterContants {
    */
   public User getUser(EmailAddress address) {
     User user = (User) users.get(address.getAddress());
-    if (log.isInfoEnabled() && user == null)
+    if (log.isInfoEnabled() && user == null) {
       log.info("Tried to load non-existent user: " + address.getAddress());
+    }
 
     return user;
   }
@@ -609,8 +611,9 @@ public class ConfigurationManager implements ConfigurationParameterContants {
           defaultSmtpServers[i].setHost(server.substring(0, colon));
           defaultSmtpServers[i].setPort(Integer.parseInt(server.substring(colon + 1)));
         }
-        if (defaultSmtpServers[i].getHost().length() == 0)
+        if (defaultSmtpServers[i].getHost().length() == 0) {
           defaultSmtpServers[i].setHost("localhost");
+        }
 
         if (credentials != null) {
           colon = credentials.indexOf(':');
@@ -715,8 +718,9 @@ public class ConfigurationManager implements ConfigurationParameterContants {
     }
     this.users = users;
 
-    if (log.isInfoEnabled())
+    if (log.isInfoEnabled()) {
       log.info("Loaded " + users.size() + " users from user.conf");
+    }
 
     // Save the user configuration if they changed.
     if (userConfModified) {
@@ -828,8 +832,9 @@ public class ConfigurationManager implements ConfigurationParameterContants {
     EmailAddress[] emailAddresses = new EmailAddress[addressList.size()];
     emailAddresses = (EmailAddress[]) addressList.toArray(emailAddresses);
 
-    if (log.isDebugEnabled())
+    if (log.isDebugEnabled()) {
       log.debug(emailAddresses.length + " forward addresses load for user: " + user.getFullUsername());
+    }
     user.setForwardAddresses(emailAddresses);
 
     return user;
@@ -855,6 +860,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
     /**
      * Check the timestamp on the file to see if it has been updated.
      */
+    @Override
     public void run() {
       long sleepTime = 10 * 1000;
       while (true) {

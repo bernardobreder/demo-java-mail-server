@@ -2,9 +2,6 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
-
 /**
  * Mail Forwarder Record - specifies a mail agent which forwards mail for a
  * domain (obsolete)
@@ -17,13 +14,14 @@ public class MFRecord extends SingleNameBase {
   MFRecord() {
   }
 
+  @Override
   Record getObject() {
     return new MFRecord();
   }
 
   /**
    * Creates a new MF Record with the given data
-   * 
+   *
    * @param mailAgent The mail agent that forwards mail for the domain.
    */
   public MFRecord(Name name, int dclass, long ttl, Name mailAgent) {
@@ -35,6 +33,7 @@ public class MFRecord extends SingleNameBase {
     return getSingleName();
   }
 
+  @Override
   public Name getAdditionalName() {
     return getSingleName();
   }

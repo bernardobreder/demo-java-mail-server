@@ -2,13 +2,22 @@
 
 package org.xbill.DNS.security;
 
-import java.io.*;
-import java.math.*;
-import java.security.*;
-import java.security.interfaces.*;
-import javax.crypto.interfaces.*;
-import org.xbill.DNS.*;
-import org.xbill.DNS.utils.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.PublicKey;
+import java.security.interfaces.DSAPublicKey;
+import java.security.interfaces.RSAPublicKey;
+
+import javax.crypto.interfaces.DHPublicKey;
+
+import org.xbill.DNS.DNSKEYRecord;
+import org.xbill.DNS.DNSSEC;
+import org.xbill.DNS.KEYRecord;
+import org.xbill.DNS.Name;
+import org.xbill.DNS.Options;
 
 /**
  * Routines to convert between a DNS KEY record and a Java PublicKey.
@@ -34,17 +43,20 @@ public class KEYConverter {
   static BigInteger readBigInteger(DataInputStream in, int len) throws IOException {
     byte[] b = new byte[len];
     int n = in.read(b);
-    if (n < len)
+    if (n < len) {
       throw new IOException("end of input");
+    }
     return new BigInteger(1, b);
   }
 
   static void writeBigInteger(ByteArrayOutputStream out, BigInteger val) {
     byte[] b = val.toByteArray();
-    if (b[0] == 0)
+    if (b[0] == 0) {
       out.write(b, 1, b.length - 1);
-    else
+    }
+    else {
       out.write(b, 0, b.length);
+    }
   }
 
   static void writeShort(ByteArrayOutputStream out, int i) {
@@ -54,8 +66,9 @@ public class KEYConverter {
 
   static RSAPublicKey parseRSA(DataInputStream in) throws IOException {
     int exponentLength = in.readUnsignedByte();
-    if (exponentLength == 0)
+    if (exponentLength == 0) {
       exponentLength = in.readUnsignedShort();
+    }
     BigInteger exponent = readBigInteger(in, exponentLength);
 
     int modulusLength = in.available();
@@ -68,34 +81,44 @@ public class KEYConverter {
   static DHPublicKey parseDH(DataInputStream in) throws IOException {
     int special = 0;
     int pLength = in.readUnsignedShort();
-    if (pLength < 16 && pLength != 1 && pLength != 2)
+    if (pLength < 16 && pLength != 1 && pLength != 2) {
       return null;
+    }
     BigInteger p;
     if (pLength == 1 || pLength == 2) {
-      if (pLength == 1)
+      if (pLength == 1) {
         special = in.readUnsignedByte();
-      else
+      }
+      else {
         special = in.readUnsignedShort();
-      if (special != 1 && special != 2)
+      }
+      if (special != 1 && special != 2) {
         return null;
-      if (special == 1)
+      }
+      if (special == 1) {
         p = DHPRIME768;
-      else
+      }
+      else {
         p = DHPRIME1024;
+      }
     }
-    else
+    else {
       p = readBigInteger(in, pLength);
+    }
 
     int gLength = in.readUnsignedShort();
     BigInteger g;
     if (gLength == 0) {
-      if (special != 0)
+      if (special != 0) {
         g = TWO;
-      else
+      }
+      else {
         return null;
+      }
     }
-    else
+    else {
       g = readBigInteger(in, gLength);
+    }
 
     int yLength = in.readUnsignedShort();
     BigInteger y = readBigInteger(in, yLength);
@@ -133,8 +156,9 @@ public class KEYConverter {
       }
     }
     catch (IOException e) {
-      if (Options.check("verboseexceptions"))
+      if (Options.check("verboseexceptions")) {
         System.err.println(e);
+      }
       return null;
     }
   }
@@ -159,8 +183,9 @@ public class KEYConverter {
     BigInteger modulus = key.getModulus();
     int exponentLength = BigIntegerLength(exponent);
 
-    if (exponentLength < 256)
+    if (exponentLength < 256) {
       out.write(exponentLength);
+    }
     else {
       out.write(0);
       writeShort(out, exponentLength);
@@ -190,16 +215,20 @@ public class KEYConverter {
 
     writeShort(out, pLength);
     if (pLength == 1) {
-      if (p.bitLength() == 768)
+      if (p.bitLength() == 768) {
         out.write(1);
-      else
+      }
+      else {
         out.write(2);
+      }
     }
-    else
+    else {
       writeBigInteger(out, p);
+    }
     writeShort(out, gLength);
-    if (gLength > 0)
+    if (gLength > 0) {
       writeBigInteger(out, g);
+    }
     writeShort(out, yLength);
     writeBigInteger(out, y);
 
@@ -240,11 +269,13 @@ public class KEYConverter {
       alg = DNSSEC.DSA;
       data = buildDSA((DSAPublicKey) key);
     }
-    else
+    else {
       return null;
+    }
 
-    if (data == null)
+    if (data == null) {
       return null;
+    }
 
     return new KEYRecord(name, dclass, ttl, flags, proto, alg, data);
   }

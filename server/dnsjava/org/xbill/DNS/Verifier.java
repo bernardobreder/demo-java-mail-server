@@ -7,7 +7,7 @@ package org.xbill.DNS;
  * data received by dnsjava. The specific implementation of the verifier is
  * expected to store trusted keys in some way. The Verifier will use these
  * trusted keys as well as secure cached keys to verify data.
- * 
+ *
  * @see org.xbill.DNS.security.DNSSECVerifier
  *
  * @author Brian Wellington
@@ -17,7 +17,7 @@ public interface Verifier {
 
   /**
    * Verifies this RRset, using secure keys found in this Cache if necessary.
-   * 
+   *
    * @see RRset
    * @see Cache
    */

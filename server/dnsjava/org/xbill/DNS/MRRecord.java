@@ -2,9 +2,6 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
-
 /**
  * Mailbox Rename Record - specifies a rename of a mailbox.
  *
@@ -16,13 +13,14 @@ public class MRRecord extends SingleNameBase {
   MRRecord() {
   }
 
+  @Override
   Record getObject() {
     return new MRRecord();
   }
 
   /**
    * Creates a new MR Record with the given data
-   * 
+   *
    * @param newName The new name of the mailbox specified by the domain. domain.
    */
   public MRRecord(Name name, int dclass, long ttl, Name newName) {

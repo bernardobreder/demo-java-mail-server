@@ -2,8 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * ISDN - identifies the ISDN number and subaddress associated with a name.
@@ -19,13 +18,14 @@ public class ISDNRecord extends Record {
   ISDNRecord() {
   }
 
+  @Override
   Record getObject() {
     return new ISDNRecord();
   }
 
   /**
    * Creates an ISDN Record from the given data
-   * 
+   *
    * @param address The ISDN number associated with the domain.
    * @param subAddress The subaddress, if any.
    * @throws IllegalArgumentException One of the strings is invalid.
@@ -34,20 +34,24 @@ public class ISDNRecord extends Record {
     super(name, Type.ISDN, dclass, ttl);
     try {
       this.address = byteArrayFromString(address);
-      if (subAddress != null)
+      if (subAddress != null) {
         this.subAddress = byteArrayFromString(subAddress);
+      }
     }
     catch (TextParseException e) {
       throw new IllegalArgumentException(e.getMessage());
     }
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     address = in.readCountedString();
-    if (in.remaining() > 0)
+    if (in.remaining() > 0) {
       subAddress = in.readCountedString();
+    }
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     try {
       address = byteArrayFromString(st.getString());
@@ -75,17 +79,21 @@ public class ISDNRecord extends Record {
    * Returns the ISDN subaddress, or null if there is none.
    */
   public String getSubAddress() {
-    if (subAddress == null)
+    if (subAddress == null) {
       return null;
+    }
     return byteArrayToString(subAddress, false);
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeCountedString(address);
-    if (subAddress != null)
+    if (subAddress != null) {
       out.writeCountedString(subAddress);
+    }
   }
 
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(byteArrayToString(address, true));

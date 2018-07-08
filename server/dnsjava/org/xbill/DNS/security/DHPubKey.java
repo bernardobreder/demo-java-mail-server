@@ -2,9 +2,10 @@
 
 package org.xbill.DNS.security;
 
-import java.math.*;
-import javax.crypto.interfaces.*;
-import javax.crypto.spec.*;
+import java.math.BigInteger;
+
+import javax.crypto.interfaces.DHPublicKey;
+import javax.crypto.spec.DHParameterSpec;
 
 /**
  * A stub implementation of a Diffie-Hellman public key
@@ -51,6 +52,7 @@ class DHPubKey implements DHPublicKey {
     return null;
   }
 
+  @Override
   public String toString() {
     StringBuffer sb = new StringBuffer();
     sb.append("P = ");

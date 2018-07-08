@@ -2,8 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * Responsible Person Record - lists the mail address of a responsible person
@@ -21,13 +20,14 @@ public class RPRecord extends Record {
   RPRecord() {
   }
 
+  @Override
   Record getObject() {
     return new RPRecord();
   }
 
   /**
    * Creates an RP Record from the given data
-   * 
+   *
    * @param mailbox The responsible person
    * @param textDomain The address where TXT records can be found
    */
@@ -38,17 +38,20 @@ public class RPRecord extends Record {
     this.textDomain = checkName("textDomain", textDomain);
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     mailbox = new Name(in);
     textDomain = new Name(in);
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     mailbox = st.getName(origin);
     textDomain = st.getName(origin);
   }
 
   /** Converts the RP Record to a String */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(mailbox);
@@ -67,6 +70,7 @@ public class RPRecord extends Record {
     return textDomain;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     mailbox.toWire(out, null, canonical);
     textDomain.toWire(out, null, canonical);

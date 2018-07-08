@@ -2,9 +2,6 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
-
 /**
  * Mail Exchange - specifies where mail to a domain is sent
  *
@@ -16,13 +13,14 @@ public class MXRecord extends U16NameBase {
   MXRecord() {
   }
 
+  @Override
   Record getObject() {
     return new MXRecord();
   }
 
   /**
    * Creates an MX Record from the given data
-   * 
+   *
    * @param priority The priority of this MX. Records with lower priority are
    *        preferred.
    * @param target The host that mail is sent to
@@ -41,11 +39,13 @@ public class MXRecord extends U16NameBase {
     return getU16Field();
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeU16(u16Field);
     nameField.toWire(out, c, canonical);
   }
 
+  @Override
   public Name getAdditionalName() {
     return getNameField();
   }

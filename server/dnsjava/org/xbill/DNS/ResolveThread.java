@@ -27,6 +27,7 @@ class ResolveThread extends Thread {
   /**
    * Performs the query, and executes the callback.
    */
+  @Override
   public void run() {
     try {
       Message response = res.send(query);

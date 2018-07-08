@@ -2,8 +2,6 @@
 
 package org.xbill.DNS;
 
-import org.xbill.DNS.utils.*;
-
 /**
  * Constants and functions relating to flags in the DNS header.
  *
@@ -71,8 +69,9 @@ public final class Flags {
    */
   public static boolean isFlag(int index) {
     flags.check(index);
-    if ((index >= 1 && index <= 4) || (index >= 12))
+    if ((index >= 1 && index <= 4) || (index >= 12)) {
       return false;
+    }
     return true;
   }
 

@@ -31,12 +31,17 @@
 package com.ericdaugherty.mail.server.services.smtp;
 
 // Java imports
-import java.io.*;
-import java.util.Date;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.StringTokenizer;
 
 // Log imports
@@ -45,8 +50,8 @@ import org.apache.commons.logging.LogFactory;
 
 // Local imports
 import com.ericdaugherty.mail.server.configuration.ConfigurationManager;
-import com.ericdaugherty.mail.server.info.EmailAddress;
 import com.ericdaugherty.mail.server.errors.InvalidAddressException;
+import com.ericdaugherty.mail.server.info.EmailAddress;
 
 /**
  * Bean class used to store incoming SMTP message on disk (via Java
@@ -269,8 +274,9 @@ public class SMTPMessage implements Serializable {
 
     try {
       String version = reader.readLine();
-      if (log.isDebugEnabled())
+      if (log.isDebugEnabled()) {
         log.debug("Loading SMTP Message " + messageFile.getName() + " version " + version);
+      }
       if (!FILE_VERSION.equals(version)) {
         log.error("Error loading SMTP Message.  Can not handle file version: " + version);
         throw new IOException("Invalid file version: " + version);

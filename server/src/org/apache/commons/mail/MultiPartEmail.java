@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -33,15 +33,15 @@ import javax.mail.internet.MimePart;
 
 /**
  * A multipart email.
- * 
+ *
  * <p>
  * This class is used to send multi-part internet email like messages with
  * attachments.
- * 
+ *
  * <p>
  * To create a multi-part email, call the default constructor and then you can
  * call setMsg() to set the message and call the different attach() methods.
- * 
+ *
  * @since 1.0
  * @author <a href="mailto:quintonm@bellsouth.net">Quinton McCombs</a>
  * @author <a href="mailto:jon@latchkey.com">Jon S. Stevens</a>
@@ -69,7 +69,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Set the MIME subtype of the email.
-   * 
+   *
    * @param aSubType MIME subtype of the email
    * @since 1.0
    */
@@ -79,7 +79,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Get the MIME subtype of the email.
-   * 
+   *
    * @return MIME subtype of the email
    * @since 1.0
    */
@@ -89,7 +89,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Add a new part to the email.
-   * 
+   *
    * @param partContent The content.
    * @param partContentType The content type.
    * @return An Email.
@@ -111,7 +111,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Add a new part to the email.
-   * 
+   *
    * @param multipart The MimeMultipart.
    * @return An Email.
    * @throws EmailException see javax.mail.internet.MimeBodyPart for definitions
@@ -128,7 +128,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Add a new part to the email.
-   * 
+   *
    * @param multipart The part to add.
    * @param index The index to add at.
    * @return The email.
@@ -150,7 +150,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Initialize the multipart email.
-   * 
+   *
    * @since 1.0
    */
   protected void init() {
@@ -166,12 +166,13 @@ public class MultiPartEmail extends Email {
 
   /**
    * Set the message of the email.
-   * 
+   *
    * @param msg A String.
    * @return An Email.
    * @throws EmailException see javax.mail.internet.MimeBodyPart for definitions
    * @since 1.0
    */
+  @Override
   public Email setMsg(String msg) throws EmailException {
     // throw exception on null message
     if (EmailUtils.isEmpty(msg)) {
@@ -195,10 +196,11 @@ public class MultiPartEmail extends Email {
 
   /**
    * Builds the actual MimeMessage
-   * 
+   *
    * @throws EmailException see javax.mail.internet.MimeBodyPart for definitions
    * @since 1.0
    */
+  @Override
   public void buildMimeMessage() throws EmailException {
     try {
       if (primaryBodyPart != null) {
@@ -232,7 +234,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Attach an EmailAttachment.
-   * 
+   *
    * @param attachment An EmailAttachment.
    * @return A MultiPartEmail.
    * @throws EmailException see javax.mail.internet.MimeBodyPart for definitions
@@ -272,7 +274,7 @@ public class MultiPartEmail extends Email {
   /**
    * Attach a file located by its URL. The disposition of the file is set to
    * mixed.
-   * 
+   *
    * @param url The URL of the file (may be any valid URL).
    * @param name The name field for the attachment.
    * @param description A description for the attachment.
@@ -286,7 +288,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Attach a file located by its URL.
-   * 
+   *
    * @param url The URL of the file (may be any valid URL).
    * @param name The name field for the attachment.
    * @param description A description for the attachment.
@@ -310,7 +312,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Attach a file specified as a DataSource interface.
-   * 
+   *
    * @param ds A DataSource interface for the file.
    * @param name The name field for the attachment.
    * @param description A description for the attachment.
@@ -334,7 +336,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Attach a file specified as a DataSource interface.
-   * 
+   *
    * @param ds A DataSource interface for the file.
    * @param name The name field for the attachment.
    * @param description A description for the attachment.
@@ -367,7 +369,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Gets first body part of the message.
-   * 
+   *
    * @return The primary body part.
    * @throws MessagingException An error occured while getting the primary body
    *         part.
@@ -389,7 +391,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Gets the message container.
-   * 
+   *
    * @return The message container.
    * @since 1.0
    */
@@ -403,7 +405,7 @@ public class MultiPartEmail extends Email {
   /**
    * Creates a body part object. Can be overridden if you don't want to create a
    * BodyPart.
-   * 
+   *
    * @return the created body part
    */
   protected BodyPart createBodyPart() {
@@ -413,7 +415,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Creates a mime multipart object.
-   * 
+   *
    * @return the created mime part
    */
   protected MimeMultipart createMimeMultipart() {
@@ -423,7 +425,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Checks whether there are attachments.
-   * 
+   *
    * @return true if there are attachments
    * @since 1.0
    */
@@ -433,7 +435,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Sets whether there are attachments.
-   * 
+   *
    * @param b the attachments flag
    * @since 1.0
    */
@@ -443,7 +445,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Checks if this object is initialized.
-   * 
+   *
    * @return true if initialized
    */
   protected boolean isInitialized() {
@@ -452,7 +454,7 @@ public class MultiPartEmail extends Email {
 
   /**
    * Sets the initialized status of this object.
-   * 
+   *
    * @param b the initialized status flag
    */
   protected void setInitialized(boolean b) {

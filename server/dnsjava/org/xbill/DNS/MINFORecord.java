@@ -2,8 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * Mailbox information Record - lists the address responsible for a mailing
@@ -21,13 +20,14 @@ public class MINFORecord extends Record {
   MINFORecord() {
   }
 
+  @Override
   Record getObject() {
     return new MINFORecord();
   }
 
   /**
    * Creates an MINFO Record from the given data
-   * 
+   *
    * @param responsibleAddress The address responsible for the mailing
    *        list/mailbox.
    * @param errorAddress The address to receive error messages relating to the
@@ -40,17 +40,20 @@ public class MINFORecord extends Record {
     this.errorAddress = checkName("errorAddress", errorAddress);
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     responsibleAddress = new Name(in);
     errorAddress = new Name(in);
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     responsibleAddress = st.getName(origin);
     errorAddress = st.getName(origin);
   }
 
   /** Converts the MINFO Record to a String */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(responsibleAddress);
@@ -72,6 +75,7 @@ public class MINFORecord extends Record {
     return errorAddress;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     responsibleAddress.toWire(out, null, canonical);
     errorAddress.toWire(out, null, canonical);

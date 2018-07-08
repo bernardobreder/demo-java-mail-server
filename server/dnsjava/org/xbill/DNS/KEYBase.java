@@ -2,9 +2,9 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+
+import org.xbill.DNS.utils.base64;
 
 /**
  * The base class for KEY/DNSKEY records, which have identical formats
@@ -29,15 +29,18 @@ abstract class KEYBase extends Record {
     this.key = key;
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     flags = in.readU16();
     proto = in.readU8();
     alg = in.readU8();
-    if (in.remaining() > 0)
+    if (in.remaining() > 0) {
       key = in.readByteArray();
+    }
   }
 
   /** Converts the DNSKEY/KEY Record to a String */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(flags);
@@ -92,8 +95,9 @@ abstract class KEYBase extends Record {
    * Returns the key's footprint (after computing it)
    */
   public int getFootprint() {
-    if (footprint >= 0)
+    if (footprint >= 0) {
       return footprint;
+    }
 
     int foot = 0;
 
@@ -123,12 +127,14 @@ abstract class KEYBase extends Record {
     return footprint;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeU16(flags);
     out.writeU8(proto);
     out.writeU8(alg);
-    if (key != null)
+    if (key != null) {
       out.writeByteArray(key);
+    }
   }
 
 }

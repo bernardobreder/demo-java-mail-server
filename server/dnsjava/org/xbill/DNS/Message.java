@@ -2,15 +2,19 @@
 
 package org.xbill.DNS;
 
-import java.util.*;
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * A DNS Message. A message is the basic unit of communication between the
  * client and server of a DNS operation. A message consists of a Header and 4
  * message sections.
- * 
+ *
  * @see Resolver
  * @see Header
  * @see Section
@@ -72,7 +76,7 @@ public class Message implements Cloneable {
   /**
    * Creates a new Message with a random Message ID suitable for sending as a
    * query.
-   * 
+   *
    * @param r A record containing the question
    */
   public static Message newQuery(Record r) {
@@ -86,7 +90,7 @@ public class Message implements Cloneable {
   /**
    * Creates a new Message to contain a dynamic update. A random Message ID and
    * the zone are filled in.
-   * 
+   *
    * @param zone The zone to be updated
    */
   public static Message newUpdate(Name zone) {
@@ -100,27 +104,30 @@ public class Message implements Cloneable {
     try {
       for (int i = 0; i < 4; i++) {
         int count = header.getCount(i);
-        if (count > 0)
+        if (count > 0) {
           sections[i] = new ArrayList(count);
+        }
         for (int j = 0; j < count; j++) {
           int pos = in.current();
           Record rec = Record.fromWire(in, i, isUpdate);
           sections[i].add(rec);
-          if (rec.getType() == Type.TSIG)
+          if (rec.getType() == Type.TSIG) {
             tsigstart = pos;
+          }
         }
       }
     }
     catch (WireParseException e) {
-      if (!truncated)
+      if (!truncated) {
         throw e;
+      }
     }
     size = in.current();
   }
 
   /**
    * Creates a new Message from its DNS wire format representation
-   * 
+   *
    * @param b A byte array containing the DNS Message.
    */
   public Message(byte[] b) throws IOException {
@@ -129,7 +136,7 @@ public class Message implements Cloneable {
 
   /**
    * Replaces the Header with a new one.
-   * 
+   *
    * @see Header
    */
   public void setHeader(Header h) {
@@ -138,7 +145,7 @@ public class Message implements Cloneable {
 
   /**
    * Retrieves the Header.
-   * 
+   *
    * @see Header
    */
   public Header getHeader() {
@@ -147,20 +154,21 @@ public class Message implements Cloneable {
 
   /**
    * Adds a record to a section of the Message, and adjusts the header.
-   * 
+   *
    * @see Record
    * @see Section
    */
   public void addRecord(Record r, int section) {
-    if (sections[section] == null)
+    if (sections[section] == null) {
       sections[section] = new LinkedList();
+    }
     sections[section].add(r);
     header.incCount(section);
   }
 
   /**
    * Removes a record from a section of the Message, and adjusts the header.
-   * 
+   *
    * @see Record
    * @see Section
    */
@@ -169,13 +177,14 @@ public class Message implements Cloneable {
       header.decCount(section);
       return true;
     }
-    else
+    else {
       return false;
+    }
   }
 
   /**
    * Removes all records from a section of the Message, and adjusts the header.
-   * 
+   *
    * @see Record
    * @see Section
    */
@@ -186,7 +195,7 @@ public class Message implements Cloneable {
 
   /**
    * Determines if the given record is already present in the given section.
-   * 
+   *
    * @see Record
    * @see Section
    */
@@ -196,31 +205,35 @@ public class Message implements Cloneable {
 
   /**
    * Determines if the given record is already present in any section.
-   * 
+   *
    * @see Record
    * @see Section
    */
   public boolean findRecord(Record r) {
-    for (int i = Section.ANSWER; i <= Section.ADDITIONAL; i++)
-      if (sections[i] != null && sections[i].contains(r))
+    for (int i = Section.ANSWER; i <= Section.ADDITIONAL; i++) {
+      if (sections[i] != null && sections[i].contains(r)) {
         return true;
+      }
+    }
     return false;
   }
 
   /**
    * Determines if an RRset with the given name and type is already present in
    * the given section.
-   * 
+   *
    * @see RRset
    * @see Section
    */
   public boolean findRRset(Name name, int type, int section) {
-    if (sections[section] == null)
+    if (sections[section] == null) {
       return false;
+    }
     for (int i = 0; i < sections[section].size(); i++) {
       Record r = (Record) sections[section].get(i);
-      if (r.getType() == type && name.equals(r.getName()))
+      if (r.getType() == type && name.equals(r.getName())) {
         return true;
+      }
     }
     return false;
   }
@@ -228,7 +241,7 @@ public class Message implements Cloneable {
   /**
    * Determines if an RRset with the given name and type is already present in
    * any section.
-   * 
+   *
    * @see RRset
    * @see Section
    */
@@ -239,13 +252,14 @@ public class Message implements Cloneable {
 
   /**
    * Returns the first record in the QUESTION section.
-   * 
+   *
    * @see Record
    * @see Section
    */
   public Record getQuestion() {
-    if (sections[Section.QUESTION] == null)
+    if (sections[Section.QUESTION] == null) {
       return null;
+    }
     try {
       return (Record) sections[Section.QUESTION].get(0);
     }
@@ -256,25 +270,27 @@ public class Message implements Cloneable {
 
   /**
    * Returns the TSIG record from the ADDITIONAL section, if one is present.
-   * 
+   *
    * @see TSIGRecord
    * @see TSIG
    * @see Section
    */
   public TSIGRecord getTSIG() {
     int count = header.getCount(Section.ADDITIONAL);
-    if (count == 0)
+    if (count == 0) {
       return null;
+    }
     List l = sections[Section.ADDITIONAL];
     Record rec = (Record) l.get(count - 1);
-    if (rec.type != Type.TSIG)
+    if (rec.type != Type.TSIG) {
       return null;
+    }
     return (TSIGRecord) rec;
   }
 
   /**
    * Was this message signed by a TSIG?
-   * 
+   *
    * @see TSIG
    */
   public boolean isSigned() {
@@ -283,7 +299,7 @@ public class Message implements Cloneable {
 
   /**
    * If this message was signed by a TSIG, was the TSIG verified?
-   * 
+   *
    * @see TSIG
    */
   public boolean isVerified() {
@@ -292,15 +308,17 @@ public class Message implements Cloneable {
 
   /**
    * Returns the OPT record from the ADDITIONAL section, if one is present.
-   * 
+   *
    * @see OPTRecord
    * @see Section
    */
   public OPTRecord getOPT() {
     Record[] additional = getSectionArray(Section.ADDITIONAL);
-    for (int i = 0; i < additional.length; i++)
-      if (additional[i] instanceof OPTRecord)
+    for (int i = 0; i < additional.length; i++) {
+      if (additional[i] instanceof OPTRecord) {
         return (OPTRecord) additional[i];
+      }
+    }
     return null;
   }
 
@@ -311,21 +329,23 @@ public class Message implements Cloneable {
   public int getRcode() {
     int rcode = header.getRcode();
     OPTRecord opt = getOPT();
-    if (opt != null)
+    if (opt != null) {
       rcode += (opt.getExtendedRcode() << 4);
+    }
     return rcode;
   }
 
   /**
    * Returns an array containing all records in the given section, or an empty
    * array if the section is empty.
-   * 
+   *
    * @see Record
    * @see Section
    */
   public Record[] getSectionArray(int section) {
-    if (sections[section] == null)
+    if (sections[section] == null) {
       return emptyRecordArray;
+    }
     List l = sections[section];
     return (Record[]) l.toArray(new Record[l.size()]);
   }
@@ -338,13 +358,14 @@ public class Message implements Cloneable {
   /**
    * Returns an array containing all records in the given section grouped into
    * RRsets.
-   * 
+   *
    * @see RRset
    * @see Section
    */
   public RRset[] getSectionRRsets(int section) {
-    if (sections[section] == null)
+    if (sections[section] == null) {
       return emptyRRsetArray;
+    }
     List sets = new LinkedList();
     Record[] recs = getSectionArray(section);
     Set hash = new HashSet();
@@ -376,8 +397,9 @@ public class Message implements Cloneable {
     header.toWire(out);
     Compression c = new Compression();
     for (int i = 0; i < 4; i++) {
-      if (sections[i] == null)
+      if (sections[i] == null) {
         continue;
+      }
       for (int j = 0; j < sections[i].size(); j++) {
         Record rec = (Record) sections[i].get(j);
         rec.toWire(out, i, c);
@@ -410,32 +432,37 @@ public class Message implements Cloneable {
 
   /* Returns true if the message could be rendered. */
   private boolean toWire(DNSOutput out, int maxLength) {
-    if (maxLength < Header.LENGTH)
+    if (maxLength < Header.LENGTH) {
       return false;
+    }
 
     Header newheader = null;
 
     int tempMaxLength = maxLength;
-    if (tsigkey != null)
+    if (tsigkey != null) {
       tempMaxLength -= tsigkey.recordLength();
+    }
 
     int startpos = out.current();
     header.toWire(out);
     Compression c = new Compression();
     for (int i = 0; i < 4; i++) {
       int skipped;
-      if (sections[i] == null)
+      if (sections[i] == null) {
         continue;
+      }
       skipped = sectionToWire(out, i, c, tempMaxLength);
       if (skipped != 0) {
         if (i != Section.ADDITIONAL) {
-          if (newheader == null)
+          if (newheader == null) {
             newheader = (Header) header.clone();
+          }
           newheader.setFlag(Flags.TC);
           int count = newheader.getCount(i);
           newheader.setCount(i, count - skipped);
-          for (int j = i + 1; j < 4; j++)
+          for (int j = i + 1; j < 4; j++) {
             newheader.setCount(j, 0);
+          }
 
           out.save();
           out.jump(startpos);
@@ -449,8 +476,9 @@ public class Message implements Cloneable {
     if (tsigkey != null) {
       TSIGRecord tsigrec = tsigkey.generate(this, out.toByteArray(), tsigerror, querytsig);
 
-      if (newheader == null)
+      if (newheader == null) {
         newheader = (Header) header.clone();
+      }
       tsigrec.toWire(out, Section.ADDITIONAL, c);
       newheader.incCount(Section.ADDITIONAL);
 
@@ -480,7 +508,7 @@ public class Message implements Cloneable {
    * message with the TSIG key set by a call to setTSIG(). This method may
    * return null if the message could not be rendered at all; this could happen
    * if maxLength is smaller than a DNS header, for example.
-   * 
+   *
    * @param maxLength The maximum length of the message.
    * @return The wire format of the message, or null if the message could not be
    *         rendered into the specified length.
@@ -496,7 +524,7 @@ public class Message implements Cloneable {
 
   /**
    * Sets the TSIG key and other necessary information to sign a message.
-   * 
+   *
    * @param key The TSIG key.
    * @param error The value of the TSIG error field.
    * @param querytsig If this is a response, the TSIG from the request.
@@ -517,12 +545,13 @@ public class Message implements Cloneable {
 
   /**
    * Converts the given section of the Message to a String.
-   * 
+   *
    * @see Section
    */
   public String sectionToString(int i) {
-    if (i > 3)
+    if (i > 3) {
       return null;
+    }
 
     StringBuffer sb = new StringBuffer();
 
@@ -534,8 +563,9 @@ public class Message implements Cloneable {
         sb.append(", type = " + Type.string(rec.type));
         sb.append(", class = " + DClass.string(rec.dclass));
       }
-      else
+      else {
         sb.append(rec);
+      }
       sb.append("\n");
     }
     return sb.toString();
@@ -544,26 +574,33 @@ public class Message implements Cloneable {
   /**
    * Converts the Message to a String.
    */
+  @Override
   public String toString() {
     StringBuffer sb = new StringBuffer();
     OPTRecord opt = getOPT();
-    if (opt != null)
+    if (opt != null) {
       sb.append(header.toStringWithRcode(getRcode()) + "\n");
-    else
+    }
+    else {
       sb.append(header + "\n");
+    }
     if (isSigned()) {
       sb.append(";; TSIG ");
-      if (isVerified())
+      if (isVerified()) {
         sb.append("ok");
-      else
+      }
+      else {
         sb.append("invalid");
+      }
       sb.append('\n');
     }
     for (int i = 0; i < 4; i++) {
-      if (header.getOpcode() != Opcode.UPDATE)
+      if (header.getOpcode() != Opcode.UPDATE) {
         sb.append(";; " + Section.longString(i) + ":\n");
-      else
+      }
+      else {
         sb.append(";; " + Section.updString(i) + ":\n");
+      }
       sb.append(sectionToString(i) + "\n");
     }
     sb.append(";; Message size: " + numBytes() + " bytes");
@@ -573,16 +610,18 @@ public class Message implements Cloneable {
   /**
    * Creates a copy of this Message. This is done by the Resolver before adding
    * TSIG and OPT records, for example.
-   * 
+   *
    * @see Resolver
    * @see TSIGRecord
    * @see OPTRecord
    */
+  @Override
   public Object clone() {
     Message m = new Message();
     for (int i = 0; i < sections.length; i++) {
-      if (sections[i] != null)
+      if (sections[i] != null) {
         m.sections[i] = new LinkedList(sections[i]);
+      }
     }
     m.header = (Header) header.clone();
     m.size = size;

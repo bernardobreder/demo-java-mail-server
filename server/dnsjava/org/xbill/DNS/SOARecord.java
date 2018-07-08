@@ -2,8 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * Start of Authority - describes properties of a zone.
@@ -19,13 +18,14 @@ public class SOARecord extends Record {
   SOARecord() {
   }
 
+  @Override
   Record getObject() {
     return new SOARecord();
   }
 
   /**
    * Creates an SOA Record from the given data
-   * 
+   *
    * @param host The primary nameserver for the zone
    * @param admin The zone administrator's address
    * @param serial The zone's serial number
@@ -48,6 +48,7 @@ public class SOARecord extends Record {
     this.minimum = checkU32("minimum", minimum);
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     host = new Name(in);
     admin = new Name(in);
@@ -58,6 +59,7 @@ public class SOARecord extends Record {
     minimum = in.readU32();
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     host = st.getName(origin);
     admin = st.getName(origin);
@@ -69,6 +71,7 @@ public class SOARecord extends Record {
   }
 
   /** Convert to a String */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(host);
@@ -137,6 +140,7 @@ public class SOARecord extends Record {
     return minimum;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     host.toWire(out, c, canonical);
     admin.toWire(out, c, canonical);

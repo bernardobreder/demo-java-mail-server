@@ -2,7 +2,9 @@
 
 package org.xbill.DNS.utils;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 /**
  * Routines for converting between Strings of hex-encoded data and arrays of
@@ -20,7 +22,7 @@ public class base16 {
 
   /**
    * Convert binary data to a hex-encoded String
-   * 
+   *
    * @param b An array containing binary data
    * @return A String containing the encoded data
    */
@@ -39,7 +41,7 @@ public class base16 {
 
   /**
    * Convert a hex-encoded String to binary data
-   * 
+   *
    * @param str A String containing the encoded data
    * @return An array containing the binary data, or null if the string is
    *         invalid
@@ -48,8 +50,9 @@ public class base16 {
     ByteArrayOutputStream bs = new ByteArrayOutputStream();
     byte[] raw = str.getBytes();
     for (int i = 0; i < raw.length; i++) {
-      if (!Character.isWhitespace((char) raw[i]))
+      if (!Character.isWhitespace((char) raw[i])) {
         bs.write(raw[i]);
+      }
     }
     byte[] in = bs.toByteArray();
     if (in.length % 2 != 0) {

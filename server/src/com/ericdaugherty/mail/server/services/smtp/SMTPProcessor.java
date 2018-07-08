@@ -30,23 +30,28 @@
 
 package com.ericdaugherty.mail.server.services.smtp;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
+import java.io.PrintWriter;
 // Java imports
-import java.net.*;
-import java.io.*;
-import java.util.*;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.Date;
 
-// Log imports
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+import com.ericdaugherty.mail.server.configuration.ConfigurationManager;
+import com.ericdaugherty.mail.server.errors.InvalidAddressException;
 // Local imports
 import com.ericdaugherty.mail.server.info.EmailAddress;
 import com.ericdaugherty.mail.server.info.User;
-import com.ericdaugherty.mail.server.errors.InvalidAddressException;
-import com.ericdaugherty.mail.server.services.general.DeliveryService;
 import com.ericdaugherty.mail.server.services.general.ConnectionProcessor;
-import com.ericdaugherty.mail.server.configuration.ConfigurationManager;
+import com.ericdaugherty.mail.server.services.general.DeliveryService;
 
 /**
  * Handles an incoming SMTP connection. See rfc821 for details.
@@ -338,9 +343,10 @@ public class SMTPProcessor implements ConnectionProcessor {
         }
       }
       else {
-        if (log.isInfoEnabled())
+        if (log.isInfoEnabled()) {
           log.info("Invalid delivery address for incoming mail: " + toAddress + " from client: " + clientIp + " / "
             + message.getFromAddress());
+        }
         throw new InvalidAddressException();
       }
     }
@@ -403,8 +409,9 @@ public class SMTPProcessor implements ConnectionProcessor {
       throw new RuntimeException(se.getMessage());
     }
 
-    if (log.isInfoEnabled())
+    if (log.isInfoEnabled()) {
       log.info("Message " + message.getMessageLocation().getName() + " accepted for delivery.");
+    }
   }
 
   /**

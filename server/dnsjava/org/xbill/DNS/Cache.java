@@ -2,9 +2,13 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
-import java.lang.ref.*;
+import java.io.IOException;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
+import java.util.ConcurrentModificationException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * A cache of DNS records. The cache obeys TTLs, so items are purged after their
@@ -12,7 +16,7 @@ import java.lang.ref.*;
  * failed DNS queries. The credibility of each RRset is maintained, so that more
  * credible records replace less credible records, and lookups can specify the
  * minimum credibility of data they are requesting.
- * 
+ *
  * @see RRset
  * @see Credibility
  *
@@ -28,8 +32,9 @@ public class Cache extends NameSet {
     protected void setValues(int credibility, long ttl) {
       this.credibility = credibility;
       this.expire = (int) ((System.currentTimeMillis() / 1000) + ttl);
-      if (this.expire < 0 || this.expire > Integer.MAX_VALUE)
+      if (this.expire < 0 || this.expire > Integer.MAX_VALUE) {
         this.expire = Integer.MAX_VALUE;
+      }
     }
 
     public final boolean expired() {
@@ -46,15 +51,18 @@ public class Cache extends NameSet {
     public PositiveElement(RRset r, int cred, long maxttl) {
       rrset = r;
       long ttl = r.getTTL();
-      if (maxttl >= 0 && maxttl < ttl)
+      if (maxttl >= 0 && maxttl < ttl) {
         ttl = maxttl;
+      }
       setValues(cred, ttl);
     }
 
+    @Override
     public int getType() {
       return rrset.getType();
     }
 
+    @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
       sb.append(rrset);
@@ -76,22 +84,27 @@ public class Cache extends NameSet {
       long cttl = 0;
       if (soa != null) {
         cttl = soa.getMinimum();
-        if (maxttl >= 0)
+        if (maxttl >= 0) {
           cttl = Math.min(cttl, maxttl);
+        }
       }
       setValues(cred, cttl);
     }
 
+    @Override
     public int getType() {
       return type;
     }
 
+    @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      if (type == 0)
+      if (type == 0) {
         sb.append("NXDOMAIN " + name);
-      else
+      }
+      else {
         sb.append("NXRRSET " + name + " " + Type.string(type));
+      }
       sb.append(" cl = ");
       sb.append(credibility);
       return sb.toString();
@@ -123,13 +136,15 @@ public class Cache extends NameSet {
         Object[] elements = cache.findExactSets(name);
         for (int i = 0; i < elements.length; i++) {
           Element element = (Element) elements[i];
-          if (element.expired())
+          if (element.expired()) {
             cache.removeSet(name, element.getType(), element);
+          }
         }
       }
       return true;
     }
 
+    @Override
     public void run() {
       while (true) {
         long now = System.currentTimeMillis();
@@ -147,9 +162,11 @@ public class Cache extends NameSet {
         if (cache == null) {
           return;
         }
-        for (int i = 0; i < 4; i++)
-          if (clean(cache))
+        for (int i = 0; i < 4; i++) {
+          if (clean(cache)) {
             break;
+          }
+        }
       }
     }
   }
@@ -188,7 +205,7 @@ public class Cache extends NameSet {
 
   /**
    * Creates an empty Cache for class IN.
-   * 
+   *
    * @see DClass
    */
   public Cache() {
@@ -208,13 +225,14 @@ public class Cache extends NameSet {
     cleaner = new CacheCleaner(this, defaultCleanInterval);
     Master m = new Master(file);
     Record record;
-    while ((record = m.nextRecord()) != null)
+    while ((record = m.nextRecord()) != null) {
       addRecord(record, Credibility.HINT, m);
+    }
   }
 
   /**
    * Adds a record to the Cache.
-   * 
+   *
    * @param r The record to be added
    * @param cred The credibility of the record
    * @param o The source of the record (this could be a Message, for example)
@@ -223,8 +241,9 @@ public class Cache extends NameSet {
   public void addRecord(Record r, int cred, Object o) {
     Name name = r.getName();
     int type = r.getRRsetType();
-    if (!Type.isRR(type))
+    if (!Type.isRR(type)) {
       return;
+    }
     boolean addrrset = false;
     Element element = (Element) findExactSet(name, type);
     if (element == null || cred > element.credibility) {
@@ -242,7 +261,7 @@ public class Cache extends NameSet {
 
   /**
    * Adds an RRset to the Cache.
-   * 
+   *
    * @param rrset The RRset to be added
    * @param cred The credibility of these records
    * @see RRset
@@ -251,24 +270,28 @@ public class Cache extends NameSet {
     long ttl = rrset.getTTL();
     Name name = rrset.getName();
     int type = rrset.getType();
-    if (verifier != null)
+    if (verifier != null) {
       rrset.setSecurity(verifier.verify(rrset, this));
-    if (secure && rrset.getSecurity() < DNSSEC.Secure)
+    }
+    if (secure && rrset.getSecurity() < DNSSEC.Secure) {
       return;
+    }
     Element element = (Element) findExactSet(name, type);
     if (ttl == 0) {
-      if (element != null && cred >= element.credibility)
+      if (element != null && cred >= element.credibility) {
         removeSet(name, type, element);
+      }
     }
     else {
-      if (element == null || cred >= element.credibility)
+      if (element == null || cred >= element.credibility) {
         addSet(name, type, new PositiveElement(rrset, cred, maxcache));
+      }
     }
   }
 
   /**
    * Adds a negative entry to the Cache.
-   * 
+   *
    * @param name The name of the negative entry
    * @param type The type of the negative entry
    * @param soa The SOA record to add to the negative cache entry, or null. The
@@ -276,15 +299,18 @@ public class Cache extends NameSet {
    * @param cred The credibility of the negative entry
    */
   public void addNegative(Name name, int type, SOARecord soa, int cred) {
-    if (verifier != null && secure)
+    if (verifier != null && secure) {
       return;
+    }
     Element element = (Element) findExactSet(name, type);
     if (soa == null || soa.getTTL() == 0) {
-      if (element != null && cred >= element.credibility)
+      if (element != null && cred >= element.credibility) {
         removeSet(name, type, element);
+      }
     }
-    if (element == null || cred >= element.credibility)
+    if (element == null || cred >= element.credibility) {
       addSet(name, type, new NegativeElement(name, type, soa, cred, maxncache));
+    }
   }
 
   private void logLookup(Name name, int type, String msg) {
@@ -294,7 +320,7 @@ public class Cache extends NameSet {
   /**
    * Looks up Records in the Cache. This follows CNAMEs and handles negatively
    * cached data.
-   * 
+   *
    * @param name The name to look up
    * @param type The type to look up
    * @param minCred The minimum acceptable credibility
@@ -307,24 +333,28 @@ public class Cache extends NameSet {
     boolean verbose = Options.check("verbosecache");
     Object o = lookup(name, type);
 
-    if (verbose)
+    if (verbose) {
       logLookup(name, type, "Starting");
+    }
 
     if (o == null || o == NXRRSET) {
       /*
        * The name exists, but the type was not found. Or, the name does not
        * exist and no parent does either. Punt.
        */
-      if (verbose)
+      if (verbose) {
         logLookup(name, type, "no information found");
+      }
       return SetResponse.ofType(SetResponse.UNKNOWN);
     }
 
     Object[] objects;
-    if (o instanceof Element)
+    if (o instanceof Element) {
       objects = new Object[] { o };
-    else
+    }
+    else {
       objects = (Object[]) o;
+    }
 
     int nelements = 0;
     for (int i = 0; i < objects.length; i++) {
@@ -350,29 +380,33 @@ public class Cache extends NameSet {
     }
     if (nelements == 0) {
       /* We have data, but can't use it. Punt. */
-      if (verbose)
+      if (verbose) {
         logLookup(name, type, "no useful data found");
+      }
       return SetResponse.ofType(SetResponse.UNKNOWN);
     }
 
     /*
      * We have something at the name. It could be the answer, a CNAME, DNAME, or
      * NS, or a negative cache entry.
-     * 
+     *
      * Ignore wildcards, since it's pretty unlikely that any will be cached. The
      * occasional extra query is easily balanced by the reduced number of
      * lookups.
      */
 
     for (int i = 0; i < objects.length; i++) {
-      if (objects[i] == null)
+      if (objects[i] == null) {
         continue;
+      }
       Element element = (Element) objects[i];
-      if (verbose)
+      if (verbose) {
         logLookup(name, type, element.toString());
+      }
       RRset rrset = null;
-      if (element instanceof PositiveElement)
+      if (element instanceof PositiveElement) {
         rrset = ((PositiveElement) element).rrset;
+      }
 
       /* Is this a negatively cached entry? */
       if (rrset == null) {
@@ -380,8 +414,9 @@ public class Cache extends NameSet {
          * If this is an NXDOMAIN entry, return NXDOMAIN.
          */
         if (element.getType() == 0) {
-          if (verbose)
+          if (verbose) {
             logLookup(name, type, "NXDOMAIN");
+          }
           return SetResponse.ofType(SetResponse.NXDOMAIN);
         }
 
@@ -390,13 +425,15 @@ public class Cache extends NameSet {
          * this.
          */
         if (type != Type.ANY) {
-          if (verbose)
+          if (verbose) {
             logLookup(name, type, "NXRRSET");
+          }
           return SetResponse.ofType(SetResponse.NXRRSET);
         }
         else {
-          if (verbose)
+          if (verbose) {
             logLookup(name, type, "ANY query; " + "ignoring NXRRSET");
+          }
           continue;
         }
       }
@@ -405,42 +442,50 @@ public class Cache extends NameSet {
       Name rname = rrset.getName();
       if (name.equals(rname)) {
         if (type != Type.CNAME && type != Type.ANY && rtype == Type.CNAME) {
-          if (verbose)
+          if (verbose) {
             logLookup(name, type, "cname");
+          }
           return new SetResponse(SetResponse.CNAME, rrset);
         }
         else if (type != Type.NS && type != Type.ANY && rtype == Type.NS) {
-          if (verbose)
+          if (verbose) {
             logLookup(name, type, "exact delegation");
+          }
           return new SetResponse(SetResponse.DELEGATION, rrset);
         }
         else {
-          if (verbose)
+          if (verbose) {
             logLookup(name, type, "exact match");
-          if (cr == null)
+          }
+          if (cr == null) {
             cr = new SetResponse(SetResponse.SUCCESSFUL);
+          }
           cr.addRRset(rrset);
         }
       }
       else if (name.subdomain(rname)) {
         if (rtype == Type.DNAME) {
-          if (verbose)
+          if (verbose) {
             logLookup(name, type, "dname");
+          }
           return new SetResponse(SetResponse.DNAME, rrset);
         }
         else if (rtype == Type.NS) {
-          if (verbose)
+          if (verbose) {
             logLookup(name, type, "parent delegation");
+          }
           return new SetResponse(SetResponse.DELEGATION, rrset);
         }
         else {
-          if (verbose)
+          if (verbose) {
             logLookup(name, type, "ignoring rrset (" + rname + " " + Type.string(rtype) + ")");
+          }
         }
       }
       else {
-        if (verbose)
+        if (verbose) {
           logLookup(name, type, "ignoring rrset (" + rname + " " + Type.string(rtype) + ")");
+        }
       }
     }
 
@@ -449,25 +494,29 @@ public class Cache extends NameSet {
      * queried for ANY and only saw negative responses, but not an NXDOMAIN.
      * Return UNKNOWN.
      */
-    if (cr == null && type == Type.ANY)
+    if (cr == null && type == Type.ANY) {
       return SetResponse.ofType(SetResponse.UNKNOWN);
-    else if (cr == null)
+    }
+    else if (cr == null) {
       throw new IllegalStateException("looking up (" + name + " " + Type.string(type) + "): " + "cr == null.");
+    }
     return cr;
   }
 
   private RRset[] findRecords(Name name, int type, int minCred) {
     SetResponse cr = lookupRecords(name, type, minCred);
-    if (cr.isSuccessful())
+    if (cr.isSuccessful()) {
       return cr.answers();
-    else
+    }
+    else {
       return null;
+    }
   }
 
   /**
    * Looks up credible Records in the Cache (a wrapper around lookupRecords).
    * Unlike lookupRecords, this given no indication of why failure occurred.
-   * 
+   *
    * @param name The name to look up
    * @param type The type to look up
    * @return An array of RRsets, or null
@@ -480,7 +529,7 @@ public class Cache extends NameSet {
   /**
    * Looks up Records in the Cache (a wrapper around lookupRecords). Unlike
    * lookupRecords, this given no indication of why failure occurred.
-   * 
+   *
    * @param name The name to look up
    * @param type The type to look up
    * @return An array of RRsets, or null
@@ -499,17 +548,21 @@ public class Cache extends NameSet {
       Object[] elements = findExactSets(name);
       for (int i = 0; i < elements.length; i++) {
         Element element = (Element) elements[i];
-        if (element instanceof PositiveElement)
+        if (element instanceof PositiveElement) {
           continue;
+        }
         RRset rrset = ((PositiveElement) element).rrset;
 
         /* for now, ignore negative cache entries */
-        if (rrset == null)
+        if (rrset == null) {
           continue;
-        if (verifier != null)
+        }
+        if (verifier != null) {
           rrset.setSecurity(verifier.verify(rrset, this));
-        if (rrset.getSecurity() < DNSSEC.Secure)
+        }
+        if (rrset.getSecurity() < DNSSEC.Secure) {
           continue;
+        }
         addSet(name, rrset.getType(), element);
       }
     }
@@ -517,42 +570,49 @@ public class Cache extends NameSet {
 
   private final int getCred(int section, boolean isAuth) {
     if (section == Section.ANSWER) {
-      if (isAuth)
+      if (isAuth) {
         return Credibility.AUTH_ANSWER;
-      else
+      }
+      else {
         return Credibility.NONAUTH_ANSWER;
+      }
     }
     else if (section == Section.AUTHORITY) {
-      if (isAuth)
+      if (isAuth) {
         return Credibility.AUTH_AUTHORITY;
-      else
+      }
+      else {
         return Credibility.NONAUTH_AUTHORITY;
+      }
     }
     else if (section == Section.ADDITIONAL) {
       return Credibility.ADDITIONAL;
     }
-    else
+    else {
       throw new IllegalArgumentException("getCred: invalid section");
+    }
   }
 
   private static void markAdditional(RRset rrset, Set names) {
     Record first = rrset.first();
-    if (first.getAdditionalName() == null)
+    if (first.getAdditionalName() == null) {
       return;
+    }
 
     Iterator it = rrset.rrs();
     while (it.hasNext()) {
       Record r = (Record) it.next();
       Name name = r.getAdditionalName();
-      if (name != null)
+      if (name != null) {
         names.add(name);
+      }
     }
   }
 
   /**
    * Adds all data from a Message into the Cache. Each record is added with the
    * appropriate credibility, and negative answers are cached as such.
-   * 
+   *
    * @param in The Message to be added
    * @return A SetResponse that reflects what would be returned from a cache
    *         lookup, or null if nothing useful could be cached from the message.
@@ -574,8 +634,9 @@ public class Cache extends NameSet {
     boolean verbose = Options.check("verbosecache");
     HashSet additionalNames;
 
-    if ((rcode != Rcode.NOERROR && rcode != Rcode.NXDOMAIN) || question == null)
+    if ((rcode != Rcode.NOERROR && rcode != Rcode.NXDOMAIN) || question == null) {
       return null;
+    }
 
     qname = question.getName();
     qtype = question.getType();
@@ -587,8 +648,9 @@ public class Cache extends NameSet {
 
     answers = in.getSectionRRsets(Section.ANSWER);
     for (int i = 0; i < answers.length; i++) {
-      if (answers[i].getDClass() != qclass)
+      if (answers[i].getDClass() != qclass) {
         continue;
+      }
       int type = answers[i].getType();
       Name name = answers[i].getName();
       cred = getCred(Section.ANSWER, isAuth);
@@ -597,8 +659,9 @@ public class Cache extends NameSet {
         completed = true;
         haveAnswer = true;
         if (curname == qname) {
-          if (response == null)
+          if (response == null) {
             response = new SetResponse(SetResponse.SUCCESSFUL);
+          }
           response.addRRset(answers[i]);
         }
         markAdditional(answers[i], additionalNames);
@@ -606,8 +669,9 @@ public class Cache extends NameSet {
       else if (type == Type.CNAME && name.equals(curname)) {
         CNAMERecord cname;
         addRRset(answers[i], cred);
-        if (curname == qname)
+        if (curname == qname) {
           response = new SetResponse(SetResponse.CNAME, answers[i]);
+        }
         cname = (CNAMERecord) answers[i].first();
         curname = cname.getTarget();
         haveAnswer = true;
@@ -615,8 +679,9 @@ public class Cache extends NameSet {
       else if (type == Type.DNAME && curname.subdomain(name)) {
         DNAMERecord dname;
         addRRset(answers[i], cred);
-        if (curname == qname)
+        if (curname == qname) {
           response = new SetResponse(SetResponse.DNAME, answers[i]);
+        }
         dname = (DNAMERecord) answers[i].first();
         try {
           curname = curname.fromDNAME(dname);
@@ -631,10 +696,12 @@ public class Cache extends NameSet {
     auth = in.getSectionRRsets(Section.AUTHORITY);
     RRset soa = null, ns = null;
     for (int i = 0; i < auth.length; i++) {
-      if (auth[i].getType() == Type.SOA && curname.subdomain(auth[i].getName()))
+      if (auth[i].getType() == Type.SOA && curname.subdomain(auth[i].getName())) {
         soa = auth[i];
-      else if (auth[i].getType() == Type.NS && curname.subdomain(auth[i].getName()))
+      }
+      else if (auth[i].getType() == Type.NS && curname.subdomain(auth[i].getName())) {
         ns = auth[i];
+      }
     }
     if (!completed) {
       /* This is a negative response or a referral. */
@@ -643,15 +710,18 @@ public class Cache extends NameSet {
         /* Negative response */
         cred = getCred(Section.AUTHORITY, isAuth);
         SOARecord soarec = null;
-        if (soa != null)
+        if (soa != null) {
           soarec = (SOARecord) soa.first();
+        }
         addNegative(curname, cachetype, soarec, cred);
         if (response == null) {
           int responseType;
-          if (rcode == Rcode.NXDOMAIN)
+          if (rcode == Rcode.NXDOMAIN) {
             responseType = SetResponse.NXDOMAIN;
-          else
+          }
+          else {
             responseType = SetResponse.NXRRSET;
+          }
           response = SetResponse.ofType(responseType);
         }
         /* NXT records are not cached yet. */
@@ -661,8 +731,9 @@ public class Cache extends NameSet {
         cred = getCred(Section.AUTHORITY, isAuth);
         addRRset(ns, cred);
         markAdditional(ns, additionalNames);
-        if (response == null)
+        if (response == null) {
           response = new SetResponse(SetResponse.DELEGATION, ns);
+        }
       }
     }
     else if (rcode == Rcode.NOERROR && ns != null) {
@@ -675,36 +746,40 @@ public class Cache extends NameSet {
     addl = in.getSectionRRsets(Section.ADDITIONAL);
     for (int i = 0; i < addl.length; i++) {
       int type = addl[i].getType();
-      if (type != Type.A && type != Type.AAAA && type != Type.A6)
+      if (type != Type.A && type != Type.AAAA && type != Type.A6) {
         continue;
+      }
       Name name = addl[i].getName();
-      if (!additionalNames.contains(name))
+      if (!additionalNames.contains(name)) {
         continue;
+      }
       cred = getCred(Section.ADDITIONAL, isAuth);
       addRRset(addl[i], cred);
     }
-    if (verbose)
+    if (verbose) {
       System.out.println("addMessage: " + response);
+    }
     return (response);
   }
 
   /**
    * Flushes an RRset from the cache
-   * 
+   *
    * @param name The name of the records to be flushed
    * @param type The type of the records to be flushed
    * @see RRset
    */
   public void flushSet(Name name, int type) {
     Element element = (Element) findExactSet(name, type);
-    if (element == null)
+    if (element == null) {
       return;
+    }
     removeSet(name, type, element);
   }
 
   /**
    * Flushes all RRsets with a given name from the cache
-   * 
+   *
    * @param name The name of the records to be flushed
    * @see RRset
    */
@@ -750,17 +825,19 @@ public class Cache extends NameSet {
    * Sets the periodic interval (in minutes) that all expired records will be
    * expunged from the cache. The default is 30 minutes. 0 or a negative value
    * disables this feature.
-   * 
+   *
    * @param cleanInterval The interval between cache cleanings, in minutes.
    */
   public void setCleanInterval(int cleanInterval) {
     if (cleaner != null) {
       cleaner.interrupt();
     }
-    if (cleanInterval > 0)
+    if (cleanInterval > 0) {
       cleaner = new CacheCleaner(this, cleanInterval);
+    }
   }
 
+  @Override
   protected void finalize() throws Throwable {
     try {
       setCleanInterval(0);

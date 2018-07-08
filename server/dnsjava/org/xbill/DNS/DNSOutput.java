@@ -16,7 +16,7 @@ public class DNSOutput {
 
   /**
    * Create a new DNSOutput with a specified size.
-   * 
+   *
    * @param size The initial size
    */
   public DNSOutput(int size) {
@@ -62,7 +62,7 @@ public class DNSOutput {
 
   /**
    * Resets the current position of the output stream to the specified index.
-   * 
+   *
    * @param index The new current position.
    * @throws IllegalArgumentException The index is not within the output.
    */
@@ -75,7 +75,7 @@ public class DNSOutput {
 
   /**
    * Saves the current state of the output stream.
-   * 
+   *
    * @throws IllegalArgumentException The index is not within the output.
    */
   public void save() {
@@ -95,7 +95,7 @@ public class DNSOutput {
 
   /**
    * Writes an unsigned 8 bit value to the stream.
-   * 
+   *
    * @param val The value to be written
    */
   public void writeU8(int val) {
@@ -106,7 +106,7 @@ public class DNSOutput {
 
   /**
    * Writes an unsigned 16 bit value to the stream.
-   * 
+   *
    * @param val The value to be written
    */
   public void writeU16(int val) {
@@ -118,7 +118,7 @@ public class DNSOutput {
 
   /**
    * Writes an unsigned 32 bit value to the stream.
-   * 
+   *
    * @param val The value to be written
    */
   public void writeU32(long val) {
@@ -132,7 +132,7 @@ public class DNSOutput {
 
   /**
    * Writes a byte array to the stream.
-   * 
+   *
    * @param b The array to write.
    * @param off The offset of the array to start copying data from.
    * @param len The number of bytes to write.
@@ -145,7 +145,7 @@ public class DNSOutput {
 
   /**
    * Writes a byte array to the stream.
-   * 
+   *
    * @param b The array to write.
    */
   public void writeByteArray(byte[] b) {
@@ -155,7 +155,7 @@ public class DNSOutput {
   /**
    * Writes a counted string from the stream. A counted string is a one byte
    * value indicating string length, followed by bytes of data.
-   * 
+   *
    * @param s The string to write.
    */
   public void writeCountedString(byte[] s) {

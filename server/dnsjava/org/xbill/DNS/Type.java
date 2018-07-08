@@ -2,8 +2,6 @@
 
 package org.xbill.DNS;
 
-import java.util.HashMap;
-
 /**
  * Constants and functions relating to DNS Types
  *
@@ -177,6 +175,7 @@ public final class Type {
       setPrefix("TYPE");
     }
 
+    @Override
     public void check(int val) {
       Type.check(val);
     }
@@ -244,13 +243,14 @@ public final class Type {
   }
 
   static void check(int i) {
-    if (i < 0 || i > 0xFFFF)
+    if (i < 0 || i > 0xFFFF) {
       throw new InvalidTypeException(i);
+    }
   }
 
   /**
    * Converts a numeric Type into a String
-   * 
+   *
    * @return The canonical string representation of the type
    * @throws InvalidTypeException The type is out of range.
    */
@@ -260,7 +260,7 @@ public final class Type {
 
   /**
    * Converts a String representation of an Type into its numeric value.
-   * 
+   *
    * @param s The string representation of the type
    * @param numberok Whether a number will be accepted or not.
    * @return The type code, or -1 on error.
@@ -275,7 +275,7 @@ public final class Type {
 
   /**
    * Converts a String representation of an Type into its numeric value
-   * 
+   *
    * @return The type code, or -1 on error.
    */
   public static int value(String s) {

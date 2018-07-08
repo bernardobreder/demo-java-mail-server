@@ -2,8 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * Host Information - describes the CPU and OS of a host
@@ -18,13 +17,14 @@ public class HINFORecord extends Record {
   HINFORecord() {
   }
 
+  @Override
   Record getObject() {
     return new HINFORecord();
   }
 
   /**
    * Creates an HINFO Record from the given data
-   * 
+   *
    * @param cpu A string describing the host's CPU
    * @param os A string describing the host's OS
    * @throws IllegalArgumentException One of the strings has invalid escapes
@@ -40,11 +40,13 @@ public class HINFORecord extends Record {
     }
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     cpu = in.readCountedString();
     os = in.readCountedString();
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     try {
       cpu = byteArrayFromString(st.getString());
@@ -69,6 +71,7 @@ public class HINFORecord extends Record {
     return byteArrayToString(os, false);
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeCountedString(cpu);
     out.writeCountedString(os);
@@ -77,6 +80,7 @@ public class HINFORecord extends Record {
   /**
    * Converts to a string
    */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(byteArrayToString(cpu, true));

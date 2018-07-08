@@ -2,8 +2,8 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * A helper class for constructing dynamic DNS (DDNS) update messages.
@@ -18,14 +18,15 @@ public class Update extends Message {
 
   /**
    * Creates an update message.
-   * 
+   *
    * @param zone The name of the zone being updated.
    * @param dclass The class of the zone being updated.
    */
   public Update(Name zone, int dclass) {
     super();
-    if (!zone.isAbsolute())
+    if (!zone.isAbsolute()) {
       throw new RelativeNameException(zone);
+    }
     DClass.check(dclass);
     getHeader().setOpcode(Opcode.UPDATE);
     Record soa = Record.newRecord(zone, Type.SOA, DClass.IN);
@@ -36,7 +37,7 @@ public class Update extends Message {
 
   /**
    * Creates an update message. The class is assumed to be IN.
-   * 
+   *
    * @param zone The name of the zone being updated.
    */
   public Update(Name zone) {
@@ -73,7 +74,7 @@ public class Update extends Message {
    * must be met is that the set of all records with the same and type in the
    * update message must be identical to the set of all records with that name
    * and type on the server.
-   * 
+   *
    * @throws IOException The record could not be parsed.
    */
   public void present(Name name, int type, String record) throws IOException {
@@ -86,7 +87,7 @@ public class Update extends Message {
    * condition that must be met is that the set of all records with the same and
    * type in the update message must be identical to the set of all records with
    * that name and type on the server.
-   * 
+   *
    * @throws IOException The record could not be parsed.
    */
   public void present(Name name, int type, Tokenizer tokenizer) throws IOException {
@@ -122,7 +123,7 @@ public class Update extends Message {
   /**
    * Parses a record from the string, and indicates that the record should be
    * inserted into the zone.
-   * 
+   *
    * @throws IOException The record could not be parsed.
    */
   public void add(Name name, int type, long ttl, String record) throws IOException {
@@ -132,7 +133,7 @@ public class Update extends Message {
   /**
    * Parses a record from the tokenizer, and indicates that the record should be
    * inserted into the zone.
-   * 
+   *
    * @throws IOException The record could not be parsed.
    */
   public void add(Name name, int type, long ttl, Tokenizer tokenizer) throws IOException {
@@ -150,8 +151,9 @@ public class Update extends Message {
    * Indicates that the records should be inserted into the zone.
    */
   public void add(Record[] records) {
-    for (int i = 0; i < records.length; i++)
+    for (int i = 0; i < records.length; i++) {
       add(records[i]);
+    }
   }
 
   /**
@@ -159,8 +161,9 @@ public class Update extends Message {
    * zone.
    */
   public void add(RRset rrset) {
-    for (Iterator it = rrset.rrs(); it.hasNext();)
+    for (Iterator it = rrset.rrs(); it.hasNext();) {
       add((Record) it.next());
+    }
   }
 
   /**
@@ -182,7 +185,7 @@ public class Update extends Message {
   /**
    * Parses a record from the string, and indicates that the record should be
    * deleted from the zone.
-   * 
+   *
    * @throws IOException The record could not be parsed.
    */
   public void delete(Name name, int type, String record) throws IOException {
@@ -192,7 +195,7 @@ public class Update extends Message {
   /**
    * Parses a record from the tokenizer, and indicates that the record should be
    * deleted from the zone.
-   * 
+   *
    * @throws IOException The record could not be parsed.
    */
   public void delete(Name name, int type, Tokenizer tokenizer) throws IOException {
@@ -210,8 +213,9 @@ public class Update extends Message {
    * Indicates that the records should be deleted from the zone.
    */
   public void delete(Record[] records) {
-    for (int i = 0; i < records.length; i++)
+    for (int i = 0; i < records.length; i++) {
       delete(records[i]);
+    }
   }
 
   /**
@@ -219,15 +223,16 @@ public class Update extends Message {
    * zone.
    */
   public void delete(RRset rrset) {
-    for (Iterator it = rrset.rrs(); it.hasNext();)
+    for (Iterator it = rrset.rrs(); it.hasNext();) {
       delete((Record) it.next());
+    }
   }
 
   /**
    * Parses a record from the string, and indicates that the record should be
    * inserted into the zone replacing any other records with the same name and
    * type.
-   * 
+   *
    * @throws IOException The record could not be parsed.
    */
   public void replace(Name name, int type, long ttl, String record) throws IOException {
@@ -239,7 +244,7 @@ public class Update extends Message {
    * Parses a record from the tokenizer, and indicates that the record should be
    * inserted into the zone replacing any other records with the same name and
    * type.
-   * 
+   *
    * @throws IOException The record could not be parsed.
    */
   public void replace(Name name, int type, long ttl, Tokenizer tokenizer) throws IOException {
@@ -261,8 +266,9 @@ public class Update extends Message {
    * other records with the same name and type as each one.
    */
   public void replace(Record[] records) {
-    for (int i = 0; i < records.length; i++)
+    for (int i = 0; i < records.length; i++) {
       replace(records[i]);
+    }
   }
 
   /**
@@ -271,8 +277,9 @@ public class Update extends Message {
    */
   public void replace(RRset rrset) {
     delete(rrset.getName(), rrset.getType());
-    for (Iterator it = rrset.rrs(); it.hasNext();)
+    for (Iterator it = rrset.rrs(); it.hasNext();) {
       add((Record) it.next());
+    }
   }
 
 }

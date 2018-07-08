@@ -2,8 +2,9 @@
 
 package org.xbill.DNS.utils;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.security.*;
 
 /**
  * A pure java implementation of the HMAC-MD5 secure hash algorithm
@@ -42,7 +43,7 @@ public class HMAC {
 
   /**
    * Creates a new HMAC instance
-   * 
+   *
    * @param key The secret key
    */
   public HMAC(MessageDigest digest, byte[] key) {
@@ -62,7 +63,7 @@ public class HMAC {
 
   /**
    * Adds data to the current hash
-   * 
+   *
    * @param b The data
    * @param offset The index at which to start adding to the hash
    * @param length The number of bytes to hash
@@ -73,7 +74,7 @@ public class HMAC {
 
   /**
    * Adds data to the current hash
-   * 
+   *
    * @param b The data
    */
   public void update(byte[] b) {
@@ -82,7 +83,7 @@ public class HMAC {
 
   /**
    * Signs the data (computes the secure hash)
-   * 
+   *
    * @return An array with the signature
    */
   public byte[] sign() {
@@ -94,7 +95,7 @@ public class HMAC {
 
   /**
    * Verifies the data (computes the secure hash and compares it to the input)
-   * 
+   *
    * @param signature The signature to compare against
    * @return true if the signature matched, false otherwise
    */

@@ -2,8 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * A class implementing Records of unknown and/or unimplemented types. This
@@ -19,19 +18,23 @@ public class UNKRecord extends Record {
   UNKRecord() {
   }
 
+  @Override
   Record getObject() {
     return new UNKRecord();
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     data = in.readByteArray();
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     throw st.exception("invalid unknown RR encoding");
   }
 
   /** Converts this Record to the String "unknown format" */
+  @Override
   String rrToString() {
     return unknownToString(data);
   }
@@ -41,6 +44,7 @@ public class UNKRecord extends Record {
     return data;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeByteArray(data);
   }

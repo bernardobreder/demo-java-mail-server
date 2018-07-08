@@ -16,19 +16,21 @@ public final class TTL {
   }
 
   static void check(long i) {
-    if (i < 0 || i > 0xFFFFFFFFL)
+    if (i < 0 || i > 0xFFFFFFFFL) {
       throw new InvalidTTLException(i);
+    }
   }
 
   /**
    * Parses a BIND-stype TTL
-   * 
+   *
    * @return The TTL as a number of seconds
    * @throws NumberFormatException The TTL was not a valid TTL.
    */
   public static long parseTTL(String s) {
-    if (s == null || !Character.isDigit(s.charAt(0)))
+    if (s == null || !Character.isDigit(s.charAt(0))) {
       throw new NumberFormatException();
+    }
     long value = 0;
     long ttl = 0;
     for (int i = 0; i < s.length(); i++) {
@@ -36,8 +38,9 @@ public final class TTL {
       long oldvalue = value;
       if (Character.isDigit(c)) {
         value = (value * 10) + Character.getNumericValue(c);
-        if (value < oldvalue)
+        if (value < oldvalue) {
           throw new NumberFormatException();
+        }
       }
       else {
         switch (Character.toUpperCase(c)) {
@@ -56,14 +59,16 @@ public final class TTL {
         }
         ttl += value;
         value = 0;
-        if (ttl > 0xFFFFFFFFL)
+        if (ttl > 0xFFFFFFFFL) {
           throw new NumberFormatException();
+        }
       }
     }
     if (ttl == 0) {
       ttl = value;
-      if (ttl > 0xFFFFFFFFL)
+      if (ttl > 0xFFFFFFFFL) {
         throw new NumberFormatException();
+      }
     }
     return ttl;
   }
@@ -81,16 +86,21 @@ public final class TTL {
     days = ttl % 7;
     ttl /= 7;
     weeks = ttl;
-    if (weeks > 0)
+    if (weeks > 0) {
       sb.append(weeks + "W");
-    if (days > 0)
+    }
+    if (days > 0) {
       sb.append(days + "D");
-    if (hours > 0)
+    }
+    if (hours > 0) {
       sb.append(hours + "H");
-    if (mins > 0)
+    }
+    if (mins > 0) {
       sb.append(mins + "M");
-    if (secs > 0 || (weeks == 0 && days == 0 && hours == 0 && mins == 0))
+    }
+    if (secs > 0 || (weeks == 0 && days == 0 && hours == 0 && mins == 0)) {
       sb.append(secs + "S");
+    }
     return sb.toString();
   }
 

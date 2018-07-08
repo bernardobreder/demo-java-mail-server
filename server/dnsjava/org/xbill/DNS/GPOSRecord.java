@@ -2,9 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.text.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * Geographical Location - describes the physical location of a host.
@@ -19,13 +17,14 @@ public class GPOSRecord extends Record {
   GPOSRecord() {
   }
 
+  @Override
   Record getObject() {
     return new GPOSRecord();
   }
 
   /**
    * Creates an GPOS Record from the given data
-   * 
+   *
    * @param longitude The longitude component of the location.
    * @param latitude The latitude component of the location.
    * @param altitude The altitude component of the location (in meters above sea
@@ -46,7 +45,7 @@ public class GPOSRecord extends Record {
 
   /**
    * Creates an GPOS Record from the given data
-   * 
+   *
    * @param longitude The longitude component of the location.
    * @param latitude The latitude component of the location.
    * @param altitude The altitude component of the location (in meters above sea
@@ -64,12 +63,14 @@ public class GPOSRecord extends Record {
     }
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     longitude = in.readCountedString();
     latitude = in.readCountedString();
     altitude = in.readCountedString();
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     try {
       this.longitude = byteArrayFromString(st.getString());
@@ -82,6 +83,7 @@ public class GPOSRecord extends Record {
   }
 
   /** Convert to a String */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(byteArrayToString(longitude, true));
@@ -99,7 +101,7 @@ public class GPOSRecord extends Record {
 
   /**
    * Returns the longitude as a double
-   * 
+   *
    * @throws NumberFormatException The string does not contain a valid numeric
    *         value.
    */
@@ -114,7 +116,7 @@ public class GPOSRecord extends Record {
 
   /**
    * Returns the latitude as a double
-   * 
+   *
    * @throws NumberFormatException The string does not contain a valid numeric
    *         value.
    */
@@ -129,7 +131,7 @@ public class GPOSRecord extends Record {
 
   /**
    * Returns the altitude as a double
-   * 
+   *
    * @throws NumberFormatException The string does not contain a valid numeric
    *         value.
    */
@@ -137,6 +139,7 @@ public class GPOSRecord extends Record {
     return Double.parseDouble(getAltitudeString());
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeCountedString(longitude);
     out.writeCountedString(latitude);

@@ -40,7 +40,7 @@ class Mnemonic {
 
   /**
    * Creates a new Mnemonic table.
-   * 
+   *
    * @param description A short description of the mnemonic to use when
    * @param wordcase Whether to convert strings into uppercase, lowercase, or
    *        leave them unchanged. throwing exceptions.
@@ -76,8 +76,9 @@ class Mnemonic {
    * Converts an int into a possibly cached Integer.
    */
   public static Integer toInteger(int val) {
-    if (val >= 0 && val < cachedInts.length)
+    if (val >= 0 && val < cachedInts.length) {
       return (cachedInts[val]);
+    }
     return new Integer(val);
   }
 
@@ -92,18 +93,21 @@ class Mnemonic {
 
   /* Converts a String to the correct case. */
   private String sanitize(String str) {
-    if (wordcase == CASE_UPPER)
+    if (wordcase == CASE_UPPER) {
       return str.toUpperCase();
-    else if (wordcase == CASE_LOWER)
+    }
+    else if (wordcase == CASE_LOWER) {
       return str.toLowerCase();
+    }
     return str;
   }
 
   private int parseNumeric(String s) {
     try {
       int val = Integer.parseInt(s);
-      if (val >= 0 && (max == 0 || val <= max))
+      if (val >= 0 && (max == 0 || val <= max)) {
         return val;
+      }
     }
     catch (NumberFormatException e) {
     }
@@ -112,7 +116,7 @@ class Mnemonic {
 
   /**
    * Defines the text representation of a numeric value.
-   * 
+   *
    * @param val The numeric value
    * @param string The text string
    */
@@ -127,7 +131,7 @@ class Mnemonic {
   /**
    * Defines an additional text representation of a numeric value. This will be
    * used by getValue(), but not getText().
-   * 
+   *
    * @param val The numeric value
    * @param string The text string
    */
@@ -140,7 +144,7 @@ class Mnemonic {
 
   /**
    * Copies all mnemonics from one table into another.
-   * 
+   *
    * @param val The numeric value
    * @param string The text string
    */
@@ -151,24 +155,26 @@ class Mnemonic {
 
   /**
    * Gets the text mnemonic corresponding to a numeric value.
-   * 
+   *
    * @param val The numeric value
    * @return The corresponding text mnemonic.
    */
   public String getText(int val) {
     check(val);
     String str = (String) values.get(toInteger(val));
-    if (str != null)
+    if (str != null) {
       return str;
+    }
     str = Integer.toString(val);
-    if (prefix != null)
+    if (prefix != null) {
       return prefix + str;
+    }
     return str;
   }
 
   /**
    * Gets the numeric value corresponding to a text mnemonic.
-   * 
+   *
    * @param str The text mnemonic
    * @return The corresponding numeric value, or -1 if there is none
    */

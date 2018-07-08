@@ -21,9 +21,10 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An incoming DNS Zone Transfer. To use this class, first initialize an object,
@@ -91,8 +92,9 @@ public class ZoneTransferIn {
 
   private ZoneTransferIn(SimpleResolver sres, Name zone, int xfrtype, long serial, boolean fallback) {
     res = sres;
-    if (zone.isAbsolute())
+    if (zone.isAbsolute()) {
       zname = zone;
+    }
     else {
       try {
         zname = Name.concatenate(zone, Name.root);
@@ -109,16 +111,18 @@ public class ZoneTransferIn {
 
   private static SimpleResolver newResolver(String host, int port, TSIG key) throws UnknownHostException {
     SimpleResolver sres = new SimpleResolver(host);
-    if (port != 0)
+    if (port != 0) {
       sres.setPort(port);
-    if (key != null)
+    }
+    if (key != null) {
       sres.setTSIGKey(key);
+    }
     return sres;
   }
 
   /**
    * Instantiates a ZoneTransferIn object to do an AXFR (full zone transfer).
-   * 
+   *
    * @param zone The zone to transfer.
    * @param res The resolver to use when doing the transfer.
    * @return The ZoneTransferIn object.
@@ -129,7 +133,7 @@ public class ZoneTransferIn {
 
   /**
    * Instantiates a ZoneTransferIn object to do an AXFR (full zone transfer).
-   * 
+   *
    * @param zone The zone to transfer.
    * @param host The host from which to transfer the zone.
    * @param port The port to connect to on the server, or 0 for the default.
@@ -143,7 +147,7 @@ public class ZoneTransferIn {
 
   /**
    * Instantiates a ZoneTransferIn object to do an AXFR (full zone transfer).
-   * 
+   *
    * @param zone The zone to transfer.
    * @param host The host from which to transfer the zone.
    * @param key The TSIG key used to authenticate the transfer, or null.
@@ -157,7 +161,7 @@ public class ZoneTransferIn {
   /**
    * Instantiates a ZoneTransferIn object to do an IXFR (incremental zone
    * transfer).
-   * 
+   *
    * @param zone The zone to transfer.
    * @param serial The existing serial number.
    * @param fallback If true, fall back to AXFR if IXFR is not supported.
@@ -171,7 +175,7 @@ public class ZoneTransferIn {
   /**
    * Instantiates a ZoneTransferIn object to do an IXFR (incremental zone
    * transfer).
-   * 
+   *
    * @param zone The zone to transfer.
    * @param serial The existing serial number.
    * @param fallback If true, fall back to AXFR if IXFR is not supported.
@@ -189,7 +193,7 @@ public class ZoneTransferIn {
   /**
    * Instantiates a ZoneTransferIn object to do an IXFR (incremental zone
    * transfer).
-   * 
+   *
    * @param zone The zone to transfer.
    * @param serial The existing serial number.
    * @param fallback If true, fall back to AXFR if IXFR is not supported.
@@ -226,8 +230,9 @@ public class ZoneTransferIn {
   }
 
   private void logxfr(String s) {
-    if (Options.check("verbose"))
+    if (Options.check("verbose")) {
       System.out.println(zname + ": " + s);
+    }
   }
 
   private void fail(String s) throws ZoneTransferException {
@@ -235,8 +240,9 @@ public class ZoneTransferIn {
   }
 
   private void fallback() throws ZoneTransferException {
-    if (!want_fallback)
+    if (!want_fallback) {
       fail("server doesn't support IXFR");
+    }
 
     logxfr("falling back to AXFR");
     qtype = Type.AXFR;
@@ -251,8 +257,9 @@ public class ZoneTransferIn {
 
     switch (state) {
       case INITIALSOA:
-        if (type != Type.SOA)
+        if (type != Type.SOA) {
           fail("missing initial SOA");
+        }
         initialsoa = rec;
         // Remember the serial number in the intial SOA; we need it
         // to recognize the end of an IXFR.
@@ -332,8 +339,9 @@ public class ZoneTransferIn {
 
       case AXFR:
         // Old BINDs sent cross class A records for non IN classes.
-        if (type == Type.A && rec.getDClass() != DClass.IN)
+        if (type == Type.A && rec.getDClass() != DClass.IN) {
           break;
+        }
         axfr.add(rec);
         if (type == Type.SOA) {
           state = END;
@@ -394,14 +402,15 @@ public class ZoneTransferIn {
         parseRR(answers[i]);
       }
 
-      if (state == END && response.tsigState == Message.TSIG_INTERMEDIATE)
+      if (state == END && response.tsigState == Message.TSIG_INTERMEDIATE) {
         fail("last message must be signed");
+      }
     }
   }
 
   /**
    * Does the zone transfer.
-   * 
+   *
    * @return A list, which is either an AXFR-style response (List of Records),
    *         and IXFR-style response (List of Deltas), or null, which indicates
    *         that an IXFR was performed and the zone is up to date.
@@ -417,10 +426,12 @@ public class ZoneTransferIn {
     finally {
       closeConnection();
     }
-    if (axfr != null)
+    if (axfr != null) {
       return axfr;
-    if (ixfr != null)
+    }
+    if (ixfr != null) {
       return ixfr;
+    }
     return null;
   }
 

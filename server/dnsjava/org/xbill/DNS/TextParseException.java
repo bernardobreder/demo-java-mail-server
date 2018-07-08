@@ -2,7 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
+import java.io.IOException;
 
 /**
  * An exception thrown when unable to parse text.

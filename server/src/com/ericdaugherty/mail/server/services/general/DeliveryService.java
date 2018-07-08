@@ -6,23 +6,23 @@
  * This program is a 100% Java Email Server.
  ******************************************************************************
  * Copyright (C) 2001, Eric Daugherty All rights reserved.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  ******************************************************************************
  * For current versions and more information, please visit:
  * http://www.ericdaugherty.com/java/mail
- * 
+ *
  * or contact the author at: java@ericdaugherty.com
- * 
+ *
  ******************************************************************************
  * This program is based on the CSRMail project written by Calvin Smith.
  * http://crsemail.sourceforge.net/
@@ -31,16 +31,19 @@
 package com.ericdaugherty.mail.server.services.general;
 
 // Java imports
-import java.util.*;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 
+import org.apache.commons.logging.Log;
 // Log imports
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 
+import com.ericdaugherty.mail.server.configuration.ConfigurationManager;
+import com.ericdaugherty.mail.server.configuration.ConfigurationParameterContants;
 // Local imports
 import com.ericdaugherty.mail.server.info.EmailAddress;
-import com.ericdaugherty.mail.server.configuration.ConfigurationParameterContants;
-import com.ericdaugherty.mail.server.configuration.ConfigurationManager;
 
 /**
  * Handles the evalution of general mail delivery rules, including SMTP
@@ -131,8 +134,9 @@ public class DeliveryService implements ConfigurationParameterContants {
    * This method should be called whenever a client authenticates themselves.
    */
   public void ipAuthenticated(String clientIp) {
-    if (log.isDebugEnabled())
+    if (log.isDebugEnabled()) {
       log.debug("Adding authenticated IP address: " + clientIp);
+    }
     authenticatedIps.put(clientIp, new Date());
   }
 
@@ -148,8 +152,9 @@ public class DeliveryService implements ConfigurationParameterContants {
    * Checks to see if a user currently has the specified mailbox locked.
    */
   public boolean isMailboxLocked(EmailAddress address) {
-    if (log.isDebugEnabled())
+    if (log.isDebugEnabled()) {
       log.debug("Locking Mailbox: " + address.getAddress());
+    }
     return lockedMailboxes.containsKey(address.getAddress());
   }
 
@@ -157,8 +162,9 @@ public class DeliveryService implements ConfigurationParameterContants {
    * Unlocks an mailbox.
    */
   public void unlockMailbox(EmailAddress address) {
-    if (log.isDebugEnabled())
+    if (log.isDebugEnabled()) {
       log.debug("Unlocking Mailbox: " + address.getAddress());
+    }
     lockedMailboxes.remove(address.getAddress());
   }
 
@@ -237,8 +243,9 @@ public class DeliveryService implements ConfigurationParameterContants {
             }
           }
           // Return true if you had a match.
-          if (isMatch)
+          if (isMatch) {
             return true;
+          }
         }
       }
     }

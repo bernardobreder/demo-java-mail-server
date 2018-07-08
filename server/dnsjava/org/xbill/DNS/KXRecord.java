@@ -2,9 +2,6 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
-
 /**
  * Key Exchange - delegation of authority
  *
@@ -16,13 +13,14 @@ public class KXRecord extends U16NameBase {
   KXRecord() {
   }
 
+  @Override
   Record getObject() {
     return new KXRecord();
   }
 
   /**
    * Creates a KX Record from the given data
-   * 
+   *
    * @param preference The preference of this KX. Records with lower priority
    *        are preferred.
    * @param target The host that authority is delegated to
@@ -41,6 +39,7 @@ public class KXRecord extends U16NameBase {
     return getU16Field();
   }
 
+  @Override
   public Name getAdditionalName() {
     return getNameField();
   }

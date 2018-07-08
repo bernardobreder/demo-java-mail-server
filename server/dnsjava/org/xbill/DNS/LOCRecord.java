@@ -2,9 +2,9 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.text.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 /**
  * Location - describes the physical location of hosts, networks, subnets.
@@ -32,13 +32,14 @@ public class LOCRecord extends Record {
   LOCRecord() {
   }
 
+  @Override
   Record getObject() {
     return new LOCRecord();
   }
 
   /**
    * Creates an LOC Record from the given data
-   * 
+   *
    * @param latitude The latitude of the center of the sphere
    * @param longitude The longitude of the center of the sphere
    * @param altitude The altitude of the center of the sphere, in m
@@ -57,12 +58,14 @@ public class LOCRecord extends Record {
     this.vPrecision = (long) (vPrecision * 100);
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     int version;
 
     version = in.readU8();
-    if (version != 0)
+    if (version != 0) {
       throw new WireParseException("Invalid LOC version");
+    }
 
     size = parseLOCformat(in.readU8());
     hPrecision = parseLOCformat(in.readU8());
@@ -80,33 +83,39 @@ public class LOCRecord extends Record {
     String s;
 
     deg = st.getUInt16();
-    if (deg > 180 || (deg > 90 && isLatitude))
+    if (deg > 180 || (deg > 90 && isLatitude)) {
       throw st.exception("Invalid LOC " + type + " degrees");
+    }
 
     s = st.getString();
     try {
       min = Integer.parseInt(s);
-      if (min < 0 || min > 59)
+      if (min < 0 || min > 59) {
         throw st.exception("Invalid LOC " + type + " minutes");
+      }
       s = st.getString();
       sec = Double.parseDouble(s);
-      if (sec < 0 || sec >= 60)
+      if (sec < 0 || sec >= 60) {
         throw st.exception("Invalid LOC " + type + " seconds");
+      }
       s = st.getString();
     }
     catch (NumberFormatException e) {
     }
 
-    if (s.length() != 1)
+    if (s.length() != 1) {
       throw st.exception("Invalid LOC " + type);
+    }
 
     value = (long) (1000 * (sec + 60L * (min + 60L * deg)));
 
     char c = Character.toUpperCase(s.charAt(0));
-    if ((isLatitude && c == 'S') || (!isLatitude && c == 'W'))
+    if ((isLatitude && c == 'S') || (!isLatitude && c == 'W')) {
       value = -value;
-    else if ((isLatitude && c != 'N') || (!isLatitude && c != 'E'))
+    }
+    else if ((isLatitude && c != 'N') || (!isLatitude && c != 'E')) {
       throw st.exception("Invalid LOC " + type);
+    }
 
     value += (1L << 31);
 
@@ -117,18 +126,21 @@ public class LOCRecord extends Record {
     throws IOException {
     Tokenizer.Token token = st.get();
     if (token.isEOL()) {
-      if (required)
+      if (required) {
         throw st.exception("Invalid LOC " + type);
+      }
       st.unget();
       return defaultValue;
     }
     String s = token.value;
-    if (s.length() > 1 && s.charAt(s.length() - 1) == 'm')
+    if (s.length() > 1 && s.charAt(s.length() - 1) == 'm') {
       s = s.substring(0, s.length() - 1);
+    }
     try {
       long value = (long) (100 * new Double(s).doubleValue());
-      if (value < min || value > max)
+      if (value < min || value > max) {
         throw st.exception("Invalid LOC " + type);
+      }
       return value;
     }
     catch (NumberFormatException e) {
@@ -136,6 +148,7 @@ public class LOCRecord extends Record {
     }
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     String s = null;
     int deg, min;
@@ -158,8 +171,9 @@ public class LOCRecord extends Record {
       temp = -temp;
       direction = neg;
     }
-    else
+    else {
       direction = pos;
+    }
 
     sb.append(temp / (3600 * 1000)); /* degrees */
     temp = temp % (3600 * 1000);
@@ -178,6 +192,7 @@ public class LOCRecord extends Record {
   }
 
   /** Convert to a String */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     long temp;
@@ -240,6 +255,7 @@ public class LOCRecord extends Record {
     return ((double) vPrecision) / 100;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeU8(0); /* version */
     out.writeU8(toLOCformat(size));
@@ -253,10 +269,12 @@ public class LOCRecord extends Record {
   private static long parseLOCformat(int b) throws WireParseException {
     long out = b >> 4;
     int exp = b & 0xF;
-    if (out > 9 || exp > 9)
+    if (out > 9 || exp > 9) {
       throw new WireParseException("Invalid LOC Encoding");
-    while (exp-- > 0)
+    }
+    while (exp-- > 0) {
       out *= 10;
+    }
     return (out);
   }
 

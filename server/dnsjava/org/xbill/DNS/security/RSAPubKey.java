@@ -2,8 +2,8 @@
 
 package org.xbill.DNS.security;
 
-import java.math.*;
-import java.security.interfaces.*;
+import java.math.BigInteger;
+import java.security.interfaces.RSAPublicKey;
 
 /**
  * A stub implementation of an RSA public key

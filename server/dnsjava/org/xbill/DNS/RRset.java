@@ -2,12 +2,15 @@
 
 package org.xbill.DNS;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A set of Records with the same name, type, and class. Also included are all
  * SIG/RRSIG records signing the data records.
- * 
+ *
  * @see Record
  * @see SIGRecord
  * @see RRSIGRecord
@@ -34,16 +37,19 @@ public class RRset implements TypedObject {
   public void addRR(Record r) {
     if (!(r instanceof SIGBase)) {
       synchronized (rrs) {
-        if (!rrs.contains(r))
+        if (!rrs.contains(r)) {
           rrs.add(r);
+        }
         start = 0;
       }
     }
     else {
-      if (sigs == null)
+      if (sigs == null) {
         sigs = new ArrayList();
-      if (!sigs.contains(r))
+      }
+      if (!sigs.contains(r)) {
         sigs.add(r);
+      }
     }
   }
 
@@ -55,8 +61,9 @@ public class RRset implements TypedObject {
         start = 0;
       }
     }
-    else if (sigs != null)
+    else if (sigs != null) {
       sigs.remove(r);
+    }
   }
 
   /** Deletes all Records from an RRset */
@@ -74,12 +81,15 @@ public class RRset implements TypedObject {
    */
   public synchronized Iterator rrs() {
     int size = rrs.size();
-    if (size == 0)
+    if (size == 0) {
       return Collections.EMPTY_LIST.iterator();
-    if (start == size)
+    }
+    if (start == size) {
       start = 0;
-    if (start++ == 0)
+    }
+    if (start++ == 0) {
       return (rrs.iterator());
+    }
     List list = new ArrayList(rrs.subList(start - 1, size));
     list.addAll(rrs.subList(0, start - 1));
     return list.iterator();
@@ -87,10 +97,12 @@ public class RRset implements TypedObject {
 
   /** Returns an Iterator listing all signature records */
   public Iterator sigs() {
-    if (sigs == null)
+    if (sigs == null) {
       return Collections.EMPTY_LIST.iterator();
-    else
+    }
+    else {
       return sigs.iterator();
+    }
   }
 
   /** Returns the number of (data) records */
@@ -100,51 +112,56 @@ public class RRset implements TypedObject {
 
   /**
    * Returns the name of the records
-   * 
+   *
    * @see Name
    */
   public Name getName() {
     Record r = first();
-    if (r == null)
+    if (r == null) {
       return null;
+    }
     return r.getName();
   }
 
   /**
    * Returns the type of the records
-   * 
+   *
    * @see Type
    */
   public int getType() {
     Record r = first();
-    if (r == null)
+    if (r == null) {
       return 0;
+    }
     return r.getType();
   }
 
   /**
    * Returns the class of the records
-   * 
+   *
    * @see DClass
    */
   public int getDClass() {
     Record r = first();
-    if (r == null)
+    if (r == null) {
       return 0;
+    }
     return r.getDClass();
   }
 
   /** Returns the ttl of the records */
   public long getTTL() {
     synchronized (rrs) {
-      if (rrs.size() == 0)
+      if (rrs.size() == 0) {
         return 0;
+      }
       long ttl = 0xFFFFFFFFL;
       Iterator it = rrs.iterator();
       while (it.hasNext()) {
         Record r = (Record) it.next();
-        if (r.getTTL() < ttl)
+        if (r.getTTL() < ttl) {
           ttl = r.getTTL();
+        }
       }
       return ttl;
     }
@@ -177,16 +194,19 @@ public class RRset implements TypedObject {
       sb.append("[");
       sb.append(rr.rdataToString());
       sb.append("]");
-      if (it.hasNext())
+      if (it.hasNext()) {
         sb.append(" ");
+      }
     }
     return sb.toString();
   }
 
   /** Converts the RRset to a String */
+  @Override
   public String toString() {
-    if (rrs == null)
+    if (rrs == null) {
       return ("{empty}");
+    }
     StringBuffer sb = new StringBuffer();
     sb.append("{ ");
     sb.append(getName() + " ");

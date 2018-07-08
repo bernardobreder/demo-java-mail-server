@@ -2,8 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * Name Authority Pointer Record - specifies rewrite rule, that when applied to
@@ -21,13 +20,14 @@ public class NAPTRRecord extends Record {
   NAPTRRecord() {
   }
 
+  @Override
   Record getObject() {
     return new NAPTRRecord();
   }
 
   /**
    * Creates an NAPTR Record from the given data
-   * 
+   *
    * @param order The order of this NAPTR. Records with lower order are
    *        preferred.
    * @param preference The preference, used to select between records at the
@@ -55,6 +55,7 @@ public class NAPTRRecord extends Record {
     this.replacement = checkName("replacement", replacement);
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     order = in.readU16();
     preference = in.readU16();
@@ -64,6 +65,7 @@ public class NAPTRRecord extends Record {
     replacement = new Name(in);
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     order = st.getUInt16();
     preference = st.getUInt16();
@@ -79,6 +81,7 @@ public class NAPTRRecord extends Record {
   }
 
   /** Converts rdata to a String */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(order);
@@ -125,6 +128,7 @@ public class NAPTRRecord extends Record {
     return replacement;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeU16(order);
     out.writeU16(preference);
@@ -134,6 +138,7 @@ public class NAPTRRecord extends Record {
     replacement.toWire(out, null, canonical);
   }
 
+  @Override
   public Name getAdditionalName() {
     return replacement;
   }

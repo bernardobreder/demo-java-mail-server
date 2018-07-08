@@ -2,9 +2,9 @@
 
 package org.xbill.DNS;
 
-import java.util.*;
-
-import org.xbill.DNS.utils.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
 
 /**
  * Constants and functions relating to DNSSEC (algorithm constants). DNSSEC
@@ -14,7 +14,7 @@ import org.xbill.DNS.utils.*;
  * also be validated or implicitly trusted - to validate a key requires a series
  * of validations leading to a trusted key. The key must also be authorized to
  * sign the data.
- * 
+ *
  * @see SIGRecord
  * @see KEYRecord
  * @see RRset
@@ -78,7 +78,7 @@ public class DNSSEC {
     /**
      * Converts a textual representation of an algorithm into its numeric code.
      * Integers in the range 0..255 are also accepted.
-     * 
+     *
      * @param s The textual representation of the algorithm
      * @return The algorithm code, or -1 on error.
      */
@@ -94,8 +94,9 @@ public class DNSSEC {
       int len = Math.min(b1.length, b2.length);
       for (int i = 0; i < len; i++) {
         int diff = (b1[i] & 0xFF) - (b2[i] & 0xFF);
-        if (diff != 0)
+        if (diff != 0) {
           return diff;
+        }
       }
       return b1.length - b2.length;
     }
@@ -131,7 +132,7 @@ public class DNSSEC {
    * Creates a byte array containing the concatenation of the fields of the SIG
    * record and the RRsets to be signed/verified. This does not perform a
    * cryptographic digest.
-   * 
+   *
    * @param sig The SIG record used to sign/verify the rrset.
    * @param rrset The data to be signed/verified.
    * @return The data to be cryptographically signed or verified.
@@ -147,17 +148,20 @@ public class DNSSEC {
     Name name = rrset.getName();
     Name wild = null;
     int sigLabels = sig.getLabels() + 1; // Add the root label back.
-    if (name.labels() > sigLabels)
+    if (name.labels() > sigLabels) {
       wild = name.wild(name.labels() - sigLabels);
+    }
     while (it.hasNext()) {
       Record rec = (Record) it.next();
-      if (wild != null)
+      if (wild != null) {
         rec = rec.withName(wild);
+      }
       records[--size] = rec.toWireCanonical();
     }
     Arrays.sort(records, byteArrayComparator);
-    for (int i = 0; i < records.length; i++)
+    for (int i = 0; i < records.length; i++) {
       out.writeByteArray(records[i]);
+    }
     return out.toByteArray();
   }
 
@@ -165,7 +169,7 @@ public class DNSSEC {
    * Creates a byte array containing the concatenation of the fields of the SIG
    * record and the message to be signed/verified. This does not perform a
    * cryptographic digest.
-   * 
+   *
    * @param sig The SIG record used to sign/verify the rrset.
    * @param msg The message to be signed/verified.
    * @param previous If this is a response, the signature from the query.
@@ -175,8 +179,9 @@ public class DNSSEC {
     DNSOutput out = new DNSOutput();
     digestSIG(out, sig);
 
-    if (previous != null)
+    if (previous != null) {
       out.writeByteArray(previous);
+    }
 
     msg.toWire(out);
     return out.toByteArray();

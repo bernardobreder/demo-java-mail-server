@@ -2,8 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * X.400 mail mapping record.
@@ -20,13 +19,14 @@ public class PXRecord extends Record {
   PXRecord() {
   }
 
+  @Override
   Record getObject() {
     return new PXRecord();
   }
 
   /**
    * Creates an PX Record from the given data
-   * 
+   *
    * @param preference The preference of this mail address.
    * @param map822 The RFC 822 component of the mail address.
    * @param mapX400 The X.400 component of the mail address.
@@ -39,12 +39,14 @@ public class PXRecord extends Record {
     this.mapX400 = checkName("mapX400", mapX400);
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     preference = in.readU16();
     map822 = new Name(in);
     mapX400 = new Name(in);
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     preference = st.getUInt16();
     map822 = st.getName(origin);
@@ -52,6 +54,7 @@ public class PXRecord extends Record {
   }
 
   /** Converts the PX Record to a String */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(preference);
@@ -62,6 +65,7 @@ public class PXRecord extends Record {
     return sb.toString();
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeU16(preference);
     map822.toWire(out, null, canonical);

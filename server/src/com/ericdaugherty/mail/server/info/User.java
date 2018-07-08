@@ -6,23 +6,23 @@
  * This program is a 100% Java Email Server.
  ******************************************************************************
  * Copyright (C) 2001, Eric Daugherty All rights reserved.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  ******************************************************************************
  * For current versions and more information, please visit:
  * http://www.ericdaugherty.com/java/mail
- * 
+ *
  * or contact the author at: java@ericdaugherty.com
- * 
+ *
  ******************************************************************************
  * This program is based on the CSRMail project written by Calvin Smith.
  * http://crsemail.sourceforge.net/
@@ -33,9 +33,9 @@ package com.ericdaugherty.mail.server.info;
 // Java imports
 import java.io.File;
 
+import org.apache.commons.logging.Log;
 // Log imports
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 
 // Local imports
 import com.ericdaugherty.mail.server.configuration.ConfigurationManager;
@@ -44,7 +44,7 @@ import com.ericdaugherty.mail.server.configuration.PasswordManager;
 /**
  * Represents a user object. This class is responsible for providing all
  * information about a specific user and their mailbox.
- * 
+ *
  * @author Eric Daugherty
  */
 public class User {
@@ -103,11 +103,13 @@ public class User {
    * @return true if it matches.
    */
   public boolean isPasswordValid(String plainTextPassword) {
-    if (log.isDebugEnabled())
+    if (log.isDebugEnabled()) {
       log.debug("Authenticating User: " + getFullUsername());
+    }
     boolean result = getPassword().equals(PasswordManager.encryptPassword(plainTextPassword));
-    if (log.isDebugEnabled() && !result)
+    if (log.isDebugEnabled() && !result) {
       log.debug("Authentication Failed for User: " + getFullUsername());
+    }
 
     return result;
   }
@@ -238,8 +240,9 @@ public class User {
     File directory = new File(mailDirectory + File.separator + "users" + File.separator + getFullUsername());
 
     if (!directory.exists()) {
-      if (log.isInfoEnabled())
+      if (log.isInfoEnabled()) {
         log.info("Directory for user: " + getFullUsername() + "does not exist, creating...");
+      }
       directory.mkdirs();
     }
 

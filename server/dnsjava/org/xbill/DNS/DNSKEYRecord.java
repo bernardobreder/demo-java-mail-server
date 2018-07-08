@@ -2,13 +2,12 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * Key - contains a cryptographic public key for use by DNS. The data can be
  * converted to objects implementing java.security.interfaces.PublicKey
- * 
+ *
  * @see DNSSEC
  *
  * @author Brian Wellington
@@ -38,13 +37,14 @@ public class DNSKEYRecord extends KEYBase {
   DNSKEYRecord() {
   }
 
+  @Override
   Record getObject() {
     return new DNSKEYRecord();
   }
 
   /**
    * Creates a DNSKEY Record from the given data
-   * 
+   *
    * @param flags Flags describing the key's properties
    * @param proto The protocol that the key was created for
    * @param alg The key's algorithm
@@ -54,13 +54,15 @@ public class DNSKEYRecord extends KEYBase {
     super(name, Type.DNSKEY, dclass, ttl, flags, proto, alg, key);
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     flags = st.getUInt16();
     proto = st.getUInt8();
     String algString = st.getString();
     alg = DNSSEC.Algorithm.value(algString);
-    if (alg < 0)
+    if (alg < 0) {
       throw st.exception("Invalid algorithm: " + algString);
+    }
     key = st.getBase64();
   }
 

@@ -2,9 +2,6 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
-
 /**
  * NSAP Pointer Record - maps a domain name representing an NSAP Address to a
  * hostname.
@@ -17,13 +14,14 @@ public class NSAP_PTRRecord extends SingleNameBase {
   NSAP_PTRRecord() {
   }
 
+  @Override
   Record getObject() {
     return new NSAP_PTRRecord();
   }
 
   /**
    * Creates a new NSAP_PTR Record with the given data
-   * 
+   *
    * @param target The name of the host with this address
    */
   public NSAP_PTRRecord(Name name, int dclass, long ttl, Name target) {

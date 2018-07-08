@@ -2,9 +2,14 @@
 
 package org.xbill.DNS;
 
-import java.util.*;
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Lookup object issues queries to caching DNS servers. The input consists
@@ -96,7 +101,7 @@ public final class Lookup {
 
   /**
    * Gets the Resolver that will be used as the default by future Lookups.
-   * 
+   *
    * @return The default resolver.
    */
   public static synchronized Resolver getDefaultResolver() {
@@ -105,7 +110,7 @@ public final class Lookup {
 
   /**
    * Sets the default Resolver to be used as the default by future Lookups.
-   * 
+   *
    * @param resolver The default resolver.
    */
   public static synchronized void setDefaultResolver(Resolver resolver) {
@@ -115,7 +120,7 @@ public final class Lookup {
   /**
    * Gets the Cache that will be used as the default for the specified class by
    * future Lookups.
-   * 
+   *
    * @param dclass The class whose cache is being retrieved.
    * @return The default cache for the specified class.
    */
@@ -132,7 +137,7 @@ public final class Lookup {
   /**
    * Sets the Cache to be used as the default for the specified class by future
    * Lookups.
-   * 
+   *
    * @param cache The default cache for the specified class.
    * @param dclass The class whose cache is being set.
    */
@@ -143,7 +148,7 @@ public final class Lookup {
 
   /**
    * Gets the search path that will be used as the default by future Lookups.
-   * 
+   *
    * @return The default search path.
    */
   public static synchronized Name[] getDefaultSearchPath() {
@@ -152,7 +157,7 @@ public final class Lookup {
 
   /**
    * Sets the search path to be used as the default by future Lookups.
-   * 
+   *
    * @param domains The default search path.
    */
   public static synchronized void setDefaultSearchPath(Name[] domains) {
@@ -161,7 +166,7 @@ public final class Lookup {
 
   /**
    * Sets the search path that will be used as the default by future Lookups.
-   * 
+   *
    * @param domains The default search path.
    * @throws TextParseException A name in the array is not a valid DNS name.
    */
@@ -171,8 +176,9 @@ public final class Lookup {
       return;
     }
     Name[] newdomains = new Name[domains.length];
-    for (int i = 0; i < domains.length; i++)
+    for (int i = 0; i < domains.length; i++) {
       newdomains[i] = Name.fromString(domains[i], Name.root);
+    }
     defaultSearchPath = newdomains;
   }
 
@@ -192,15 +198,16 @@ public final class Lookup {
     timedout = false;
     nametoolong = false;
     referral = false;
-    if (temporary_cache)
+    if (temporary_cache) {
       cache.clearCache();
+    }
   }
 
   /**
    * Create a Lookup object that will find records of the given name, type, and
    * class. The lookup will use the default cache, resolver, and search path,
    * and look for records that are reasonably credible.
-   * 
+   *
    * @param name The name of the desired records
    * @param type The type of the desired records
    * @param dclass The class of the desired records
@@ -215,8 +222,9 @@ public final class Lookup {
   public Lookup(Name name, int type, int dclass) {
     Type.check(type);
     DClass.check(dclass);
-    if (!Type.isRR(type) && type != Type.ANY)
+    if (!Type.isRR(type) && type != Type.ANY) {
       throw new IllegalArgumentException("Cannot query for " + "meta-types other than ANY");
+    }
     this.name = name;
     this.type = type;
     this.dclass = dclass;
@@ -233,7 +241,7 @@ public final class Lookup {
   /**
    * Create a Lookup object that will find records of the given name and type in
    * the IN class.
-   * 
+   *
    * @param name The name of the desired records
    * @param type The type of the desired records
    * @throws IllegalArgumentException The type is a meta type other than ANY.
@@ -246,7 +254,7 @@ public final class Lookup {
   /**
    * Create a Lookup object that will find records of type A at the given name
    * in the IN class.
-   * 
+   *
    * @param name The name of the desired records
    * @see #Lookup(Name,int,int)
    */
@@ -257,7 +265,7 @@ public final class Lookup {
   /**
    * Create a Lookup object that will find records of the given name, type, and
    * class.
-   * 
+   *
    * @param name The name of the desired records
    * @param type The type of the desired records
    * @param dclass The class of the desired records
@@ -272,7 +280,7 @@ public final class Lookup {
   /**
    * Create a Lookup object that will find records of the given name and type in
    * the IN class.
-   * 
+   *
    * @param name The name of the desired records
    * @param type The type of the desired records
    * @throws TextParseException The name is not a valid DNS name
@@ -286,7 +294,7 @@ public final class Lookup {
   /**
    * Create a Lookup object that will find records of type A at the given name
    * in the IN class.
-   * 
+   *
    * @param name The name of the desired records
    * @throws TextParseException The name is not a valid DNS name
    * @see #Lookup(Name,int,int)
@@ -298,7 +306,7 @@ public final class Lookup {
   /**
    * Sets the resolver to use when performing this lookup. This overrides the
    * default value.
-   * 
+   *
    * @param resolver The resolver to use.
    */
   public void setResolver(Resolver resolver) {
@@ -308,7 +316,7 @@ public final class Lookup {
   /**
    * Sets the search path to use when performing this lookup. This overrides the
    * default value.
-   * 
+   *
    * @param domains An array of names containing the search path.
    */
   public void setSearchPath(Name[] domains) {
@@ -318,7 +326,7 @@ public final class Lookup {
   /**
    * Sets the search path to use when performing this lookup. This overrides the
    * default value.
-   * 
+   *
    * @param domains An array of names containing the search path.
    * @throws TextParseException A name in the array is not a valid DNS name.
    */
@@ -328,8 +336,9 @@ public final class Lookup {
       return;
     }
     Name[] newdomains = new Name[domains.length];
-    for (int i = 0; i < domains.length; i++)
+    for (int i = 0; i < domains.length; i++) {
       newdomains[i] = Name.fromString(domains[i], Name.root);
+    }
     this.searchPath = newdomains;
   }
 
@@ -337,7 +346,7 @@ public final class Lookup {
    * Sets the cache to use when performing this lookup. This overrides the
    * default value. If the results of this lookup should not be permanently
    * cached, null can be provided here.
-   * 
+   *
    * @param cache The cache to use.
    */
   public void setCache(Cache cache) {
@@ -354,7 +363,7 @@ public final class Lookup {
   /**
    * Sets the minimum credibility level that will be accepted when performing
    * the lookup. This defaults to Crefibility.NORMAL.
-   * 
+   *
    * @param credibility The minimum credibility level.
    */
   public void setCredibility(int credibility) {
@@ -375,8 +384,9 @@ public final class Lookup {
       done = true;
       return;
     }
-    if (aliases == null)
+    if (aliases == null) {
       aliases = new ArrayList();
+    }
     aliases.add(name);
     lookup(name);
   }
@@ -390,8 +400,9 @@ public final class Lookup {
 
       for (i = 0; i < rrsets.length; i++) {
         it = rrsets[i].rrs();
-        while (it.hasNext())
+        while (it.hasNext()) {
           l.add(it.next());
+        }
       }
 
       result = SUCCESSFUL;
@@ -440,8 +451,9 @@ public final class Lookup {
       System.err.println(sr);
     }
     processResponse(current, sr);
-    if (done || doneCurrent)
+    if (done || doneCurrent) {
       return;
+    }
 
     Record question = Record.newRecord(current, type, dclass);
     Message query = Message.newQuery(question);
@@ -451,10 +463,12 @@ public final class Lookup {
     }
     catch (IOException e) {
       // A network error occurred.  Press on.
-      if (e instanceof InterruptedIOException)
+      if (e instanceof InterruptedIOException) {
         timedout = true;
-      else
+      }
+      else {
         networkerror = true;
+      }
       return;
     }
     int rcode = response.getHeader().getRcode();
@@ -474,8 +488,9 @@ public final class Lookup {
     }
 
     sr = cache.addMessage(response);
-    if (sr == null)
+    if (sr == null) {
       sr = cache.lookupRecords(current, type, credibility);
+    }
     if (verbose) {
       System.err.println("queried " + current + " " + Type.string(type));
       System.err.println(sr);
@@ -486,8 +501,9 @@ public final class Lookup {
   private void resolve(Name current, Name suffix) {
     doneCurrent = false;
     Name tname = null;
-    if (suffix == null)
+    if (suffix == null) {
       tname = current;
+    }
     else {
       try {
         tname = Name.concatenate(current, suffix);
@@ -502,28 +518,35 @@ public final class Lookup {
 
   /**
    * Performs the lookup, using the specified Cache, Resolver, and search path.
-   * 
+   *
    * @return The answers, or null if none are found.
    */
   public Record[] run() {
-    if (done)
+    if (done) {
       reset();
-    if (name.isAbsolute())
+    }
+    if (name.isAbsolute()) {
       resolve(name, null);
-    else if (searchPath == null)
+    }
+    else if (searchPath == null) {
       resolve(name, Name.root);
+    }
     else {
-      if (name.labels() > 1)
+      if (name.labels() > 1) {
         resolve(name, Name.root);
-      if (done)
+      }
+      if (done) {
         return answers;
+      }
 
       for (int i = 0; i < searchPath.length; i++) {
         resolve(name, searchPath[i]);
-        if (done)
+        if (done) {
           return answers;
-        else if (foundAlias)
+        }
+        else if (foundAlias) {
           break;
+        }
       }
     }
     if (!done) {
@@ -561,18 +584,20 @@ public final class Lookup {
   }
 
   private void checkDone() {
-    if (done && result != -1)
+    if (done && result != -1) {
       return;
+    }
     StringBuffer sb = new StringBuffer("Lookup of " + name + " ");
-    if (dclass != DClass.IN)
+    if (dclass != DClass.IN) {
       sb.append(DClass.string(dclass) + " ");
+    }
     sb.append(Type.string(type) + " isn't done");
     throw new IllegalStateException(sb.toString());
   }
 
   /**
    * Returns the answers from the lookup.
-   * 
+   *
    * @return The answers, or null if none are found.
    * @throws IllegalStateException The lookup has not completed.
    */
@@ -585,20 +610,21 @@ public final class Lookup {
    * Returns all known aliases for this name. Whenever a CNAME/DNAME is
    * followed, an alias is added to this array. The last element in this array
    * will be the owner name for records in the answer, if there are any.
-   * 
+   *
    * @return The aliases.
    * @throws IllegalStateException The lookup has not completed.
    */
   public Name[] getAliases() {
     checkDone();
-    if (aliases == null)
+    if (aliases == null) {
       return noAliases;
+    }
     return (Name[]) aliases.toArray(new Name[aliases.size()]);
   }
 
   /**
    * Returns the result code of the lookup.
-   * 
+   *
    * @return The result code, which can be SUCCESSFUL, UNRECOVERABLE, TRY_AGAIN,
    *         HOST_NOT_FOUND, or TYPE_NOT_FOUND.
    * @throws IllegalStateException The lookup has not completed.
@@ -610,15 +636,16 @@ public final class Lookup {
 
   /**
    * Returns an error string describing the result code of this lookup.
-   * 
+   *
    * @return A string, which may either directly correspond the result code or
    *         be more specific.
    * @throws IllegalStateException The lookup has not completed.
    */
   public String getErrorString() {
     checkDone();
-    if (error != null)
+    if (error != null) {
       return error;
+    }
     switch (result) {
       case SUCCESSFUL:
         return "successful";

@@ -2,8 +2,9 @@
 
 package org.xbill.DNS.security;
 
-import java.math.*;
-import java.security.interfaces.*;
+import java.math.BigInteger;
+import java.security.interfaces.DSAParams;
+import java.security.interfaces.DSAPublicKey;
 
 /**
  * A stub implementation of a DSA (Digital Signature Algorithm) public key
@@ -40,7 +41,7 @@ class DSAPubKey implements DSAPublicKey {
 
   /** Create a DSA public key from its parts */
   public DSAPubKey(BigInteger p, BigInteger q, BigInteger g, BigInteger y) {
-    params = (DSAParams) new SimpleDSAParams(p, q, g);
+    params = new SimpleDSAParams(p, q, g);
     Y = y;
   }
 

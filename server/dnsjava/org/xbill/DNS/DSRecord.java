@@ -2,13 +2,14 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+
+import org.xbill.DNS.utils.base16;
 
 /**
  * DS - contains a Delegation Signer record, which acts as a placeholder for KEY
  * records in the parent zone.
- * 
+ *
  * @see DNSSEC
  *
  * @author David Blacka
@@ -27,13 +28,14 @@ public class DSRecord extends Record {
   DSRecord() {
   }
 
+  @Override
   Record getObject() {
     return new DSRecord();
   }
 
   /**
    * Creates a DS Record from the given data
-   * 
+   *
    * @param footprint The original KEY record's footprint (keyid).
    * @param alg The original key algorithm.
    * @param digestid The digest id code.
@@ -47,6 +49,7 @@ public class DSRecord extends Record {
     this.digest = digest;
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     footprint = in.readU16();
     alg = in.readU8();
@@ -54,6 +57,7 @@ public class DSRecord extends Record {
     digest = in.readByteArray();
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     footprint = st.getUInt16();
     alg = st.getUInt8();
@@ -64,6 +68,7 @@ public class DSRecord extends Record {
   /**
    * Converts rdata to a String
    */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(footprint);
@@ -107,12 +112,14 @@ public class DSRecord extends Record {
     return footprint;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     out.writeU16(footprint);
     out.writeU8(alg);
     out.writeU8(digestid);
-    if (digest != null)
+    if (digest != null) {
       out.writeByteArray(digest);
+    }
   }
 
 }

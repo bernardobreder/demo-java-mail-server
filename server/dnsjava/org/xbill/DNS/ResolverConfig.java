@@ -2,8 +2,17 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 
 /**
  * A class that tries to locate name servers and the search path to be appended
@@ -31,38 +40,46 @@ public class ResolverConfig {
     if (servers == null || searchlist == null) {
       String OS = System.getProperty("os.name");
       if (OS.indexOf("Windows") != -1) {
-        if (OS.indexOf("95") != -1 || OS.indexOf("98") != -1 || OS.indexOf("ME") != -1)
+        if (OS.indexOf("95") != -1 || OS.indexOf("98") != -1 || OS.indexOf("ME") != -1) {
           find95();
-        else
+        }
+        else {
           findNT();
+        }
       }
-      else if (OS.indexOf("NetWare") != -1)
+      else if (OS.indexOf("NetWare") != -1) {
         findNetware();
-      else
+      }
+      else {
         findUnix();
+      }
     }
   }
 
   private void addServer(String server, List list) {
-    if (list.contains(server))
+    if (list.contains(server)) {
       return;
-    if (Options.check("verbose"))
+    }
+    if (Options.check("verbose")) {
       System.out.println("adding server " + server);
+    }
     list.add(server);
   }
 
   private void addSearch(String search, List list) {
     Name name;
-    if (Options.check("verbose"))
+    if (Options.check("verbose")) {
       System.out.println("adding search " + search);
+    }
     try {
       name = Name.fromString(search, Name.root);
     }
     catch (TextParseException e) {
       return;
     }
-    if (list.contains(name))
+    if (list.contains(name)) {
       return;
+    }
     list.add(name);
   }
 
@@ -79,10 +96,12 @@ public class ResolverConfig {
     prop = System.getProperty("dns.server");
     if (prop != null) {
       st = new StringTokenizer(prop, ",");
-      while (st.hasMoreTokens())
+      while (st.hasMoreTokens()) {
         addServer(st.nextToken(), l);
-      if (l.size() > 0)
+      }
+      if (l.size() > 0) {
         servers = (String[]) l.toArray(new String[l.size()]);
+      }
     }
 
     l.clear();
@@ -92,8 +111,9 @@ public class ResolverConfig {
       while (st.hasMoreTokens()) {
         addSearch(st.nextToken(), l);
       }
-      if (l.size() > 0)
+      if (l.size() > 0) {
         searchlist = (Name[]) l.toArray(new Name[l.size()]);
+      }
     }
   }
 
@@ -124,16 +144,18 @@ public class ResolverConfig {
         else if (line.startsWith("domain")) {
           StringTokenizer st = new StringTokenizer(line);
           st.nextToken(); /* skip domain */
-          if (!st.hasMoreTokens())
+          if (!st.hasMoreTokens()) {
             continue;
+          }
           addSearch(st.nextToken(), lsearch);
         }
         else if (line.startsWith("search")) {
           StringTokenizer st = new StringTokenizer(line);
           st.nextToken(); /* skip search */
           String s;
-          while (st.hasMoreTokens())
+          while (st.hasMoreTokens()) {
             addSearch(st.nextToken(), lsearch);
+          }
         }
       }
       br.close();
@@ -141,11 +163,13 @@ public class ResolverConfig {
     catch (IOException e) {
     }
 
-    if (servers == null && lserver.size() > 0)
+    if (servers == null && lserver.size() > 0) {
       servers = (String[]) lserver.toArray(new String[lserver.size()]);
+    }
 
-    if (searchlist == null && lsearch.size() > 0)
+    if (searchlist == null && lsearch.size() > 0) {
       searchlist = (Name[]) lsearch.toArray(new Name[lsearch.size()]);
+    }
   }
 
   private void findUnix() {
@@ -190,8 +214,9 @@ public class ResolverConfig {
         }
 
         if (line.indexOf(host_name) != -1) {
-          while (st.hasMoreTokens())
+          while (st.hasMoreTokens()) {
             s = st.nextToken();
+          }
           Name name;
           try {
             name = Name.fromString(s, null);
@@ -199,38 +224,46 @@ public class ResolverConfig {
           catch (TextParseException e) {
             continue;
           }
-          if (name.labels() == 1)
+          if (name.labels() == 1) {
             continue;
+          }
           addSearch(s, lsearch);
         }
         else if (line.indexOf(primary_dns_suffix) != -1) {
-          while (st.hasMoreTokens())
+          while (st.hasMoreTokens()) {
             s = st.nextToken();
-          if (s.equals(":"))
+          }
+          if (s.equals(":")) {
             continue;
+          }
           addSearch(s, lsearch);
           readingSearches = true;
         }
         else if (readingSearches || line.indexOf(dns_suffix) != -1) {
-          while (st.hasMoreTokens())
+          while (st.hasMoreTokens()) {
             s = st.nextToken();
-          if (s.equals(":"))
+          }
+          if (s.equals(":")) {
             continue;
+          }
           addSearch(s, lsearch);
           readingSearches = true;
         }
         else if (readingServers || line.indexOf(dns_servers) != -1) {
-          while (st.hasMoreTokens())
+          while (st.hasMoreTokens()) {
             s = st.nextToken();
-          if (s.equals(":"))
+          }
+          if (s.equals(":")) {
             continue;
+          }
           addServer(s, lserver);
           readingServers = true;
         }
       }
 
-      if (servers == null && lserver.size() > 0)
+      if (servers == null && lserver.size() > 0) {
         servers = (String[]) lserver.toArray(new String[lserver.size()]);
+      }
     }
     catch (IOException e) {
     }
@@ -284,8 +317,9 @@ public class ResolverConfig {
 
   /** Returns the first located server */
   public String server() {
-    if (servers == null)
+    if (servers == null) {
       return null;
+    }
     return servers[0];
   }
 

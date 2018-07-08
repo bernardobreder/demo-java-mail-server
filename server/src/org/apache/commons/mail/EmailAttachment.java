@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -20,7 +20,7 @@ import java.net.URL;
 
 /**
  * This class models an email attachment. Used by MultiPartEmail.
- * 
+ *
  * @since 1.0
  * @author <a href="mailto:frank.kim@clearink.com">Frank Y. Kim</a>
  * @version $Id: EmailAttachment.java 480401 2006-11-29 04:40:04Z bayard $
@@ -48,7 +48,7 @@ public class EmailAttachment {
 
   /**
    * Get the description.
-   * 
+   *
    * @return A String.
    * @since 1.0
    */
@@ -58,7 +58,7 @@ public class EmailAttachment {
 
   /**
    * Get the name.
-   * 
+   *
    * @return A String.
    * @since 1.0
    */
@@ -68,7 +68,7 @@ public class EmailAttachment {
 
   /**
    * Get the path.
-   * 
+   *
    * @return A String.
    * @since 1.0
    */
@@ -78,7 +78,7 @@ public class EmailAttachment {
 
   /**
    * Get the URL.
-   * 
+   *
    * @return A URL.
    * @since 1.0
    */
@@ -88,7 +88,7 @@ public class EmailAttachment {
 
   /**
    * Get the disposition.
-   * 
+   *
    * @return A String.
    * @since 1.0
    */
@@ -98,7 +98,7 @@ public class EmailAttachment {
 
   /**
    * Set the description.
-   * 
+   *
    * @param desc A String.
    * @since 1.0
    */
@@ -108,7 +108,7 @@ public class EmailAttachment {
 
   /**
    * Set the name.
-   * 
+   *
    * @param aName A String.
    * @since 1.0
    */
@@ -122,7 +122,7 @@ public class EmailAttachment {
    * <p>
    * Example: /home/user/images/image.jpg<br>
    * Example: images/image.jpg
-   * 
+   *
    * @param aPath A String.
    * @since 1.0
    */
@@ -132,7 +132,7 @@ public class EmailAttachment {
 
   /**
    * Set the URL.
-   * 
+   *
    * @param aUrl A URL.
    * @since 1.0
    */
@@ -142,7 +142,7 @@ public class EmailAttachment {
 
   /**
    * Set the disposition.
-   * 
+   *
    * @param aDisposition A String.
    * @since 1.0
    */

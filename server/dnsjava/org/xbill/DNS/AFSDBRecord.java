@@ -2,9 +2,6 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
-
 /**
  * AFS Data Base Record - maps a domain name to the name of an AFS cell database
  * server.
@@ -18,13 +15,14 @@ public class AFSDBRecord extends U16NameBase {
   AFSDBRecord() {
   }
 
+  @Override
   Record getObject() {
     return new AFSDBRecord();
   }
 
   /**
    * Creates an AFSDB Record from the given data.
-   * 
+   *
    * @param subtype Indicates the type of service provided by the host.
    * @param host The host providing the service.
    */

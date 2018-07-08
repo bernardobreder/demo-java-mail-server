@@ -5,7 +5,8 @@ package org.xbill.DNS.security;
 import java.security.SignatureException;
 import java.security.interfaces.DSAParams;
 import java.util.Arrays;
-import org.xbill.DNS.*;
+
+import org.xbill.DNS.SIGRecord;
 
 /**
  * Converts DSA signatures between the SIG record format (as specified in RFC
@@ -34,12 +35,14 @@ public class DSASignature {
     byte[] sigdata = sigrec.getSignature();
 
     rlen = len;
-    if (sigdata[1] < 0)
+    if (sigdata[1] < 0) {
       rlen++;
+    }
 
     slen = len;
-    if (sigdata[1] < 0)
+    if (sigdata[1] < 0) {
       slen++;
+    }
 
     /* 4 = 2 * (INT, value) */
     seqlen = (byte) (rlen + slen + 4);
@@ -48,19 +51,23 @@ public class DSASignature {
     byte[] array = new byte[seqlen + 2];
 
     array[n++] = ASN1_SEQ;
-    array[n++] = (byte) seqlen;
+    array[n++] = seqlen;
     array[n++] = ASN1_INT;
     array[n++] = rlen;
-    if (rlen > len)
+    if (rlen > len) {
       array[n++] = 0;
-    for (int i = 0; i < len; i++, n++)
+    }
+    for (int i = 0; i < len; i++, n++) {
       array[n] = sigdata[1 + i];
+    }
     array[n++] = ASN1_INT;
     array[n++] = slen;
-    if (slen > len)
+    if (slen > len) {
       array[n++] = 0;
-    for (int i = 0; i < len; i++, n++)
+    }
+    for (int i = 0; i < len; i++, n++) {
       array[n] = sigdata[1 + len + i];
+    }
     return array;
   }
 
@@ -71,16 +78,18 @@ public class DSASignature {
   static byte[] create(DSAParams params, byte[] sig) throws SignatureException {
     int rLength, sLength;
     int rOffset, sOffset;
-    if ((sig[0] != ASN1_SEQ) || (sig[2] != ASN1_INT))
+    if ((sig[0] != ASN1_SEQ) || (sig[2] != ASN1_INT)) {
       throw new SignatureException("Expected SEQ, INT");
+    }
     rLength = sig[3];
     rOffset = 4;
     if (sig[rOffset] == 0) {
       rLength--;
       rOffset++;
     }
-    if (sig[rOffset + rLength] != ASN1_INT)
+    if (sig[rOffset + rLength] != ASN1_INT) {
       throw new SignatureException("Expected INT");
+    }
     sLength = sig[rOffset + rLength + 1];
     sOffset = rOffset + rLength + 2;
     if (sig[sOffset] == 0) {
@@ -88,8 +97,9 @@ public class DSASignature {
       sOffset++;
     }
 
-    if ((rLength > 20) || (sLength > 20))
+    if ((rLength > 20) || (sLength > 20)) {
       throw new SignatureException("DSA R/S too long");
+    }
 
     byte[] newSig = new byte[41];
     Arrays.fill(newSig, (byte) 0);

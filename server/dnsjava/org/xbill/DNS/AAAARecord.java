@@ -2,8 +2,7 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
 
 /**
  * IPv6 Address Record - maps a domain name to an IPv6 address
@@ -18,13 +17,14 @@ public class AAAARecord extends Record {
   AAAARecord() {
   }
 
+  @Override
   Record getObject() {
     return new AAAARecord();
   }
 
   /**
    * Creates an AAAA Record from the given data
-   * 
+   *
    * @param address The address suffix
    */
   public AAAARecord(Name name, int dclass, long ttl, Inet6Address address) {
@@ -32,10 +32,12 @@ public class AAAARecord extends Record {
     this.address = address;
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     address = new Inet6Address(in.readByteArray(16));
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     try {
       address = new Inet6Address(st.getString());
@@ -46,6 +48,7 @@ public class AAAARecord extends Record {
   }
 
   /** Converts rdata to a String */
+  @Override
   String rrToString() {
     return address.toString();
   }
@@ -55,6 +58,7 @@ public class AAAARecord extends Record {
     return address;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     byte[] b = address.toBytes();
     out.writeByteArray(b);

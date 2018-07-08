@@ -11,7 +11,15 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.interfaces.DSAKey;
 import java.util.Date;
-import org.xbill.DNS.*;
+
+import org.xbill.DNS.DClass;
+import org.xbill.DNS.DNSSEC;
+import org.xbill.DNS.KEYRecord;
+import org.xbill.DNS.Message;
+import org.xbill.DNS.Name;
+import org.xbill.DNS.Options;
+import org.xbill.DNS.SIGRecord;
+import org.xbill.DNS.Section;
 
 /**
  * Creates SIG(0) transaction signatures.
@@ -35,7 +43,7 @@ public class SIG0Signer {
 
   /**
    * Creates a new SIG(0) signer object.
-   * 
+   *
    * @param algorithm usually DNSSEC.RSAMD5, DNSSEC.DSA, or DNSSEC.RSASHA1
    * @param privateKey signing key (must match algorithm)
    * @param name the name of the key
@@ -64,7 +72,7 @@ public class SIG0Signer {
 
   /**
    * Appends a SIG(0) signature to the message.
-   * 
+   *
    * @param m the message
    * @param old if this message is a response, the original message
    */
@@ -72,8 +80,9 @@ public class SIG0Signer {
     NoSuchAlgorithmException {
 
     int validity = Options.intValue("sig0validity");
-    if (validity < 0)
+    if (validity < 0) {
       validity = VALIDITY;
+    }
 
     long now = System.currentTimeMillis();
     Date timeSigned = new Date(now);

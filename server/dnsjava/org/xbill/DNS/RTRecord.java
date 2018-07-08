@@ -2,9 +2,6 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
-
 /**
  * Route Through Record - lists a route preference and intermediate host.
  *
@@ -16,13 +13,14 @@ public class RTRecord extends U16NameBase {
   RTRecord() {
   }
 
+  @Override
   Record getObject() {
     return new RTRecord();
   }
 
   /**
    * Creates an RT Record from the given data
-   * 
+   *
    * @param preference The preference of the route. Smaller numbers indicate
    *        more preferred routes.
    * @param intermediateHost The domain name of the host to use as a router.

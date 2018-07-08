@@ -2,8 +2,8 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.net.UnknownHostException;
 
 /**
  * Interface describing a resolver.
@@ -15,14 +15,14 @@ public interface Resolver {
 
   /**
    * Sets the port to communicate with on the server
-   * 
+   *
    * @param port The port to send messages to
    */
   void setPort(int port);
 
   /**
    * Sets whether TCP connections will be sent by default
-   * 
+   *
    * @param flag Indicates whether TCP connections are made
    */
   void setTCP(boolean flag);
@@ -30,14 +30,14 @@ public interface Resolver {
   /**
    * Sets whether truncated responses will be ignored. If not, a truncated
    * response over UDP will cause a retransmission over TCP.
-   * 
+   *
    * @param flag Indicates whether truncated responses should be ignored.
    */
   void setIgnoreTruncation(boolean flag);
 
   /**
    * Sets the EDNS version used on outgoing messages.
-   * 
+   *
    * @param level The EDNS level to use. 0 indicates EDNS0 and -1 indicates no
    *        EDNS.
    * @throws UnsupportedOperationException An invalid level was indicated
@@ -46,14 +46,14 @@ public interface Resolver {
 
   /**
    * Specifies the TSIG key that messages will be signed with
-   * 
+   *
    * @param key The key
    */
   void setTSIGKey(TSIG key);
 
   /**
    * Specifies the TSIG key that messages will be signed with
-   * 
+   *
    * @param name The key name
    * @param key The key data
    */
@@ -61,7 +61,7 @@ public interface Resolver {
 
   /**
    * Specifies the TSIG key that messages will be signed with
-   * 
+   *
    * @param name The key name
    * @param key The key data, represented as either a base64 encoded string or
    *        (if the first character is ':') a hex encoded string
@@ -73,7 +73,7 @@ public interface Resolver {
   /**
    * Specifies the TSIG key (with the same name as the local host) that messages
    * will be signed with.
-   * 
+   *
    * @param key The key data, represented as either a base64 encoded string or
    *        (if the first character is ':') a hex encoded string
    * @throws IllegalArgumentException The key data is improperly encoded
@@ -83,14 +83,14 @@ public interface Resolver {
 
   /**
    * Sets the amount of time to wait for a response before giving up.
-   * 
+   *
    * @param secs The number of seconds to wait.
    */
   void setTimeout(int secs);
 
   /**
    * Sends a message and waits for a response.
-   * 
+   *
    * @param query The query to send.
    * @return The response
    * @throws IOException An error occurred while sending or receiving.
@@ -102,7 +102,7 @@ public interface Resolver {
    * on success or exception. Multiple asynchronous lookups can be performed in
    * parallel. Since the callback may be invoked before the function returns,
    * external synchronization is necessary.
-   * 
+   *
    * @param query The query to send
    * @param listener The object containing the callbacks.
    * @return An identifier, which is also a parameter in the callback

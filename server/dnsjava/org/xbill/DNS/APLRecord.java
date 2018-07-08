@@ -2,10 +2,13 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.xbill.DNS.utils.base16;
 
 /**
  * APL - Address Prefix List.
@@ -41,7 +44,7 @@ public class APLRecord extends Record {
 
     /**
      * Creates an APL element corresponding to an IPv4 prefix.
-     * 
+     *
      * @param negative Indicates if this prefix is a negation.
      * @param address The IPv4 address.
      * @param prefixLength The length of this prefix, in bits.
@@ -53,7 +56,7 @@ public class APLRecord extends Record {
 
     /**
      * Creates an APL element corresponding to an IPv6 prefix.
-     * 
+     *
      * @param negative Indicates if this prefix is a negation.
      * @param address The IPv6 address.
      * @param prefixLength The length of this prefix, in bits.
@@ -63,18 +66,23 @@ public class APLRecord extends Record {
       this(AddressFamily.IPv6, negative, address, prefixLength);
     }
 
+    @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      if (negative)
+      if (negative) {
         sb.append("!");
+      }
       sb.append(family);
       sb.append(":");
-      if (family == AddressFamily.IPv4)
+      if (family == AddressFamily.IPv4) {
         sb.append(((InetAddress) address).getHostAddress());
-      else if (family == AddressFamily.IPv6)
-        sb.append((Inet6Address) address);
-      else
+      }
+      else if (family == AddressFamily.IPv6) {
+        sb.append(address);
+      }
+      else {
         sb.append(base16.toString((byte[]) address));
+      }
       sb.append("/");
       sb.append(prefixLength);
       return sb.toString();
@@ -86,21 +94,24 @@ public class APLRecord extends Record {
   APLRecord() {
   }
 
+  @Override
   Record getObject() {
     return new APLRecord();
   }
 
   private static boolean validatePrefixLength(int family, int prefixLength) {
-    if (prefixLength < 0 || prefixLength >= 256)
+    if (prefixLength < 0 || prefixLength >= 256) {
       return false;
-    if ((family == AddressFamily.IPv4 && prefixLength > 32) || (family == AddressFamily.IPv6 && prefixLength > 128))
+    }
+    if ((family == AddressFamily.IPv4 && prefixLength > 32) || (family == AddressFamily.IPv6 && prefixLength > 128)) {
       return false;
+    }
     return true;
   }
 
   /**
    * Creates an APL Record from the given data.
-   * 
+   *
    * @param elements The list of APL elements.
    */
   public APLRecord(Name name, int dclass, long ttl, List elements) {
@@ -121,15 +132,18 @@ public class APLRecord extends Record {
   }
 
   private static byte[] parseAddress(byte[] in, int length) throws WireParseException {
-    if (in.length > length)
+    if (in.length > length) {
       throw new WireParseException("invalid address length");
-    if (in.length == length)
+    }
+    if (in.length == length) {
       return in;
+    }
     byte[] out = new byte[length];
     System.arraycopy(in, 0, out, 0, in.length);
     return out;
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     elements = new ArrayList(1);
     while (in.remaining() != 0) {
@@ -164,12 +178,14 @@ public class APLRecord extends Record {
     }
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     elements = new ArrayList(1);
     while (true) {
       Tokenizer.Token t = st.get();
-      if (!t.isString())
+      if (!t.isString()) {
         break;
+      }
 
       boolean negative = false;
       int family = 0;
@@ -182,11 +198,13 @@ public class APLRecord extends Record {
         start = 1;
       }
       int colon = s.indexOf(':', start);
-      if (colon < 0)
+      if (colon < 0) {
         throw st.exception("invalid address prefix element");
+      }
       int slash = s.indexOf('/', colon);
-      if (slash < 0)
+      if (slash < 0) {
         throw st.exception("invalid address prefix element");
+      }
 
       String familyString = s.substring(start, colon);
       String addressString = s.substring(colon + 1, slash);
@@ -237,13 +255,15 @@ public class APLRecord extends Record {
     st.unget();
   }
 
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     for (Iterator it = elements.iterator(); it.hasNext();) {
       Element element = (Element) it.next();
       sb.append(element);
-      if (it.hasNext())
+      if (it.hasNext()) {
         sb.append(" ");
+      }
     }
     return sb.toString();
   }
@@ -255,12 +275,14 @@ public class APLRecord extends Record {
 
   private static int addressLength(byte[] addr) {
     for (int i = addr.length - 1; i >= 0; i--) {
-      if (addr[i] != 0)
+      if (addr[i] != 0) {
         return i + 1;
+      }
     }
     return 0;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     for (Iterator it = elements.iterator(); it.hasNext();) {
       Element element = (Element) it.next();

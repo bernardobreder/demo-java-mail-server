@@ -2,14 +2,16 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
-import org.xbill.DNS.utils.*;
+import java.util.Date;
+
+import org.xbill.DNS.utils.HMAC;
+import org.xbill.DNS.utils.base16;
+import org.xbill.DNS.utils.base64;
 
 /**
  * Transaction signature handling. This class generates and verifies TSIG
  * records on messages, which provide transaction security.
- * 
+ *
  * @see TSIGRecord
  *
  * @author Brian Wellington
@@ -44,19 +46,23 @@ public class TSIG {
   private byte[] key;
 
   private void getDigest() {
-    if (alg.equals(HMAC_MD5))
+    if (alg.equals(HMAC_MD5)) {
       digest = "md5";
-    else if (alg.equals(HMAC_SHA1))
+    }
+    else if (alg.equals(HMAC_SHA1)) {
       digest = "sha";
-    else if (alg.equals(HMAC_SHA256))
+    }
+    else if (alg.equals(HMAC_SHA256)) {
       digest = "sha-256";
-    else
+    }
+    else {
       throw new IllegalArgumentException("Invalid algorithm");
+    }
   }
 
   /**
    * Creates a new TSIG key, which can be used to sign or verify a message.
-   * 
+   *
    * @param algorithm The algorithm of the shared key.
    * @param name The name of the shared key.
    * @param key The shared key's data.
@@ -71,7 +77,7 @@ public class TSIG {
   /**
    * Creates a new TSIG key with the hmac-md5 algorithm, which can be used to
    * sign or verify a message.
-   * 
+   *
    * @param name The name of the shared key.
    * @param key The shared key's data.
    */
@@ -81,7 +87,7 @@ public class TSIG {
 
   /**
    * Creates a new TSIG object, which can be used to sign or verify a message.
-   * 
+   *
    * @param name The name of the shared key
    * @param key The shared key's data, represented as either a base64 encoded
    *        string or (if the first character is ':') a hex encoded string
@@ -89,12 +95,15 @@ public class TSIG {
    * @throws IllegalArgumentException The key data is improperly encoded
    */
   public TSIG(Name algorithm, String name, String key) {
-    if (key.length() > 1 && key.charAt(0) == ':')
+    if (key.length() > 1 && key.charAt(0) == ':') {
       this.key = base16.fromString(key.substring(1));
-    else
+    }
+    else {
       this.key = base64.fromString(key);
-    if (this.key == null)
+    }
+    if (this.key == null) {
       throw new IllegalArgumentException("Invalid TSIG key string");
+    }
     try {
       this.name = Name.fromString(name, Name.root);
     }
@@ -107,7 +116,7 @@ public class TSIG {
 
   /**
    * Creates a new TSIG object, which can be used to sign or verify a message.
-   * 
+   *
    * @param name The name of the shared key
    * @param key The shared key's data, represented as either a base64 encoded
    *        string or (if the first character is ':') a hex encoded string
@@ -121,7 +130,7 @@ public class TSIG {
   /**
    * Generates a TSIG record with a specific error for a message that has been
    * rendered.
-   * 
+   *
    * @param m The message
    * @param b The rendered message
    * @param error The error
@@ -130,18 +139,22 @@ public class TSIG {
    */
   public TSIGRecord generate(Message m, byte[] b, int error, TSIGRecord old) {
     Date timeSigned;
-    if (error != Rcode.BADTIME)
+    if (error != Rcode.BADTIME) {
       timeSigned = new Date();
-    else
+    }
+    else {
       timeSigned = old.getTimeSigned();
+    }
     int fudge;
     HMAC hmac = null;
-    if (error == Rcode.NOERROR || error == Rcode.BADTIME)
+    if (error == Rcode.NOERROR || error == Rcode.BADTIME) {
       hmac = new HMAC(digest, key);
+    }
 
     fudge = Options.intValue("tsigfudge");
-    if (fudge < 0 || fudge > 0x7FFF)
+    if (fudge < 0 || fudge > 0x7FFF) {
       fudge = FUDGE;
+    }
 
     if (old != null) {
       DNSOutput out = new DNSOutput();
@@ -153,8 +166,9 @@ public class TSIG {
     }
 
     /* Digest the message */
-    if (hmac != null)
+    if (hmac != null) {
       hmac.update(b);
+    }
 
     DNSOutput out = new DNSOutput();
     name.toWireCanonical(out);
@@ -171,14 +185,17 @@ public class TSIG {
     out.writeU16(error);
     out.writeU16(0); /* No other data */
 
-    if (hmac != null)
+    if (hmac != null) {
       hmac.update(out.toByteArray());
+    }
 
     byte[] signature;
-    if (hmac != null)
+    if (hmac != null) {
       signature = hmac.sign();
-    else
+    }
+    else {
       signature = new byte[0];
+    }
 
     byte[] other = null;
     if (error == Rcode.BADTIME) {
@@ -198,7 +215,7 @@ public class TSIG {
   /**
    * Generates a TSIG record with a specific error for a message and adds it to
    * the message.
-   * 
+   *
    * @param m The message
    * @param error The error
    * @param old If this message is a response, the TSIG from the request
@@ -211,7 +228,7 @@ public class TSIG {
 
   /**
    * Generates a TSIG record for a message and adds it to the message
-   * 
+   *
    * @param m The message
    * @param old If this message is a response, the TSIG from the request
    */
@@ -221,7 +238,7 @@ public class TSIG {
 
   /**
    * Generates a TSIG record for a message and adds it to the message
-   * 
+   *
    * @param m The message
    * @param old If this message is a response, the TSIG from the request
    */
@@ -235,8 +252,9 @@ public class TSIG {
     HMAC hmac = new HMAC(digest, key);
 
     fudge = Options.intValue("tsigfudge");
-    if (fudge < 0 || fudge > 0x7FFF)
+    if (fudge < 0 || fudge > 0x7FFF) {
       fudge = FUDGE;
+    }
 
     DNSOutput out = new DNSOutput();
     out.writeU16(old.getSignature().length);
@@ -269,7 +287,7 @@ public class TSIG {
    * Verifies a TSIG record on an incoming message. Since this is only called in
    * the context where a TSIG is expected to be present, it is an error if one
    * is not present.
-   * 
+   *
    * @param m The message
    * @param b An array containing the message in unparsed form. This is
    *        necessary since TSIG signs the message in wire format, and we can't
@@ -282,20 +300,23 @@ public class TSIG {
   public byte verify(Message m, byte[] b, int length, TSIGRecord old) {
     TSIGRecord tsig = m.getTSIG();
     HMAC hmac = new HMAC(digest, key);
-    if (tsig == null)
+    if (tsig == null) {
       return Rcode.FORMERR;
+    }
 
     if (!tsig.getName().equals(name) || !tsig.getAlgorithm().equals(alg)) {
-      if (Options.check("verbose"))
+      if (Options.check("verbose")) {
         System.err.println("BADKEY failure");
+      }
       return Rcode.BADKEY;
     }
     long now = System.currentTimeMillis();
     long then = tsig.getTimeSigned().getTime();
     long fudge = tsig.getFudge();
     if (Math.abs(now - then) > fudge * 1000) {
-      if (Options.check("verbose"))
+      if (Options.check("verbose")) {
         System.err.println("BADTIME failure");
+      }
       return Rcode.BADTIME;
     }
 
@@ -335,11 +356,13 @@ public class TSIG {
 
     hmac.update(out.toByteArray());
 
-    if (hmac.verify(tsig.getSignature()))
+    if (hmac.verify(tsig.getSignature())) {
       return Rcode.NOERROR;
+    }
     else {
-      if (Options.check("verbose"))
+      if (Options.check("verbose")) {
         System.err.println("BADSIG failure");
+      }
       return Rcode.BADSIG;
     }
   }
@@ -348,7 +371,7 @@ public class TSIG {
    * Verifies a TSIG record on an incoming message. Since this is only called in
    * the context where a TSIG is expected to be present, it is an error if one
    * is not present.
-   * 
+   *
    * @param m The message
    * @param b The message in unparsed form. This is necessary since TSIG signs
    *        the message in wire format, and we can't recreate the exact wire
@@ -363,7 +386,7 @@ public class TSIG {
 
   /**
    * Returns the maximum length of a TSIG record generated by this key.
-   * 
+   *
    * @see TSIGRecord
    */
   public int recordLength() {
@@ -396,7 +419,7 @@ public class TSIG {
      * Verifies a TSIG record on an incoming message that is part of a multiple
      * message response. TSIG records must be present on the first and last
      * messages, and at least every 100 records in between.
-     * 
+     *
      * @param m The message
      * @param b The message in unparsed form
      * @return The result of the verification (as an Rcode)
@@ -420,18 +443,22 @@ public class TSIG {
         return result;
       }
 
-      if (tsig != null)
+      if (tsig != null) {
         m.getHeader().decCount(Section.ADDITIONAL);
+      }
       byte[] header = m.getHeader().toWire();
-      if (tsig != null)
+      if (tsig != null) {
         m.getHeader().incCount(Section.ADDITIONAL);
+      }
       verifier.update(header);
 
       int len;
-      if (tsig == null)
+      if (tsig == null) {
         len = b.length - header.length;
-      else
+      }
+      else {
         len = m.tsigstart - header.length;
+      }
       verifier.update(b, header.length, len);
 
       if (tsig != null) {
@@ -440,15 +467,18 @@ public class TSIG {
       }
       else {
         boolean required = (nresponses - lastsigned >= 100);
-        if (required)
+        if (required) {
           return Rcode.FORMERR;
-        else
+        }
+        else {
           return Rcode.NOERROR;
+        }
       }
 
       if (!tsig.getName().equals(key.name) || !tsig.getAlgorithm().equals(key.alg)) {
-        if (Options.check("verbose"))
+        if (Options.check("verbose")) {
           System.err.println("BADKEY failure");
+        }
         return Rcode.BADKEY;
       }
 
@@ -462,8 +492,9 @@ public class TSIG {
       verifier.update(out.toByteArray());
 
       if (verifier.verify(tsig.getSignature()) == false) {
-        if (Options.check("verbose"))
+        if (Options.check("verbose")) {
           System.err.println("BADSIG failure");
+        }
         return Rcode.BADSIG;
       }
 

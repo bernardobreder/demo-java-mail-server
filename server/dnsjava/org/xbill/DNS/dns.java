@@ -2,8 +2,10 @@
 
 package org.xbill.DNS;
 
-import java.util.*;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A high level API for mapping queries to DNS Records.
@@ -27,7 +29,7 @@ public final class dns {
   /**
    * Converts an InetAddress into the corresponding domain name (127.0.0.1 ->
    * 1.0.0.127.IN-ADDR.ARPA.)
-   * 
+   *
    * @return A String containing the domain name.
    */
   public static String inaddrString(InetAddress addr) {
@@ -37,7 +39,7 @@ public final class dns {
   /**
    * Converts an String containing an IP address in dotted quad form into the
    * corresponding domain name. ex. 127.0.0.1 -> 1.0.0.127.IN-ADDR.ARPA.
-   * 
+   *
    * @return A String containing the domain name.
    */
   public static String inaddrString(String s) {
@@ -69,7 +71,7 @@ public final class dns {
    * beginning the lookup process. If this is not set, FindServer will be used.
    * Unlike the Lookup setSearchPath function, this will silently ignore invalid
    * names.
-   * 
+   *
    * @see FindServer
    */
   public static synchronized void setSearchPath(String[] domains) {
@@ -111,7 +113,7 @@ public final class dns {
   /**
    * Finds records with the given name, type, and class with a certain
    * credibility
-   * 
+   *
    * @param namestr The name of the desired records
    * @param type The type of the desired records
    * @param dclass The class of the desired records
@@ -132,7 +134,7 @@ public final class dns {
 
   /**
    * Finds credible records with the given name, type, and class
-   * 
+   *
    * @param namestr The name of the desired records
    * @param type The type of the desired records
    * @param dclass The class of the desired records
@@ -144,7 +146,7 @@ public final class dns {
 
   /**
    * Finds any records with the given name, type, and class
-   * 
+   *
    * @param namestr The name of the desired records
    * @param type The type of the desired records
    * @param dclass The class of the desired records
@@ -156,7 +158,7 @@ public final class dns {
 
   /**
    * Finds credible records with the given name and type in class IN
-   * 
+   *
    * @param namestr The name of the desired records
    * @param type The type of the desired records
    * @return The matching records, or null if none are found
@@ -167,7 +169,7 @@ public final class dns {
 
   /**
    * Finds any records with the given name and type in class IN
-   * 
+   *
    * @param namestr The name of the desired records
    * @param type The type of the desired records
    * @return The matching records, or null if none are found
@@ -179,7 +181,7 @@ public final class dns {
   /**
    * Finds credible records for the given dotted quad address and type in class
    * IN
-   * 
+   *
    * @param addr The dotted quad address of the desired records
    * @param type The type of the desired records
    * @return The matching records, or null if none are found
@@ -191,7 +193,7 @@ public final class dns {
 
   /**
    * Finds any records for the given dotted quad address and type in class IN
-   * 
+   *
    * @param addr The dotted quad address of the desired records
    * @param type The type of the desired records
    * @return The matching records, or null if none are found

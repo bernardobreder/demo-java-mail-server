@@ -2,13 +2,12 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+import java.util.Random;
 
 /**
  * A DNS message header
- * 
+ *
  * @see Message
  *
  * @author Brian Wellington
@@ -29,7 +28,7 @@ public class Header {
 
   /**
    * Create a new empty header.
-   * 
+   *
    * @param id The message id
    */
   public Header(int id) {
@@ -51,13 +50,14 @@ public class Header {
   Header(DNSInput in) throws IOException {
     this(in.readU16());
     readFlags(in);
-    for (int i = 0; i < counts.length; i++)
+    for (int i = 0; i < counts.length; i++) {
       counts[i] = in.readU16();
+    }
   }
 
   /**
    * Creates a new Header from its DNS wire format representation
-   * 
+   *
    * @param b A byte array containing the DNS Header.
    */
   public Header(byte[] b) throws IOException {
@@ -67,8 +67,9 @@ public class Header {
   void toWire(DNSOutput out) {
     out.writeU16(getID());
     writeFlags(out);
-    for (int i = 0; i < counts.length; i++)
+    for (int i = 0; i < counts.length; i++) {
       out.writeU16(counts[i]);
+    }
   }
 
   public byte[] toWire() {
@@ -79,7 +80,7 @@ public class Header {
 
   /**
    * Sets a flag to the supplied value
-   * 
+   *
    * @see Flags
    */
   public void setFlag(int bit) {
@@ -88,7 +89,7 @@ public class Header {
 
   /**
    * Sets a flag to the supplied value
-   * 
+   *
    * @see Flags
    */
   public void unsetFlag(int bit) {
@@ -97,7 +98,7 @@ public class Header {
 
   /**
    * Retrieves a flag
-   * 
+   *
    * @see Flags
    */
   public boolean getFlag(int bit) {
@@ -119,8 +120,9 @@ public class Header {
    * Sets the message ID
    */
   public void setID(int id) {
-    if (opcode > 0xFF)
+    if (opcode > 0xFF) {
       throw new IllegalArgumentException("DNS message ID " + id + "is out of range");
+    }
     this.id = id;
   }
 
@@ -133,18 +135,19 @@ public class Header {
 
   /**
    * Sets the message's rcode
-   * 
+   *
    * @see Rcode
    */
   public void setRcode(int value) {
-    if (opcode > 0xF)
+    if (opcode > 0xF) {
       throw new IllegalArgumentException("DNS Rcode " + value + "is out of range");
+    }
     rcode = value;
   }
 
   /**
    * Retrieves the mesasge's rcode
-   * 
+   *
    * @see Rcode
    */
   public int getRcode() {
@@ -153,18 +156,19 @@ public class Header {
 
   /**
    * Sets the message's opcode
-   * 
+   *
    * @see Opcode
    */
   public void setOpcode(int value) {
-    if (opcode > 0xF)
+    if (opcode > 0xF) {
       throw new IllegalArgumentException("DNS Opcode " + value + "is out of range");
+    }
     opcode = value;
   }
 
   /**
    * Retrieves the mesasge's opcode
-   * 
+   *
    * @see Opcode
    */
   public int getOpcode() {
@@ -172,8 +176,9 @@ public class Header {
   }
 
   void setCount(int field, int value) {
-    if (value > 0xFF)
+    if (value > 0xFF) {
       throw new IllegalArgumentException("DNS section count " + value + "is out of range");
+    }
     counts[field] = value;
   }
 
@@ -187,7 +192,7 @@ public class Header {
 
   /**
    * Retrieves the record count for the given section
-   * 
+   *
    * @see Section
    */
   public int getCount(int field) {
@@ -197,8 +202,9 @@ public class Header {
   private void writeFlags(DNSOutput out) {
     int flagsval = 0;
     for (int i = 0; i < 16; i++) {
-      if (flags[i])
+      if (flags[i]) {
         flagsval |= (1 << (15 - i));
+      }
     }
     flagsval |= (opcode << 11);
     flagsval |= (rcode);
@@ -218,11 +224,12 @@ public class Header {
   public String printFlags() {
     StringBuffer sb = new StringBuffer();
 
-    for (int i = 0; i < flags.length; i++)
+    for (int i = 0; i < flags.length; i++) {
       if (Flags.isFlag(i) && getFlag(i)) {
         sb.append(Flags.string(i));
         sb.append(" ");
       }
+    }
     return sb.toString();
   }
 
@@ -237,17 +244,20 @@ public class Header {
 
     sb.append(";; flags: " + printFlags());
     sb.append("; ");
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++) {
       sb.append(Section.string(i) + ": " + getCount(i) + " ");
+    }
     return sb.toString();
   }
 
   /** Converts the header into a String */
+  @Override
   public String toString() {
     return toStringWithRcode(getRcode());
   }
 
   /* Creates a new Header identical to the current one */
+  @Override
   public Object clone() {
     Header h = new Header(id);
     System.arraycopy(counts, 0, h.counts, 0, counts.length);

@@ -2,9 +2,9 @@
 
 package org.xbill.DNS;
 
-import java.net.*;
-import java.io.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * Address Record - maps a domain name to an Internet address
@@ -19,6 +19,7 @@ public class ARecord extends Record {
   ARecord() {
   }
 
+  @Override
   Record getObject() {
     return new ARecord();
   }
@@ -45,7 +46,7 @@ public class ARecord extends Record {
 
   /**
    * Creates an A Record from the given data
-   * 
+   *
    * @param address The address that the name refers to
    */
   public ARecord(Name name, int dclass, long ttl, InetAddress address) {
@@ -53,10 +54,12 @@ public class ARecord extends Record {
     addr = fromArray(address.getAddress());
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     addr = fromArray(in.readByteArray(4));
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     String s = st.getString();
     try {
@@ -75,12 +78,14 @@ public class ARecord extends Record {
     }
 
     int[] array = Address.toArray(s);
-    if (array == null)
+    if (array == null) {
       throw st.exception("invalid dotted quad");
+    }
     addr = fromBytes((byte) array[0], (byte) array[1], (byte) array[2], (byte) array[3]);
   }
 
   /** Converts rdata to a String */
+  @Override
   String rrToString() {
     return (toDottedQuad(addr));
   }
@@ -96,8 +101,9 @@ public class ARecord extends Record {
     }
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
-    out.writeU32(((long) addr) & 0xFFFFFFFFL);
+    out.writeU32((addr) & 0xFFFFFFFFL);
   }
 
 }

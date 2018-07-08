@@ -5,7 +5,7 @@ package org.xbill.DNS;
 /**
  * Constants relating to the credibility of cached data, which is based on the
  * data's source. The constants NORMAL and ANY should be used by most callers.
- * 
+ *
  * @see Cache
  * @see Section
  *

@@ -2,8 +2,6 @@
 
 package org.xbill.DNS;
 
-import org.xbill.DNS.utils.*;
-
 /**
  * Constants and functions relating to DNS classes. This is called DClass to
  * avoid confusion with Class.
@@ -40,6 +38,7 @@ public final class DClass {
       setPrefix("CLASS");
     }
 
+    @Override
     public void check(int val) {
       DClass.check(val);
     }
@@ -61,13 +60,14 @@ public final class DClass {
   }
 
   static void check(int i) {
-    if (i < 0 || i > 0xFFFF)
+    if (i < 0 || i > 0xFFFF) {
       throw new InvalidDClassException(i);
+    }
   }
 
   /**
    * Converts a numeric DClass into a String
-   * 
+   *
    * @return The canonical string representation of the class
    * @throws InvalidDClassException The class is out of range.
    */
@@ -77,7 +77,7 @@ public final class DClass {
 
   /**
    * Converts a String representation of a DClass into its numeric value
-   * 
+   *
    * @return The class code, or -1 on error.
    */
   public static int value(String s) {

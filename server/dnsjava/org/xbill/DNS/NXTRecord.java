@@ -2,9 +2,8 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+import java.util.BitSet;
 
 /**
  * Next name - this record contains the following name in an ordered list of
@@ -23,13 +22,14 @@ public class NXTRecord extends Record {
   NXTRecord() {
   }
 
+  @Override
   Record getObject() {
     return new NXTRecord();
   }
 
   /**
    * Creates an NXT Record from the given data
-   * 
+   *
    * @param next The following name in an ordered list of the zone
    * @param bitmap The set of type for which records exist at this name
    */
@@ -39,43 +39,51 @@ public class NXTRecord extends Record {
     this.bitmap = bitmap;
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
     next = new Name(in);
     bitmap = new BitSet();
     int bitmapLength = in.remaining();
     for (int i = 0; i < bitmapLength; i++) {
       int t = in.readU8();
-      for (int j = 0; j < 8; j++)
-        if ((t & (1 << (7 - j))) != 0)
+      for (int j = 0; j < 8; j++) {
+        if ((t & (1 << (7 - j))) != 0) {
           bitmap.set(i * 8 + j);
+        }
+      }
     }
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     next = st.getName(origin);
     bitmap = new BitSet();
     while (true) {
       Tokenizer.Token t = st.get();
-      if (!t.isString())
+      if (!t.isString()) {
         break;
+      }
       int type = Type.value(t.value, true);
-      if (type <= 0 || type > 128)
+      if (type <= 0 || type > 128) {
         throw st.exception("Invalid type: " + t.value);
+      }
       bitmap.set(type);
     }
     st.unget();
   }
 
   /** Converts rdata to a String */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     sb.append(next);
     int length = bitmap.length();
-    for (short i = 0; i < length; i++)
+    for (short i = 0; i < length; i++) {
       if (bitmap.get(i)) {
         sb.append(" ");
         sb.append(Type.string(i));
       }
+    }
     return sb.toString();
   }
 
@@ -89,6 +97,7 @@ public class NXTRecord extends Record {
     return bitmap;
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
     next.toWire(out, null, canonical);
     int length = bitmap.length();

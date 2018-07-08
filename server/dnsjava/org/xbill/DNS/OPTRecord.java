@@ -2,9 +2,13 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
-import org.xbill.DNS.utils.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import org.xbill.DNS.utils.base16;
 
 /**
  * Options - describes Extended DNS (EDNS) properties of a Message. No specific
@@ -35,6 +39,7 @@ public class OPTRecord extends Record {
       this.data = data;
     }
 
+    @Override
     public String toString() {
       return "{" + code + " <" + base16.toString(data) + ">}";
     }
@@ -46,6 +51,7 @@ public class OPTRecord extends Record {
   OPTRecord() {
   }
 
+  @Override
   Record getObject() {
     return new OPTRecord();
   }
@@ -53,7 +59,7 @@ public class OPTRecord extends Record {
   /**
    * Creates an OPT Record. This is normally called by SimpleResolver, but can
    * also be called by a server.
-   * 
+   *
    * @param payloadSize The size of a packet that can be reassembled on the
    *        sending host.
    * @param xrcode The value of the extended rcode field. This is the upper 16
@@ -80,7 +86,7 @@ public class OPTRecord extends Record {
   /**
    * Creates an OPT Record with no data. This is normally called by
    * SimpleResolver, but can also be called by a server.
-   * 
+   *
    * @param payloadSize The size of a packet that can be reassembled on the
    *        sending host.
    * @param xrcode The value of the extended rcode field. This is the upper 16
@@ -102,9 +108,11 @@ public class OPTRecord extends Record {
     this(payloadSize, xrcode, version, 0, null);
   }
 
+  @Override
   void rrFromWire(DNSInput in) throws IOException {
-    if (in.remaining() > 0)
+    if (in.remaining() > 0) {
       options = new ArrayList();
+    }
     while (in.remaining() > 0) {
       int code = in.readU16();
       int len = in.readU16();
@@ -113,11 +121,13 @@ public class OPTRecord extends Record {
     }
   }
 
+  @Override
   void rdataFromString(Tokenizer st, Name origin) throws IOException {
     throw st.exception("no text format defined for OPT");
   }
 
   /** Converts rdata to a String */
+  @Override
   String rrToString() {
     StringBuffer sb = new StringBuffer();
     if (options != null) {
@@ -142,7 +152,7 @@ public class OPTRecord extends Record {
 
   /**
    * Returns the extended Rcode
-   * 
+   *
    * @see Rcode
    */
   public int getExtendedRcode() {
@@ -159,9 +169,11 @@ public class OPTRecord extends Record {
     return (int) (ttl & 0xFFFF);
   }
 
+  @Override
   void rrToWire(DNSOutput out, Compression c, boolean canonical) {
-    if (options == null)
+    if (options == null) {
       return;
+    }
     Iterator it = options.iterator();
     while (it.hasNext()) {
       Option opt = (Option) it.next();
@@ -175,8 +187,9 @@ public class OPTRecord extends Record {
    * Gets all options in the OPTRecord. This returns a list of Options.
    */
   public List getOptions() {
-    if (options == null)
+    if (options == null) {
       return emptyList;
+    }
     return Collections.unmodifiableList(options);
   }
 
@@ -185,19 +198,22 @@ public class OPTRecord extends Record {
    * of byte arrays.
    */
   public List getOptions(int code) {
-    if (options == null)
+    if (options == null) {
       return emptyList;
+    }
     List list = null;
     for (Iterator it = options.iterator(); it.hasNext();) {
       Option opt = (Option) it.next();
       if (opt.code == code) {
-        if (list == null)
+        if (list == null) {
           list = new ArrayList();
+        }
         list.add(opt.data);
       }
     }
-    if (list == null)
+    if (list == null) {
       list = emptyList;
+    }
     return list;
   }
 

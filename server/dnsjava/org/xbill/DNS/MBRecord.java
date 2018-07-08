@@ -2,9 +2,6 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import org.xbill.DNS.utils.*;
-
 /**
  * Mailbox Record - specifies a host containing a mailbox.
  *
@@ -16,13 +13,14 @@ public class MBRecord extends SingleNameBase {
   MBRecord() {
   }
 
+  @Override
   Record getObject() {
     return new MBRecord();
   }
 
   /**
    * Creates a new MB Record with the given data
-   * 
+   *
    * @param mailbox The host containing the mailbox for the domain.
    */
   public MBRecord(Name name, int dclass, long ttl, Name mailbox) {
@@ -34,6 +32,7 @@ public class MBRecord extends SingleNameBase {
     return getSingleName();
   }
 
+  @Override
   public Name getAdditionalName() {
     return getSingleName();
   }

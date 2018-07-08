@@ -2,8 +2,10 @@
 
 package org.xbill.DNS;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Inet6Address - implementation of IPv6 address
@@ -19,8 +21,9 @@ public class Inet6Address {
    * Creates an Inet6Address from 128 bits of data
    */
   public Inet6Address(byte[] data) throws IOException {
-    if (data.length != 16)
+    if (data.length != 16) {
       throw new IOException("An Inet6Address is 128 bits");
+    }
     this.data = data;
   }
 
@@ -28,8 +31,9 @@ public class Inet6Address {
    * Creates an Inet6Address from fewer than 128 bits of data
    */
   public Inet6Address(int bits, byte[] data) throws IOException {
-    if (data.length > 16)
+    if (data.length > 16) {
       throw new IOException("An Inet6Address is only 128 bits");
+    }
     int bytes = (bits + 7) / 8;
     this.data = new byte[16];
     System.arraycopy(data, 0, this.data, 16 - bytes, bytes);
@@ -46,8 +50,9 @@ public class Inet6Address {
     data = new byte[16];
 
     StringTokenizer st = new StringTokenizer(s, ":", true);
-    while (st.hasMoreTokens())
+    while (st.hasMoreTokens()) {
       l.add(st.nextToken());
+    }
     l.add("");
     l.add("");
 
@@ -57,11 +62,13 @@ public class Inet6Address {
     while (i < tokens.length - 2) {
       if (tokens[i].equals(":")) {
         if (tokens[i + 1].equals(":")) {
-          if (tokens[i + 2].equals(":") || range >= 0)
+          if (tokens[i + 2].equals(":") || range >= 0) {
             throw new TextParseException("Invalid IPv6 address");
+          }
           range = j;
-          if (tokens[i + 2].equals(""))
+          if (tokens[i + 2].equals("")) {
             break;
+          }
           i++;
         }
         i++;
@@ -69,17 +76,20 @@ public class Inet6Address {
 
       if (tokens[i].indexOf('.') >= 0) {
         parsev4 = true;
-        if (!tokens[i + 1].equals(""))
+        if (!tokens[i + 1].equals("")) {
           throw new TextParseException("Invalid IPv6 address");
+        }
         break;
       }
 
       try {
         int x = Integer.parseInt(tokens[i], 16);
-        if (x > 0xFFFF)
+        if (x > 0xFFFF) {
           throw new TextParseException("Invalid IPv6 address");
-        if (j > 16 - 2)
+        }
+        if (j > 16 - 2) {
           throw new TextParseException("Invalid IPv6 address");
+        }
         data[j++] = (byte) (x >>> 8);
         data[j++] = (byte) (x & 0xFF);
       }
@@ -91,33 +101,40 @@ public class Inet6Address {
 
     if (parsev4) {
       int[] v4addr = Address.toArray(tokens[i]);
-      if (v4addr == null)
+      if (v4addr == null) {
         throw new TextParseException("Invalid IPv6 address");
-      for (int k = 0; k < 4; k++)
+      }
+      for (int k = 0; k < 4; k++) {
         data[j++] = (byte) v4addr[k];
+      }
     }
     if (range >= 0) {
       int left = 16 - j;
       for (int k = 15; k >= 0; k--) {
-        if (k >= range + left)
+        if (k >= range + left) {
           data[k] = data[k - left];
-        else if (k >= range)
+        }
+        else if (k >= range) {
           data[k] = 0;
+        }
       }
     }
-    else if (j < 16)
+    else if (j < 16) {
       throw new TextParseException("Invalid IPv6 address");
+    }
   }
 
   public byte[] toBytes() {
     return data;
   }
 
+  @Override
   public String toString() {
     int[] labels = new int[8];
     StringBuffer sb = new StringBuffer();
-    for (int i = 0, j = 0; i < 8; i++)
+    for (int i = 0, j = 0; i < 8; i++) {
       labels[i] = ((data[2 * i] & 0xFF) << 8) + (data[2 * i + 1] & 0xFF);
+    }
     int start = -1, length = -1, tstart = -1, tlength = -1;
     boolean inzero = false;
     for (int i = 0, j = 0; i < 8; i++) {
@@ -129,8 +146,9 @@ public class Inet6Address {
         }
       }
       else {
-        if (labels[i] == 0)
+        if (labels[i] == 0) {
           tlength++;
+        }
         else {
           inzero = false;
           if (tlength > length) {
@@ -149,8 +167,9 @@ public class Inet6Address {
     if (labels[0] == 0 && labels[1] == 0 && labels[2] == 0 && labels[3] == 0 && labels[4] == 0 && labels[6] != 0
       && (labels[5] == 0 || labels[5] == 0xFFFF)) {
       sb.append("::");
-      if (labels[5] == 0xFFFF)
+      if (labels[5] == 0xFFFF) {
         sb.append("FFFF:");
+      }
       sb.append(labels[6] >> 8);
       sb.append(".");
       sb.append(labels[6] & 0xFF);
@@ -162,8 +181,9 @@ public class Inet6Address {
     else if (start == -1) {
       for (int i = 0; i < 8; i++) {
         sb.append(Integer.toHexString(labels[i]).toUpperCase());
-        if (i != 7)
+        if (i != 7) {
           sb.append(":");
+        }
       }
     }
     else {
@@ -171,13 +191,15 @@ public class Inet6Address {
         sb.append(Integer.toHexString(labels[i]).toUpperCase());
         sb.append(":");
       }
-      if (start == 0)
+      if (start == 0) {
         sb.append(":");
+      }
       sb.append(":");
       for (int i = start + length + 1; i < 8; i++) {
         sb.append(Integer.toHexString(labels[i]).toUpperCase());
-        if (i != 7)
+        if (i != 7) {
           sb.append(":");
+        }
       }
     }
     return sb.toString();

@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -37,32 +37,32 @@ import javax.mail.internet.MimeMultipart;
 
 /**
  * An HTML multipart email.
- * 
+ *
  * <p>
  * This class is used to send HTML formatted email. A text message can also be
  * set for HTML unaware email clients, such as text-based email clients.
- * 
+ *
  * <p>
  * This class also inherits from {@link MultiPartEmail}, so it is easy to add
  * attachments to the email.
- * 
+ *
  * <p>
  * To send an email in HTML, one should create a <code>HtmlEmail</code>, then
  * use the {@link #setFrom(String)}, {@link #addTo(String)} etc. methods. The
  * HTML content can be set with the {@link #setHtmlMsg(String)} method. The
  * alternative text content can be set with {@link #setTextMsg(String)}.
- * 
+ *
  * <p>
  * Either the text or HTML can be omitted, in which case the "main" part of the
  * multipart becomes whichever is supplied rather than a
  * <code>multipart/alternative</code>.
- * 
+ *
  * <h3>Embedding Images and Media</h3>
- * 
+ *
  * <p>
  * It is also possible to embed URLs, files, or arbitrary
  * <code>DataSource</code>s directly into the body of the mail:
- * 
+ *
  * <pre>
  * <code>
  * HtmlEmail he = new HtmlEmail();
@@ -76,9 +76,9 @@ import javax.mail.internet.MimeMultipart;
  * he.setHtmlMsg(msg.toString());
  * // code to set the other email fields (not shown)
  * </pre>
- * 
+ *
  * </code>
- * 
+ *
  * <p>
  * Embedded entities are tracked by their name, which for <code>File</code>s is
  * the filename itself and for <code>URL</code>s is the canonical path. It is an
@@ -86,7 +86,7 @@ import javax.mail.internet.MimeMultipart;
  * attempt to validate that for <code>File</code>s and <code>URL</code>s. When
  * embedding a <code>DataSource</code>, the code uses the <code>equals()</code>
  * method defined on the <code>DataSource</code>s to make the determination.
- * 
+ *
  * @since 1.0
  * @author <a href="mailto:unknown">Regis Koenig</a>
  * @author <a href="mailto:sean@informage.net">Sean Legassick</a>
@@ -114,6 +114,7 @@ public class HtmlEmail extends MultiPartEmail {
    * @deprecated As of commons-email 1.1, no longer used. Inline embedded
    *             objects are now stored in {@link #inlineEmbeds}.
    */
+  @Deprecated
   protected List inlineImages;
 
   /**
@@ -124,7 +125,7 @@ public class HtmlEmail extends MultiPartEmail {
 
   /**
    * Set the text content.
-   * 
+   *
    * @param aText A String.
    * @return An HtmlEmail.
    * @throws EmailException see javax.mail.internet.MimeBodyPart for definitions
@@ -141,7 +142,7 @@ public class HtmlEmail extends MultiPartEmail {
 
   /**
    * Set the HTML content.
-   * 
+   *
    * @param aHtml A String.
    * @return An HtmlEmail.
    * @throws EmailException see javax.mail.internet.MimeBodyPart for definitions
@@ -158,19 +159,20 @@ public class HtmlEmail extends MultiPartEmail {
 
   /**
    * Set the message.
-   * 
+   *
    * <p>
    * This method overrides {@link MultiPartEmail#setMsg(String)} in order to
    * send an HTML message instead of a plain text message in the mail body. The
    * message is formatted in HTML for the HTML part of the message; it is left
    * as is in the alternate text part.
-   * 
+   *
    * @param msg the message text to use
    * @return this <code>HtmlEmail</code>
    * @throws EmailException if msg is null or empty; see
    *         javax.mail.internet.MimeBodyPart for definitions
    * @since 1.0
    */
+  @Override
   public Email setMsg(String msg) throws EmailException {
     if (EmailUtils.isEmpty(msg)) {
       throw new EmailException("Invalid message supplied");
@@ -190,14 +192,14 @@ public class HtmlEmail extends MultiPartEmail {
   /**
    * Attempts to parse the specified <code>String</code> as a URL that will then
    * be embedded in the message.
-   * 
+   *
    * @param urlString String representation of the URL.
    * @param name The name that will be set in the filename header field.
    * @return A String with the Content-ID of the URL.
    * @throws EmailException when URL supplied is invalid or if <code> is null or
    *         empty; also see {@link javax.mail.internet.MimeBodyPart} for
    *         definitions
-   * 
+   *
    * @see #embed(URL, String)
    * @since 1.1
    */
@@ -212,7 +214,7 @@ public class HtmlEmail extends MultiPartEmail {
 
   /**
    * Embeds an URL in the HTML.
-   * 
+   *
    * <p>
    * This method embeds a file located by an URL into the mail body. It allows,
    * for instance, to add inline images to the email. Inline files may be
@@ -220,21 +222,21 @@ public class HtmlEmail extends MultiPartEmail {
    * Content-ID returned by the embed function. It is an error to bind the same
    * name to more than one URL; if the same URL is embedded multiple times, the
    * same Content-ID is guaranteed to be returned.
-   * 
+   *
    * <p>
    * While functionally the same as passing <code>URLDataSource</code> to
    * {@link #embed(DataSource, String, String)}, this method attempts to
    * validate the URL before embedding it in the message and will throw
    * <code>EmailException</code> if the validation fails. In this case, the
    * <code>HtmlEmail</code> object will not be changed.
-   * 
+   *
    * <p>
    * NOTE: Clients should take care to ensure that different URLs are bound to
    * different names. This implementation tries to detect this and throw
    * <code>EmailException</code>. However, it is not guaranteed to catch all
    * cases, especially when the URL refers to a remote HTTP host that may be
    * part of a virtual host cluster.
-   * 
+   *
    * @param url The URL of the file.
    * @param name The name that will be set in the filename header field.
    * @return A String with the Content-ID of the file.
@@ -291,12 +293,12 @@ public class HtmlEmail extends MultiPartEmail {
   /**
    * Embeds a file in the HTML. This implementation delegates to
    * {@link #embed(File, String)}.
-   * 
+   *
    * @param file The <code>File</code> object to embed
    * @return A String with the Content-ID of the file.
    * @throws EmailException when the supplied <code>File</code> cannot be used;
    *         also see {@link javax.mail.internet.MimeBodyPart} for definitions
-   * 
+   *
    * @see #embed(File, String)
    * @since 1.1
    */
@@ -307,7 +309,7 @@ public class HtmlEmail extends MultiPartEmail {
 
   /**
    * Embeds a file in the HTML.
-   * 
+   *
    * <p>
    * This method embeds a file located by an URL into the mail body. It allows,
    * for instance, to add inline images to the email. Inline files may be
@@ -315,14 +317,14 @@ public class HtmlEmail extends MultiPartEmail {
    * Content-ID returned by the embed function. Files are bound to their names,
    * which is the value returned by {@link java.io.File#getName()}. If the same
    * file is embedded multiple times, the same CID is guaranteed to be returned.
-   * 
+   *
    * <p>
    * While functionally the same as passing <code>FileDataSource</code> to
    * {@link #embed(DataSource, String, String)}, this method attempts to
    * validate the file before embedding it in the message and will throw
    * <code>EmailException</code> if the validation fails. In this case, the
    * <code>HtmlEmail</code> object will not be changed.
-   * 
+   *
    * @param file The <code>File</code> to embed
    * @param cid the Content-ID to use for the embedded <code>File</code>
    * @return A String with the Content-ID of the file.
@@ -386,7 +388,7 @@ public class HtmlEmail extends MultiPartEmail {
   /**
    * Embeds the specified <code>DataSource</code> in the HTML using a randomly
    * generated Content-ID. Returns the generated Content-ID string.
-   * 
+   *
    * @param dataSource the <code>DataSource</code> to embed
    * @param name the name that will be set in the filename header field
    * @return the generated Content-ID for this <code>DataSource</code>
@@ -418,7 +420,7 @@ public class HtmlEmail extends MultiPartEmail {
   /**
    * Embeds the specified <code>DataSource</code> in the HTML using the
    * specified Content-ID. Returns the specified Content-ID string.
-   * 
+   *
    * @param dataSource the <code>DataSource</code> to embed
    * @param name the name that will be set in the filename header field
    * @param cid the Content-ID to use for this <code>DataSource</code>
@@ -452,10 +454,11 @@ public class HtmlEmail extends MultiPartEmail {
 
   /**
    * Does the work of actually building the email.
-   * 
+   *
    * @exception EmailException if there was an error.
    * @since 1.0
    */
+  @Override
   public void buildMimeMessage() throws EmailException {
     try {
       build();
@@ -545,7 +548,7 @@ public class HtmlEmail extends MultiPartEmail {
   /**
    * Private bean class that encapsulates data about URL contents that are
    * embedded in the final email.
-   * 
+   *
    * @since 1.1
    */
   private static class InlineImage {
@@ -559,7 +562,7 @@ public class HtmlEmail extends MultiPartEmail {
     /**
      * Creates an InlineImage object to represent the specified content ID and
      * <code>MimeBodyPart</code>.
-     * 
+     *
      * @param cid the generated content ID
      * @param dataSource the <code>DataSource</code> that represents the content
      * @param mbp the <code>MimeBodyPart</code> that contains the encoded data
@@ -572,7 +575,7 @@ public class HtmlEmail extends MultiPartEmail {
 
     /**
      * Returns the unique content ID of this InlineImage.
-     * 
+     *
      * @return the unique content ID of this InlineImage
      */
     public String getCid() {
@@ -581,7 +584,7 @@ public class HtmlEmail extends MultiPartEmail {
 
     /**
      * Returns the <code>DataSource</code> that represents the encoded content.
-     * 
+     *
      * @return the <code>DataSource</code> representing the encoded content
      */
     public DataSource getDataSource() {
@@ -591,7 +594,7 @@ public class HtmlEmail extends MultiPartEmail {
     /**
      * Returns the <code>MimeBodyPart</code> that contains the encoded
      * InlineImage data.
-     * 
+     *
      * @return the <code>MimeBodyPart</code> containing the encoded InlineImage
      *         data
      */
@@ -603,10 +606,11 @@ public class HtmlEmail extends MultiPartEmail {
     // is stored as a entry in a Map.
     /**
      * {@inheritDoc}
-     * 
+     *
      * @return true if the other object is also an InlineImage with the same
      *         cid.
      */
+    @Override
     public boolean equals(Object obj) {
       if (this == obj) {
         return true;
@@ -622,9 +626,10 @@ public class HtmlEmail extends MultiPartEmail {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @return the cid hashCode.
      */
+    @Override
     public int hashCode() {
       return cid.hashCode();
     }
