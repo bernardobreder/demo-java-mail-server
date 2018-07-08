@@ -39,8 +39,7 @@ public class DSRecord extends Record {
    * @param digestid The digest id code.
    * @param digest A hash of the original key.
    */
-  public DSRecord(Name name, int dclass, long ttl, int footprint, int alg,
-    int digestid, byte[] digest) {
+  public DSRecord(Name name, int dclass, long ttl, int footprint, int alg, int digestid, byte[] digest) {
     super(name, Type.DS, dclass, ttl);
     this.footprint = checkU16("footprint", footprint);
     this.alg = checkU8("alg", alg);

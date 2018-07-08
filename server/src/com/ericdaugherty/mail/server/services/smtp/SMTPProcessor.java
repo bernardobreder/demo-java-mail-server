@@ -63,8 +63,7 @@ public class SMTPProcessor implements ConnectionProcessor {
   private static Log log = LogFactory.getLog(SMTPMessage.class.getName());
 
   /** The ConfigurationManager */
-  private static ConfigurationManager configurationManager =
-    ConfigurationManager.getInstance();
+  private static ConfigurationManager configurationManager = ConfigurationManager.getInstance();
 
   /** Indicates if this thread should continue to run or shut down */
   private boolean running = true;
@@ -128,8 +127,7 @@ public class SMTPProcessor implements ConnectionProcessor {
         clientIp = remoteAddress.getHostAddress();
 
         if (log.isInfoEnabled()) {
-          log.info(remoteAddress.getHostName() + "(" + clientIp
-            + ") socket connected via SMTP.");
+          log.info(remoteAddress.getHostName() + "(" + clientIp + ") socket connected via SMTP.");
         }
 
         write(WELCOME_MESSAGE);
@@ -233,11 +231,9 @@ public class SMTPProcessor implements ConnectionProcessor {
       //Not only check the command, but the full string, since the prepare command
       //method only returns the text before the first string, and this is a two
       //word command.
-      else if (command.equals(COMMAND_MAIL_FROM) && inputString.toUpperCase()
-        .startsWith("MAIL FROM:")) {
+      else if (command.equals(COMMAND_MAIL_FROM) && inputString.toUpperCase().startsWith("MAIL FROM:")) {
 
-        if (lastCommand == HELO || lastCommand == NONE || lastCommand == RSET
-          || lastCommand == EHLO) {
+        if (lastCommand == HELO || lastCommand == NONE || lastCommand == RSET || lastCommand == EHLO) {
           if (handleMailFrom(inputString)) {
             lastCommand = MAIL_FROM;
           }
@@ -249,8 +245,7 @@ public class SMTPProcessor implements ConnectionProcessor {
       //Not only check the command, but the full string, since the prepare command
       //method only returns the text before the first string, and this is a two
       //word command.
-      else if (command.equals(COMMAND_RCPT_TO) && inputString.toUpperCase()
-        .startsWith("RCPT TO:")) {
+      else if (command.equals(COMMAND_RCPT_TO) && inputString.toUpperCase().startsWith("RCPT TO:")) {
 
         if (lastCommand == MAIL_FROM || lastCommand == RCPT_TO) {
           handleRcptTo(inputString);
@@ -323,8 +318,7 @@ public class SMTPProcessor implements ConnectionProcessor {
       EmailAddress address = new EmailAddress(toAddress);
       //Check the address to see if we can deliver it.
       DeliveryService deliveryService = DeliveryService.getDeliveryService();
-      if (deliveryService.acceptAddress(address, clientIp, message
-        .getFromAddress())) {
+      if (deliveryService.acceptAddress(address, clientIp, message.getFromAddress())) {
         // Check to see if it is a local user.  If so, ask to
         // user object for the delivery addresses.
         User localUser = configurationManager.getUser(address);
@@ -345,8 +339,8 @@ public class SMTPProcessor implements ConnectionProcessor {
       }
       else {
         if (log.isInfoEnabled())
-          log.info("Invalid delivery address for incoming mail: " + toAddress
-            + " from client: " + clientIp + " / " + message.getFromAddress());
+          log.info("Invalid delivery address for incoming mail: " + toAddress + " from client: " + clientIp + " / "
+            + message.getFromAddress());
         throw new InvalidAddressException();
       }
     }
@@ -370,9 +364,8 @@ public class SMTPProcessor implements ConnectionProcessor {
     //Add a datestamp to the message to track when the message arrived.
     message.addDataLine("X-RecievedDate: " + new Date());
     //Add a line to the message to track that the message when through this server.
-    message.addDataLine("Received: by EricDaugherty's JES SMTP "
-      + configurationManager.getLocalDomains()[0] + " from client: "
-      + clientIp);
+    message.addDataLine("Received: by EricDaugherty's JES SMTP " + configurationManager.getLocalDomains()[0]
+      + " from client: " + clientIp);
 
     try {
       String inputString = in.readLine();
@@ -386,11 +379,10 @@ public class SMTPProcessor implements ConnectionProcessor {
 
         // Check message size
         if (message.getSize() > maxSize) {
-          log.warn("Message Rejected.  Message larger than max allowed size ("
-            + configurationManager.getMaximumMessageSize() + " MB)");
+          log.warn("Message Rejected.  Message larger than max allowed size (" + configurationManager
+            .getMaximumMessageSize() + " MB)");
           write(MESSAGE_MESSAGE_TOO_LARGE);
-          throw new RuntimeException(
-            "Aborting Connection.  Message size too large.");
+          throw new RuntimeException("Aborting Connection.  Message size too large.");
         }
       }
       log.debug("Data Input Complete.");
@@ -412,8 +404,7 @@ public class SMTPProcessor implements ConnectionProcessor {
     }
 
     if (log.isInfoEnabled())
-      log.info("Message " + message.getMessageLocation().getName()
-        + " accepted for delivery.");
+      log.info("Message " + message.getMessageLocation().getName() + " accepted for delivery.");
   }
 
   /**
@@ -514,24 +505,16 @@ public class SMTPProcessor implements ConnectionProcessor {
 
   //Message Constants
   //General Message
-  private static final String WELCOME_MESSAGE =
-    "220 Welcome to EricDaugherty's Java SMTP Server.";
-  private static final String MESSAGE_DISCONNECT =
-    "221 SMTP server signing off.";
+  private static final String WELCOME_MESSAGE = "220 Welcome to EricDaugherty's Java SMTP Server.";
+  private static final String MESSAGE_DISCONNECT = "221 SMTP server signing off.";
   private static final String MESSAGE_OK = "250 OK";
-  private static final String MESSAGE_COMMAND_ORDER_INVALID =
-    "503 Command not allowed here.";
-  private static final String MESSAGE_USER_NOT_LOCAL =
-    "550 User does not exist.";
+  private static final String MESSAGE_COMMAND_ORDER_INVALID = "503 Command not allowed here.";
+  private static final String MESSAGE_USER_NOT_LOCAL = "550 User does not exist.";
   private static final String MESSAGE_USER_INVALID = "451 Address is invalid.";
-  private static final String MESSAGE_SEND_DATA =
-    "354 Start mail input; end with <CRLF>.<CRLF>";
-  private static final String MESSAGE_SAVE_MESSAGE_ERROR =
-    "500 Error handling message.";
-  private static final String MESSAGE_INVALID_COMMAND =
-    "500 Command Unrecognized: ";
-  private static final String MESSAGE_MESSAGE_TOO_LARGE =
-    "552 Message size exceeds fixed maximum message size.";
+  private static final String MESSAGE_SEND_DATA = "354 Start mail input; end with <CRLF>.<CRLF>";
+  private static final String MESSAGE_SAVE_MESSAGE_ERROR = "500 Error handling message.";
+  private static final String MESSAGE_INVALID_COMMAND = "500 Command Unrecognized: ";
+  private static final String MESSAGE_MESSAGE_TOO_LARGE = "552 Message size exceeds fixed maximum message size.";
 
   //Commands
   private static final String COMMAND_HELO = "HELO";

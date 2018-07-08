@@ -27,10 +27,8 @@ public class KXRecord extends U16NameBase {
    *        are preferred.
    * @param target The host that authority is delegated to
    */
-  public KXRecord(Name name, int dclass, long ttl, int preference,
-    Name target) {
-    super(name, Type.KX, dclass, ttl, preference, "preference", target,
-      "target");
+  public KXRecord(Name name, int dclass, long ttl, int preference, Name target) {
+    super(name, Type.KX, dclass, ttl, preference, "preference", target, "target");
   }
 
   /** Returns the target of the KX record */

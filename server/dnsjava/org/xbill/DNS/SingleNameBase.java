@@ -23,8 +23,7 @@ abstract class SingleNameBase extends Record {
     super(name, type, dclass, ttl);
   }
 
-  protected SingleNameBase(Name name, int type, int dclass, long ttl,
-    Name singleName, String description) {
+  protected SingleNameBase(Name name, int type, int dclass, long ttl, Name singleName, String description) {
     super(name, type, dclass, ttl);
     this.singleName = checkName(description, singleName);
   }

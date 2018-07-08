@@ -146,9 +146,8 @@ public class Inet6Address {
       length = tlength;
     }
 
-    if (labels[0] == 0 && labels[1] == 0 && labels[2] == 0 && labels[3] == 0
-      && labels[4] == 0 && labels[6] != 0 && (labels[5] == 0
-        || labels[5] == 0xFFFF)) {
+    if (labels[0] == 0 && labels[1] == 0 && labels[2] == 0 && labels[3] == 0 && labels[4] == 0 && labels[6] != 0
+      && (labels[5] == 0 || labels[5] == 0xFFFF)) {
       sb.append("::");
       if (labels[5] == 0xFFFF)
         sb.append("FFFF:");

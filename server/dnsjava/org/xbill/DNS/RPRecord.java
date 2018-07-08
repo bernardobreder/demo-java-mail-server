@@ -31,8 +31,7 @@ public class RPRecord extends Record {
    * @param mailbox The responsible person
    * @param textDomain The address where TXT records can be found
    */
-  public RPRecord(Name name, int dclass, long ttl, Name mailbox,
-    Name textDomain) {
+  public RPRecord(Name name, int dclass, long ttl, Name mailbox, Name textDomain) {
     super(name, Type.RP, dclass, ttl);
 
     this.mailbox = checkName("mailbox", mailbox);

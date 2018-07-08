@@ -91,21 +91,17 @@ public abstract class Email {
   /** */
   public static final String MAIL_SMTP_PASSWORD = "mail.smtp.password";
   /** */
-  public static final String MAIL_TRANSPORT_PROTOCOL =
-    "mail.transport.protocol";
+  public static final String MAIL_TRANSPORT_PROTOCOL = "mail.transport.protocol";
   /**
    * @since 1.1
    */
   public static final String MAIL_TRANSPORT_TLS = "mail.smtp.starttls.enable";
   /** */
-  public static final String MAIL_SMTP_SOCKET_FACTORY_FALLBACK =
-    "mail.smtp.socketFactory.fallback";
+  public static final String MAIL_SMTP_SOCKET_FACTORY_FALLBACK = "mail.smtp.socketFactory.fallback";
   /** */
-  public static final String MAIL_SMTP_SOCKET_FACTORY_CLASS =
-    "mail.smtp.socketFactory.class";
+  public static final String MAIL_SMTP_SOCKET_FACTORY_CLASS = "mail.smtp.socketFactory.class";
   /** */
-  public static final String MAIL_SMTP_SOCKET_FACTORY_PORT =
-    "mail.smtp.socketFactory.port";
+  public static final String MAIL_SMTP_SOCKET_FACTORY_PORT = "mail.smtp.socketFactory.port";
 
   /**
    * Socket connection timeout value in milliseconds. Default is infinite
@@ -113,8 +109,7 @@ public abstract class Email {
    * 
    * @since 1.2
    */
-  public static final String MAIL_SMTP_CONNECTIONTIMEOUT =
-    "mail.smtp.connectiontimeout";
+  public static final String MAIL_SMTP_CONNECTIONTIMEOUT = "mail.smtp.connectiontimeout";
 
   /**
    * Socket I/O timeout value in milliseconds. Default is infinite timeout.
@@ -358,8 +353,7 @@ public abstract class Email {
       else {
         // use the default charset, if one exists, for messages
         // whose content-type is some form of text.
-        if (this.contentType.startsWith("text/") && EmailUtils.isNotEmpty(
-          this.charset)) {
+        if (this.contentType.startsWith("text/") && EmailUtils.isNotEmpty(this.charset)) {
           StringBuffer contentTypeBuf = new StringBuffer(this.contentType);
           contentTypeBuf.append(strMarker);
           contentTypeBuf.append(this.charset);
@@ -397,9 +391,7 @@ public abstract class Email {
    */
   public void setSmtpPort(int aPortNumber) {
     if (aPortNumber < 1) {
-      throw new IllegalArgumentException(
-        "Cannot connect to a port number that is less than 1 ( " + aPortNumber
-          + " )");
+      throw new IllegalArgumentException("Cannot connect to a port number that is less than 1 ( " + aPortNumber + " )");
     }
 
     this.smtpPort = Integer.toString(aPortNumber);
@@ -432,8 +424,7 @@ public abstract class Email {
         // only create a new mail session with an authenticator if
         // authentication is required and no user name is given
         this.authenticator = new DefaultAuthenticator(userName, password);
-        this.session = Session.getInstance(sessionProperties,
-          this.authenticator);
+        this.session = Session.getInstance(sessionProperties, this.authenticator);
       }
       else {
         // assume that the given mail session contains a working
@@ -502,8 +493,7 @@ public abstract class Email {
       if (this.ssl) {
         properties.setProperty(MAIL_PORT, sslSmtpPort);
         properties.setProperty(MAIL_SMTP_SOCKET_FACTORY_PORT, sslSmtpPort);
-        properties.setProperty(MAIL_SMTP_SOCKET_FACTORY_CLASS,
-          "javax.net.ssl.SSLSocketFactory");
+        properties.setProperty(MAIL_SMTP_SOCKET_FACTORY_CLASS, "javax.net.ssl.SSLSocketFactory");
         properties.setProperty(MAIL_SMTP_SOCKET_FACTORY_FALLBACK, "false");
       }
 
@@ -512,13 +502,11 @@ public abstract class Email {
       }
 
       if (this.socketTimeout > 0) {
-        properties.setProperty(MAIL_SMTP_TIMEOUT, Integer.toString(
-          this.socketTimeout));
+        properties.setProperty(MAIL_SMTP_TIMEOUT, Integer.toString(this.socketTimeout));
       }
 
       if (this.socketConnectionTimeout > 0) {
-        properties.setProperty(MAIL_SMTP_CONNECTIONTIMEOUT, Integer.toString(
-          this.socketConnectionTimeout));
+        properties.setProperty(MAIL_SMTP_CONNECTIONTIMEOUT, Integer.toString(this.socketConnectionTimeout));
       }
 
       // changed this (back) to getInstance due to security exceptions
@@ -538,8 +526,7 @@ public abstract class Email {
    * @throws EmailException Thrown when the supplied address, name or charset
    *         were invalid.
    */
-  private InternetAddress createInternetAddress(String email, String name,
-    String charsetName) throws EmailException {
+  private InternetAddress createInternetAddress(String email, String name, String charsetName) throws EmailException {
     InternetAddress address = null;
 
     try {
@@ -618,8 +605,7 @@ public abstract class Email {
    * @return An Email.
    * @since 1.1
    */
-  public Email setFrom(String email, String name, String charset)
-    throws EmailException {
+  public Email setFrom(String email, String name, String charset) throws EmailException {
     this.fromAddress = createInternetAddress(email, name, charset);
     return this;
   }
@@ -668,8 +654,7 @@ public abstract class Email {
    * @return An Email.
    * @since 1.1
    */
-  public Email addTo(String email, String name, String charset)
-    throws EmailException {
+  public Email addTo(String email, String name, String charset) throws EmailException {
     this.toList.add(createInternetAddress(email, name, charset));
     return this;
   }
@@ -738,8 +723,7 @@ public abstract class Email {
    * @return An Email.
    * @since 1.1
    */
-  public Email addCc(String email, String name, String charset)
-    throws EmailException {
+  public Email addCc(String email, String name, String charset) throws EmailException {
     this.ccList.add(createInternetAddress(email, name, charset));
     return this;
   }
@@ -808,8 +792,7 @@ public abstract class Email {
    * @throws EmailException Indicates an invalid email address
    * @since 1.1
    */
-  public Email addBcc(String email, String name, String charset)
-    throws EmailException {
+  public Email addBcc(String email, String name, String charset) throws EmailException {
     this.bccList.add(createInternetAddress(email, name, charset));
     return this;
   }
@@ -878,8 +861,7 @@ public abstract class Email {
    * @throws EmailException Indicates an invalid email address or charset.
    * @since 1.1
    */
-  public Email addReplyTo(String email, String name, String charset)
-    throws EmailException {
+  public Email addReplyTo(String email, String name, String charset) throws EmailException {
     this.replyList.add(createInternetAddress(email, name, charset));
     return this;
   }
@@ -1040,18 +1022,15 @@ public abstract class Email {
       }
 
       if (this.toList.size() > 0) {
-        this.message.setRecipients(Message.RecipientType.TO, this
-          .toInternetAddressArray(this.toList));
+        this.message.setRecipients(Message.RecipientType.TO, this.toInternetAddressArray(this.toList));
       }
 
       if (this.ccList.size() > 0) {
-        this.message.setRecipients(Message.RecipientType.CC, this
-          .toInternetAddressArray(this.ccList));
+        this.message.setRecipients(Message.RecipientType.CC, this.toInternetAddressArray(this.ccList));
       }
 
       if (this.bccList.size() > 0) {
-        this.message.setRecipients(Message.RecipientType.BCC, this
-          .toInternetAddressArray(this.bccList));
+        this.message.setRecipients(Message.RecipientType.BCC, this.toInternetAddressArray(this.bccList));
       }
 
       if (this.replyList.size() > 0) {
@@ -1106,8 +1085,8 @@ public abstract class Email {
       return this.message.getMessageID();
     }
     catch (Throwable t) {
-      String msg = "Sending the email to the following server failed : " + this
-        .getHostName() + ":" + this.getSmtpPort();
+      String msg = "Sending the email to the following server failed : " + this.getHostName() + ":" + this
+        .getSmtpPort();
 
       throw new EmailException(msg, t);
     }
@@ -1228,8 +1207,7 @@ public abstract class Email {
    * @since 1.0
    */
   protected InternetAddress[] toInternetAddressArray(List list) {
-    InternetAddress[] ia = (InternetAddress[]) list.toArray(
-      new InternetAddress[list.size()]);
+    InternetAddress[] ia = (InternetAddress[]) list.toArray(new InternetAddress[list.size()]);
 
     return ia;
   }
@@ -1244,8 +1222,8 @@ public abstract class Email {
    * @param newPopPassword The pop3 password.
    * @since 1.0
    */
-  public void setPopBeforeSmtp(boolean newPopBeforeSmtp, String newPopHost,
-    String newPopUsername, String newPopPassword) {
+  public void setPopBeforeSmtp(boolean newPopBeforeSmtp, String newPopHost, String newPopUsername,
+    String newPopPassword) {
     this.popBeforeSmtp = newPopBeforeSmtp;
     this.popHost = newPopHost;
     this.popUsername = newPopUsername;

@@ -12,8 +12,7 @@ import org.xbill.DNS.utils.*;
 
 public final class Flags {
 
-  private static Mnemonic flags = new Mnemonic("DNS Header Flag",
-    Mnemonic.CASE_LOWER);
+  private static Mnemonic flags = new Mnemonic("DNS Header Flag", Mnemonic.CASE_LOWER);
 
   /** query/response */
   public static final byte QR = 0;

@@ -31,8 +31,7 @@ public class GPOSRecord extends Record {
    * @param altitude The altitude component of the location (in meters above sea
    *        level).
    */
-  public GPOSRecord(Name name, int dclass, long ttl, double longitude,
-    double latitude, double altitude) {
+  public GPOSRecord(Name name, int dclass, long ttl, double longitude, double latitude, double altitude) {
     super(name, Type.GPOS, dclass, ttl);
     if (longitude < -90.0 || longitude > 90.0) {
       throw new IllegalArgumentException("illegal longitude " + longitude);
@@ -53,8 +52,7 @@ public class GPOSRecord extends Record {
    * @param altitude The altitude component of the location (in meters above sea
    *        level).
    */
-  public GPOSRecord(Name name, int dclass, long ttl, String longitude,
-    String latitude, String altitude) {
+  public GPOSRecord(Name name, int dclass, long ttl, String longitude, String latitude, String altitude) {
     super(name, Type.GPOS, dclass, ttl);
     try {
       this.longitude = byteArrayFromString(longitude);

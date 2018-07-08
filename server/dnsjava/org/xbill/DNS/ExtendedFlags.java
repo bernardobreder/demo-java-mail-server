@@ -10,8 +10,7 @@ package org.xbill.DNS;
 
 public final class ExtendedFlags {
 
-  private static Mnemonic extflags = new Mnemonic("EDNS Flag",
-    Mnemonic.CASE_LOWER);
+  private static Mnemonic extflags = new Mnemonic("EDNS Flag", Mnemonic.CASE_LOWER);
 
   /** dnssec ok */
   public static final int DO = 0x8000;

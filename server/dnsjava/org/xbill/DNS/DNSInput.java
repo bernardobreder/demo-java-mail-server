@@ -61,8 +61,7 @@ public class DNSInput {
    */
   public void setActive(int len) {
     if (len > array.length - pos) {
-      throw new IllegalArgumentException("cannot set active "
-        + "region past end of input");
+      throw new IllegalArgumentException("cannot set active " + "region past end of input");
     }
     end = pos + len;
   }
@@ -162,8 +161,7 @@ public class DNSInput {
    * @param len The number of bytes to copy.
    * @throws WireParseException The end of the stream was reached.
    */
-  public void readByteArray(byte[] b, int off, int len)
-    throws WireParseException {
+  public void readByteArray(byte[] b, int off, int len) throws WireParseException {
     require(len);
     System.arraycopy(array, pos, b, off, len);
     pos += len;

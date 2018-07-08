@@ -146,8 +146,7 @@ public class EmailAddress implements Serializable {
   /**
    * Parses a full address into a username and password for storage.
    */
-  private void setFullAddress(String fullAddress)
-    throws InvalidAddressException {
+  private void setFullAddress(String fullAddress) throws InvalidAddressException {
 
     //Parse toAddress into username and domain.
     int index = fullAddress.indexOf("@");

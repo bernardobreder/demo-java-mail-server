@@ -83,8 +83,7 @@ public class SimpleResolver implements Resolver {
 
   public void setEDNS(int level) {
     if (level != 0 && level != -1)
-      throw new UnsupportedOperationException("invalid EDNS level "
-        + "- must be 0 or -1");
+      throw new UnsupportedOperationException("invalid EDNS level " + "- must be 0 or -1");
     this.EDNSlevel = (byte) level;
   }
 
@@ -118,8 +117,7 @@ public class SimpleResolver implements Resolver {
     return (in);
   }
 
-  private void writeUDP(DatagramSocket s, byte[] out, InetAddress addr,
-    int port) throws IOException {
+  private void writeUDP(DatagramSocket s, byte[] out, InetAddress addr, int port) throws IOException {
     if (Options.check("verbosemsg"))
       System.err.println(hexdump.dump("UDP write", out));
     s.send(new DatagramPacket(out, out.length, addr, port));
@@ -161,8 +159,7 @@ public class SimpleResolver implements Resolver {
     }
   }
 
-  private void verifyTSIG(Message query, Message response, byte[] b,
-    TSIG tsig) {
+  private void verifyTSIG(Message query, Message response, byte[] b, TSIG tsig) {
     if (tsig == null)
       return;
     int error = tsig.verify(response, b, query.getTSIG());
@@ -291,8 +288,7 @@ public class SimpleResolver implements Resolver {
    * @param listener The object containing the callbacks.
    * @return An identifier, which is also a parameter in the callback
    */
-  public Object sendAsync(final Message query,
-    final ResolverListener listener) {
+  public Object sendAsync(final Message query, final ResolverListener listener) {
     final Object id;
     synchronized (this) {
       id = new Integer(uniqueID++);

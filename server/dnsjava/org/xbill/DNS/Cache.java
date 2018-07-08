@@ -69,8 +69,7 @@ public class Cache extends NameSet {
     Name name;
     SOARecord soa;
 
-    public NegativeElement(Name name, int type, SOARecord soa, int cred,
-      long maxttl) {
+    public NegativeElement(Name name, int type, SOARecord soa, int cred, long maxttl) {
       this.name = name;
       this.type = type;
       this.soa = soa;
@@ -289,8 +288,7 @@ public class Cache extends NameSet {
   }
 
   private void logLookup(Name name, int type, String msg) {
-    System.err.println("lookupRecords(" + name + " " + Type.string(type) + "): "
-      + msg);
+    System.err.println("lookupRecords(" + name + " " + Type.string(type) + "): " + msg);
   }
 
   /**
@@ -437,14 +435,12 @@ public class Cache extends NameSet {
         }
         else {
           if (verbose)
-            logLookup(name, type, "ignoring rrset (" + rname + " " + Type
-              .string(rtype) + ")");
+            logLookup(name, type, "ignoring rrset (" + rname + " " + Type.string(rtype) + ")");
         }
       }
       else {
         if (verbose)
-          logLookup(name, type, "ignoring rrset (" + rname + " " + Type.string(
-            rtype) + ")");
+          logLookup(name, type, "ignoring rrset (" + rname + " " + Type.string(rtype) + ")");
       }
     }
 
@@ -456,8 +452,7 @@ public class Cache extends NameSet {
     if (cr == null && type == Type.ANY)
       return SetResponse.ofType(SetResponse.UNKNOWN);
     else if (cr == null)
-      throw new IllegalStateException("looking up (" + name + " " + Type.string(
-        type) + "): " + "cr == null.");
+      throw new IllegalStateException("looking up (" + name + " " + Type.string(type) + "): " + "cr == null.");
     return cr;
   }
 
@@ -638,8 +633,7 @@ public class Cache extends NameSet {
     for (int i = 0; i < auth.length; i++) {
       if (auth[i].getType() == Type.SOA && curname.subdomain(auth[i].getName()))
         soa = auth[i];
-      else if (auth[i].getType() == Type.NS && curname.subdomain(auth[i]
-        .getName()))
+      else if (auth[i].getType() == Type.NS && curname.subdomain(auth[i].getName()))
         ns = auth[i];
     }
     if (!completed) {

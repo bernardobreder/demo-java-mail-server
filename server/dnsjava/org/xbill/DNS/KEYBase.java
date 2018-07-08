@@ -21,8 +21,7 @@ abstract class KEYBase extends Record {
   protected KEYBase() {
   }
 
-  public KEYBase(Name name, int type, int dclass, long ttl, int flags,
-    int proto, int alg, byte[] key) {
+  public KEYBase(Name name, int type, int dclass, long ttl, int flags, int proto, int alg, byte[] key) {
     super(name, type, dclass, ttl);
     this.flags = checkU16("flags", flags);
     this.proto = checkU8("proto", proto);

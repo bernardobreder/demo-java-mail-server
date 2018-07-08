@@ -122,8 +122,7 @@ public class ByteArrayDataSource implements DataSource {
    * @param aType A String.
    * @throws IOException IOException
    */
-  private void byteArrayDataSource(InputStream aIs, String aType)
-    throws IOException {
+  private void byteArrayDataSource(InputStream aIs, String aType) throws IOException {
     this.type = aType;
 
     BufferedInputStream bis = null;

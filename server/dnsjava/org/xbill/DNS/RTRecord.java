@@ -27,10 +27,8 @@ public class RTRecord extends U16NameBase {
    *        more preferred routes.
    * @param intermediateHost The domain name of the host to use as a router.
    */
-  public RTRecord(Name name, int dclass, long ttl, int preference,
-    Name intermediateHost) {
-    super(name, Type.RT, dclass, ttl, preference, "preference",
-      intermediateHost, "intermediateHost");
+  public RTRecord(Name name, int dclass, long ttl, int preference, Name intermediateHost) {
+    super(name, Type.RT, dclass, ttl, preference, "preference", intermediateHost, "intermediateHost");
   }
 
   /** Gets the preference of the route. */

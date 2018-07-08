@@ -34,8 +34,7 @@ public final class Section {
   /** The update (third) section of a dynamic update message */
   public static final int UPDATE = 2;
 
-  private static Mnemonic sections = new Mnemonic("Message Section",
-    Mnemonic.CASE_LOWER);
+  private static Mnemonic sections = new Mnemonic("Message Section", Mnemonic.CASE_LOWER);
   private static String[] longSections = new String[4];
   private static String[] updateSections = new String[4];
 

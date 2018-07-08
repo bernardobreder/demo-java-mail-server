@@ -112,8 +112,7 @@ public class DeliveryService implements ConfigurationParameterContants {
   /**
    * Checks an address to see if we should accept it for delivery.
    */
-  public boolean acceptAddress(EmailAddress address, String clientIp,
-    EmailAddress clientFromAddress) {
+  public boolean acceptAddress(EmailAddress address, String clientIp, EmailAddress clientFromAddress) {
 
     // Check to see if the email should be address should be accepted
     // for delivery.
@@ -121,11 +120,9 @@ public class DeliveryService implements ConfigurationParameterContants {
 
     // Set isValid to true if one of the rules matches.
     isValid = isLocalAddress(address) || // Accept all local email.
-      (configurationManager.isEnablePOPBeforeSMTP() && isAuthenticated(
-        clientIp)) || (isRelayApproved(clientIp, configurationManager
-          .getRelayApprovedIpAddresses()) || (isRelayApprovedForEmail(
-            clientFromAddress, configurationManager
-              .getRelayApprovedEmailAddresses())));
+      (configurationManager.isEnablePOPBeforeSMTP() && isAuthenticated(clientIp)) || (isRelayApproved(clientIp,
+        configurationManager.getRelayApprovedIpAddresses()) || (isRelayApprovedForEmail(clientFromAddress,
+          configurationManager.getRelayApprovedEmailAddresses())));
 
     return isValid;
   }
@@ -184,8 +181,7 @@ public class DeliveryService implements ConfigurationParameterContants {
 
       //Calculate the current time and the time that the login will timeout.
       long currentTime = System.currentTimeMillis();
-      long timeoutTime = authenticationDate.getTime() + configurationManager
-        .getAuthenticationTimeoutMilliseconds();
+      long timeoutTime = authenticationDate.getTime() + configurationManager.getAuthenticationTimeoutMilliseconds();
 
       //If the timeout time is in the future, the ip is still authenticated.
       if (timeoutTime > currentTime) {
@@ -221,26 +217,21 @@ public class DeliveryService implements ConfigurationParameterContants {
         int wildcardIndex = approvedAddress.indexOf("*");
         if (wildcardIndex != -1) {
           boolean isMatch = true;
-          StringTokenizer clientIpTokenizer = new StringTokenizer(clientIp,
-            ".");
-          StringTokenizer approvedAddressTokenizer = new StringTokenizer(
-            approvedAddress, ".");
+          StringTokenizer clientIpTokenizer = new StringTokenizer(clientIp, ".");
+          StringTokenizer approvedAddressTokenizer = new StringTokenizer(approvedAddress, ".");
           String clientIpToken;
           String approvedAddressToken;
           while (clientIpTokenizer.hasMoreTokens()) {
             try {
               clientIpToken = clientIpTokenizer.nextToken().trim();
-              approvedAddressToken = approvedAddressTokenizer.nextToken()
-                .trim();
-              if (!clientIpToken.equals(approvedAddressToken)
-                && !approvedAddressToken.equals("*")) {
+              approvedAddressToken = approvedAddressTokenizer.nextToken().trim();
+              if (!clientIpToken.equals(approvedAddressToken) && !approvedAddressToken.equals("*")) {
                 isMatch = false;
                 break;
               }
             }
             catch (NoSuchElementException noSuchElementException) {
-              log.warn("Invalid ApprovedAddress found: " + approvedAddress
-                + ".  Skipping.");
+              log.warn("Invalid ApprovedAddress found: " + approvedAddress + ".  Skipping.");
               isMatch = false;
               break;
             }
@@ -262,8 +253,7 @@ public class DeliveryService implements ConfigurationParameterContants {
    * @param approvedEmailAddresses The approved list.
    * @return true if the email address is approved.
    */
-  private boolean isRelayApprovedForEmail(EmailAddress clientFromEmail,
-    String[] approvedEmailAddresses) {
+  private boolean isRelayApprovedForEmail(EmailAddress clientFromEmail, String[] approvedEmailAddresses) {
 
     String approvedEmailAddress;
     for (int index = 0; index < approvedEmailAddresses.length; index++) {

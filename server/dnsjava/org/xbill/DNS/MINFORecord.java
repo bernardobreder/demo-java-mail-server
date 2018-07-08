@@ -33,12 +33,10 @@ public class MINFORecord extends Record {
    * @param errorAddress The address to receive error messages relating to the
    *        mailing list/mailbox.
    */
-  public MINFORecord(Name name, int dclass, long ttl, Name responsibleAddress,
-    Name errorAddress) {
+  public MINFORecord(Name name, int dclass, long ttl, Name responsibleAddress, Name errorAddress) {
     super(name, Type.MINFO, dclass, ttl);
 
-    this.responsibleAddress = checkName("responsibleAddress",
-      responsibleAddress);
+    this.responsibleAddress = checkName("responsibleAddress", responsibleAddress);
     this.errorAddress = checkName("errorAddress", errorAddress);
   }
 

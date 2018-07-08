@@ -86,8 +86,7 @@ class Mnemonic {
    */
   public void check(int val) {
     if (val < 0 || (max > 0 && val > max)) {
-      throw new IllegalArgumentException(description + " " + val
-        + "is out of range");
+      throw new IllegalArgumentException(description + " " + val + "is out of range");
     }
   }
 

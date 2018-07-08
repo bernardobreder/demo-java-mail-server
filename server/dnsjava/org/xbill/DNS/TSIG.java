@@ -31,8 +31,7 @@ public class TSIG {
   public static final Name HMAC_SHA1 = Name.fromConstantString(HMAC_SHA1_STR);
 
   /** The domain name representing the HMAC-SHA256 algorithm. */
-  public static final Name HMAC_SHA256 = Name.fromConstantString(
-    HMAC_SHA256_STR);
+  public static final Name HMAC_SHA256 = Name.fromConstantString(HMAC_SHA256_STR);
 
   /**
    * The default fudge value for outgoing packets. Can be overriden by the
@@ -192,8 +191,8 @@ public class TSIG {
       other = out.toByteArray();
     }
 
-    return (new TSIGRecord(name, DClass.ANY, 0, alg, timeSigned, fudge,
-      signature, m.getHeader().getID(), error, other));
+    return (new TSIGRecord(name, DClass.ANY, 0, alg, timeSigned, fudge, signature, m.getHeader().getID(), error,
+      other));
   }
 
   /**
@@ -260,8 +259,8 @@ public class TSIG {
     byte[] signature = hmac.sign();
     byte[] other = null;
 
-    Record r = new TSIGRecord(name, DClass.ANY, 0, alg, timeSigned, fudge,
-      signature, m.getHeader().getID(), Rcode.NOERROR, other);
+    Record r = new TSIGRecord(name, DClass.ANY, 0, alg, timeSigned, fudge, signature, m.getHeader().getID(),
+      Rcode.NOERROR, other);
     m.addRecord(r, Section.ADDITIONAL);
     m.tsigState = Message.TSIG_SIGNED;
   }
@@ -300,8 +299,7 @@ public class TSIG {
       return Rcode.BADTIME;
     }
 
-    if (old != null && tsig.getError() != Rcode.BADKEY && tsig
-      .getError() != Rcode.BADSIG) {
+    if (old != null && tsig.getError() != Rcode.BADKEY && tsig.getError() != Rcode.BADSIG) {
       DNSOutput out = new DNSOutput();
       out.writeU16(old.getSignature().length);
       hmac.update(out.toByteArray());
@@ -448,8 +446,7 @@ public class TSIG {
           return Rcode.NOERROR;
       }
 
-      if (!tsig.getName().equals(key.name) || !tsig.getAlgorithm().equals(
-        key.alg)) {
+      if (!tsig.getName().equals(key.name) || !tsig.getAlgorithm().equals(key.alg)) {
         if (Options.check("verbose"))
           System.err.println("BADKEY failure");
         return Rcode.BADKEY;

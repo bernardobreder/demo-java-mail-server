@@ -148,8 +148,7 @@ public class Name implements Comparable {
     }
   }
 
-  private final void append(byte[] array, int start, int n)
-    throws NameTooLongException {
+  private final void append(byte[] array, int start, int n) throws NameTooLongException {
     int length = (name == null ? 0 : (name.length - offset(0)));
     int alength = 0;
     for (int i = 0, pos = start; i < n; i++) {
@@ -183,8 +182,7 @@ public class Name implements Comparable {
     return new TextParseException("'" + str + "': " + message);
   }
 
-  private final void appendFromString(String fullName, byte[] array, int start,
-    int n) throws TextParseException {
+  private final void appendFromString(String fullName, byte[] array, int start, int n) throws TextParseException {
     try {
       append(array, start, n);
     }
@@ -309,8 +307,7 @@ public class Name implements Comparable {
    * @param origin If the name is not absolute, the origin to be appended.
    * @throws TextParseException The name is invalid.
    */
-  public static Name fromString(String s, Name origin)
-    throws TextParseException {
+  public static Name fromString(String s, Name origin) throws TextParseException {
     if (s.equals("@") && origin != null)
       return origin;
     else if (s.equals("."))
@@ -380,8 +377,7 @@ public class Name implements Comparable {
           pos = in.readU8();
           pos += ((len & ~LABEL_MASK) << 8);
           if (Options.check("verbosecompression"))
-            System.err.println("currently " + in.current() + ", pointer to "
-              + pos);
+            System.err.println("currently " + in.current() + ", pointer to " + pos);
 
           if (pos >= in.current())
             throw new WireParseException("bad compression");
@@ -391,8 +387,7 @@ public class Name implements Comparable {
           }
           in.jump(pos);
           if (Options.check("verbosecompression"))
-            System.err.println("current name '" + this + "', seeking to "
-              + pos);
+            System.err.println("current name '" + this + "', seeking to " + pos);
           continue;
       }
     }
@@ -419,8 +414,7 @@ public class Name implements Comparable {
   public Name(Name src, int n) {
     int slabels = src.labels();
     if (n > slabels)
-      throw new IllegalArgumentException("attempted to remove too "
-        + "many labels");
+      throw new IllegalArgumentException("attempted to remove too " + "many labels");
     name = src.name;
     setlabels(slabels - n);
     for (int i = 0; i < MAXOFFSETS && i < slabels - n; i++)
@@ -435,8 +429,7 @@ public class Name implements Comparable {
    * @return The concatenated name.
    * @throws NameTooLongException The name is too long.
    */
-  public static Name concatenate(Name prefix, Name suffix)
-    throws NameTooLongException {
+  public static Name concatenate(Name prefix, Name suffix) throws NameTooLongException {
     if (prefix.isAbsolute())
       return (prefix);
     Name newname = new Name();
@@ -574,8 +567,7 @@ public class Name implements Comparable {
         sb.append('\\');
         sb.append(byteFormat.format(b));
       }
-      else if (b == '"' || b == '(' || b == ')' || b == '.' || b == ';'
-        || b == '\\' || b == '@' || b == '$') {
+      else if (b == '"' || b == '(' || b == ')' || b == '.' || b == ';' || b == '\\' || b == '@' || b == '$') {
         sb.append('\\');
         sb.append((char) b);
       }
@@ -643,8 +635,7 @@ public class Name implements Comparable {
    */
   void toWire(DNSOutput out, Compression c) {
     if (!isAbsolute())
-      throw new IllegalArgumentException("toWire() called on "
-        + "non-absolute name");
+      throw new IllegalArgumentException("toWire() called on " + "non-absolute name");
 
     int labels = labels();
     for (int i = 0; i < labels - 1; i++) {
@@ -800,8 +791,7 @@ public class Name implements Comparable {
       int length = name[start];
       int alength = arg.name[astart];
       for (int j = 0; j < length && j < alength; j++) {
-        int n = lowercase[(name[j + start + 1]) & 0xFF] - lowercase[(arg.name[j
-          + astart + 1]) & 0xFF];
+        int n = lowercase[(name[j + start + 1]) & 0xFF] - lowercase[(arg.name[j + astart + 1]) & 0xFF];
         if (n != 0)
           return (n);
       }

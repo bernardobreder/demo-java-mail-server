@@ -17,8 +17,7 @@ class ResolveThread extends Thread {
   private Resolver res;
 
   /** Creates a new ResolveThread */
-  public ResolveThread(Resolver res, Message query, Object id,
-    ResolverListener listener) {
+  public ResolveThread(Resolver res, Message query, Object id, ResolverListener listener) {
     this.res = res;
     this.query = query;
     this.id = id;

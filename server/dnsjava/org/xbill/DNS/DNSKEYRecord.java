@@ -50,8 +50,7 @@ public class DNSKEYRecord extends KEYBase {
    * @param alg The key's algorithm
    * @param key Binary data representing the key
    */
-  public DNSKEYRecord(Name name, int dclass, long ttl, int flags, int proto,
-    int alg, byte[] key) {
+  public DNSKEYRecord(Name name, int dclass, long ttl, int flags, int proto, int alg, byte[] key) {
     super(name, Type.DNSKEY, dclass, ttl, flags, proto, alg, key);
   }
 

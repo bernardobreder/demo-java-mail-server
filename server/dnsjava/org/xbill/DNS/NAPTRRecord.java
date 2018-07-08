@@ -39,8 +39,8 @@ public class NAPTRRecord extends Record {
    *        record, depending on the value of the flags field.
    * @throws IllegalArgumentException One of the strings has invalid escapes
    */
-  public NAPTRRecord(Name name, int dclass, long ttl, int order, int preference,
-    String flags, String service, String regexp, Name replacement) {
+  public NAPTRRecord(Name name, int dclass, long ttl, int order, int preference, String flags, String service,
+    String regexp, Name replacement) {
     super(name, Type.NAPTR, dclass, ttl);
     this.order = checkU16("order", order);
     this.preference = checkU16("preference", preference);

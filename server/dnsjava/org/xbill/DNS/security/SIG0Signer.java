@@ -41,8 +41,7 @@ public class SIG0Signer {
    * @param name the name of the key
    * @param keyFootprint the key tag
    */
-  public SIG0Signer(int algorithm, PrivateKey privateKey, Name name,
-    int keyFootprint) {
+  public SIG0Signer(int algorithm, PrivateKey privateKey, Name name, int keyFootprint) {
     this.algorithm = (byte) algorithm;
     this.privateKey = privateKey;
     this.name = name;
@@ -54,13 +53,12 @@ public class SIG0Signer {
    * constructor, except that the key tag is calculated automatically from the
    * given public key.
    */
-  public SIG0Signer(int algorithm, PrivateKey privateKey, Name name,
-    PublicKey publicKey) {
+  public SIG0Signer(int algorithm, PrivateKey privateKey, Name name, PublicKey publicKey) {
     this.algorithm = (byte) algorithm;
     this.privateKey = privateKey;
     this.name = name;
-    KEYRecord keyRecord = KEYConverter.buildRecord(name, DClass.IN, 0,
-      KEYRecord.OWNER_USER, KEYRecord.PROTOCOL_ANY, publicKey);
+    KEYRecord keyRecord = KEYConverter.buildRecord(name, DClass.IN, 0, KEYRecord.OWNER_USER, KEYRecord.PROTOCOL_ANY,
+      publicKey);
     this.footprint = keyRecord.getFootprint();
   }
 
@@ -70,8 +68,8 @@ public class SIG0Signer {
    * @param m the message
    * @param old if this message is a response, the original message
    */
-  public void apply(Message m, byte[] old) throws IOException,
-    SignatureException, InvalidKeyException, NoSuchAlgorithmException {
+  public void apply(Message m, byte[] old) throws IOException, SignatureException, InvalidKeyException,
+    NoSuchAlgorithmException {
 
     int validity = Options.intValue("sig0validity");
     if (validity < 0)
@@ -95,8 +93,8 @@ public class SIG0Signer {
       throw new NoSuchAlgorithmException("Unknown algorithm");
     }
 
-    SIGRecord tmpsig = new SIGRecord(Name.root, DClass.ANY, 0, 0, algorithm, 0,
-      timeExpires, timeSigned, footprint, name, null);
+    SIGRecord tmpsig = new SIGRecord(Name.root, DClass.ANY, 0, 0, algorithm, 0, timeExpires, timeSigned, footprint,
+      name, null);
 
     byte[] outBytes = DNSSEC.digestMessage(tmpsig, m, old);
 
@@ -114,8 +112,8 @@ public class SIG0Signer {
       signature = DSASignature.create(dsakey.getParams(), signature);
     }
 
-    SIGRecord sig = new SIGRecord(Name.root, DClass.ANY, 0, 0, algorithm, 0,
-      timeExpires, timeSigned, footprint, name, signature);
+    SIGRecord sig = new SIGRecord(Name.root, DClass.ANY, 0, 0, algorithm, 0, timeExpires, timeSigned, footprint, name,
+      signature);
     m.addRecord(sig, Section.ADDITIONAL);
   }
 

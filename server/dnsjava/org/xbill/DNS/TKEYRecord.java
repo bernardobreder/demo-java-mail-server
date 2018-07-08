@@ -59,9 +59,8 @@ public class TKEYRecord extends Record {
    * @param key The shared secret
    * @param other The other data field. Currently unused responses.
    */
-  public TKEYRecord(Name name, int dclass, long ttl, Name alg,
-    Date timeInception, Date timeExpire, int mode, int error, byte[] key,
-    byte other[]) {
+  public TKEYRecord(Name name, int dclass, long ttl, Name alg, Date timeInception, Date timeExpire, int mode, int error,
+    byte[] key, byte other[]) {
     super(name, Type.TKEY, dclass, ttl);
     this.alg = checkName("alg", alg);
     this.timeInception = timeInception;

@@ -95,8 +95,7 @@ public class Zone extends NameSet {
       throw new IOException(origin + ": no NS set specified");
   }
 
-  private final void maybeAddRecord(Record record, Cache cache, Object source)
-    throws IOException {
+  private final void maybeAddRecord(Record record, Cache cache, Object source) throws IOException {
     int type = record.getType();
     Name name = record.getName();
 
@@ -106,13 +105,11 @@ public class Zone extends NameSet {
         setOrigin(origin);
       }
       else {
-        throw new IOException("non-SOA record seen at " + name
-          + " with no origin set");
+        throw new IOException("non-SOA record seen at " + name + " with no origin set");
       }
     }
     if (type == Type.SOA && !name.equals(origin)) {
-      throw new IOException("SOA owner " + name + " does not match zone origin "
-        + origin);
+      throw new IOException("SOA owner " + name + " does not match zone origin " + origin);
     }
     if (name.subdomain(origin))
       addRecord(record);
@@ -148,8 +145,7 @@ public class Zone extends NameSet {
    * @see Cache
    * @see Master
    */
-  public Zone(Record[] records, Cache cache, Name initialOrigin)
-    throws IOException {
+  public Zone(Record[] records, Cache cache, Name initialOrigin) throws IOException {
     super(false);
 
     origin = initialOrigin;
@@ -173,8 +169,7 @@ public class Zone extends NameSet {
     this(file, cache, null);
   }
 
-  public void fromXFR(Name zone, int dclass, String remote) throws IOException,
-    ZoneTransferException {
+  public void fromXFR(Name zone, int dclass, String remote) throws IOException, ZoneTransferException {
     if (!zone.isAbsolute())
       throw new RelativeNameException(zone);
     DClass.check(dclass);
@@ -202,8 +197,7 @@ public class Zone extends NameSet {
    * 
    * @see Master
    */
-  public Zone(Name zone, int dclass, String remote) throws IOException,
-    ZoneTransferException {
+  public Zone(Name zone, int dclass, String remote) throws IOException, ZoneTransferException {
     super(false);
     fromXFR(zone, dclass, remote);
   }
@@ -214,8 +208,7 @@ public class Zone extends NameSet {
    * 
    * @see Master
    */
-  public Zone(Name zone, int dclass, String remote, Cache cache)
-    throws IOException {
+  public Zone(Name zone, int dclass, String remote, Cache cache) throws IOException {
     super(false);
     DClass.check(dclass);
     try {
@@ -292,8 +285,7 @@ public class Zone extends NameSet {
     }
 
     if (name.equals(rrset.getName())) {
-      if (type != Type.CNAME && type != Type.ANY && rrset
-        .getType() == Type.CNAME)
+      if (type != Type.CNAME && type != Type.ANY && rrset.getType() == Type.CNAME)
         zr = new SetResponse(SetResponse.CNAME, rrset);
       else if (rrset.getType() == Type.NS && !name.equals(origin))
         zr = new SetResponse(SetResponse.DELEGATION, rrset);

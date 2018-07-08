@@ -39,8 +39,7 @@ public class DNSSECVerifier implements Verifier {
   /** Adds the specified key to the set of trusted keys */
   public void addTrustedKey(Name name, PublicKey key) {
     KEYRecord keyrec;
-    keyrec = KEYConverter.buildRecord(name, DClass.IN, 0, 0,
-      KEYRecord.PROTOCOL_DNSSEC, key);
+    keyrec = KEYConverter.buildRecord(name, DClass.IN, 0, 0, KEYRecord.PROTOCOL_DNSSEC, key);
     if (keyrec != null)
       addTrustedKey(keyrec);
   }
@@ -48,23 +47,20 @@ public class DNSSECVerifier implements Verifier {
   private PublicKey findMatchingKey(Iterator it, int algorithm, int footprint) {
     while (it.hasNext()) {
       KEYRecord keyrec = (KEYRecord) it.next();
-      if (keyrec.getAlgorithm() == algorithm && keyrec
-        .getFootprint() == footprint)
+      if (keyrec.getAlgorithm() == algorithm && keyrec.getFootprint() == footprint)
         return KEYConverter.parseRecord(keyrec);
     }
     return null;
   }
 
-  private synchronized PublicKey findTrustedKey(Name name, int algorithm,
-    int footprint) {
+  private synchronized PublicKey findTrustedKey(Name name, int algorithm, int footprint) {
     List list = (List) trustedKeys.get(name);
     if (list == null)
       return null;
     return findMatchingKey(list.iterator(), algorithm, footprint);
   }
 
-  private PublicKey findCachedKey(Cache cache, Name name, int algorithm,
-    int footprint) {
+  private PublicKey findCachedKey(Cache cache, Name name, int algorithm, int footprint) {
     RRset[] keysets = cache.findAnyRecords(name, Type.KEY);
     if (keysets == null)
       return null;
@@ -74,8 +70,7 @@ public class DNSSECVerifier implements Verifier {
     return findMatchingKey(keys.rrs(), algorithm, footprint);
   }
 
-  private PublicKey findKey(Cache cache, Name name, int algorithm,
-    int footprint) {
+  private PublicKey findKey(Cache cache, Name name, int algorithm, int footprint) {
     PublicKey key = findTrustedKey(name, algorithm, footprint);
     if (key == null && cache != null)
       return findCachedKey(cache, name, algorithm, footprint);
@@ -83,14 +78,12 @@ public class DNSSECVerifier implements Verifier {
   }
 
   private int verifySIG(RRset set, SIGRecord sigrec, Cache cache) {
-    PublicKey key = findKey(cache, sigrec.getSigner(), sigrec.getAlgorithm(),
-      sigrec.getFootprint());
+    PublicKey key = findKey(cache, sigrec.getSigner(), sigrec.getAlgorithm(), sigrec.getFootprint());
     if (key == null)
       return DNSSEC.Insecure;
 
     Date now = new Date();
-    if (now.compareTo(sigrec.getExpire()) > 0 || now.compareTo(sigrec
-      .getTimeSigned()) < 0) {
+    if (now.compareTo(sigrec.getExpire()) > 0 || now.compareTo(sigrec.getTimeSigned()) < 0) {
       System.err.println("Outside of validity period");
       return DNSSEC.Failed;
     }
@@ -140,8 +133,7 @@ public class DNSSECVerifier implements Verifier {
   public int verify(RRset set, Cache cache) {
     Iterator sigs = set.sigs();
     if (Options.check("verbosesec"))
-      System.out.print("Verifying " + set.getName() + "/" + Type.string(set
-        .getType()) + ": ");
+      System.out.print("Verifying " + set.getName() + "/" + Type.string(set.getType()) + ": ");
     if (!sigs.hasNext()) {
       if (Options.check("verbosesec"))
         System.out.println("Insecure");

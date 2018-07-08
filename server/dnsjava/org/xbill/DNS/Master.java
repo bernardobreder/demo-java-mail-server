@@ -208,8 +208,7 @@ public class Master {
     // Only some types are supported.
     parseTTLClassAndType();
     if (!Generator.supportedType(currentType))
-      throw st.exception("$GENERATE does not support " + Type.string(
-        currentType) + " records");
+      throw st.exception("$GENERATE does not support " + Type.string(currentType) + " records");
 
     // Next comes the rdata specification.
     String rdataSpec = st.getIdentifier();
@@ -219,8 +218,7 @@ public class Master {
     st.getEOL();
     st.unget();
 
-    generator = new Generator(start, end, step, nameSpec, currentType,
-      currentDClass, currentTTL, rdataSpec, origin);
+    generator = new Generator(start, end, step, nameSpec, currentType, currentDClass, currentTTL, rdataSpec, origin);
     if (generators == null)
       generators = new ArrayList(1);
     generators.add(generator);
@@ -342,8 +340,7 @@ public class Master {
       }
 
       parseTTLClassAndType();
-      last = Record.fromString(name, currentType, currentDClass, currentTTL, st,
-        origin);
+      last = Record.fromString(name, currentType, currentDClass, currentTTL, st, origin);
       return last;
     }
   }

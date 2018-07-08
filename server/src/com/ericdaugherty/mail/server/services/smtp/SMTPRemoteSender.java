@@ -71,8 +71,7 @@ public class SMTPRemoteSender {
   private static Log log = LogFactory.getLog(SMTPRemoteSender.class.getName());
 
   /** ConfigurationManager */
-  private static ConfigurationManager configurationManager =
-    ConfigurationManager.getInstance();
+  private static ConfigurationManager configurationManager = ConfigurationManager.getInstance();
 
   /** Writer to sent data to the client */
   private PrintWriter out;
@@ -100,8 +99,7 @@ public class SMTPRemoteSender {
   /**
    * Handles delivery of messages to addresses not handled by this server.
    */
-  public void sendMessage(EmailAddress address, SMTPMessage message)
-    throws NotFoundException, RuntimeException {
+  public void sendMessage(EmailAddress address, SMTPMessage message) throws NotFoundException, RuntimeException {
 
     //Open the connection to the server.
     Socket socket = connect(address);
@@ -111,8 +109,7 @@ public class SMTPRemoteSender {
       socket.setSoTimeout(60 * 1000);
     }
     catch (SocketException e) {
-      throw new RuntimeException("Unable to set the Socket SO Timeout: " + e
-        .getMessage());
+      throw new RuntimeException("Unable to set the Socket SO Timeout: " + e.getMessage());
     }
 
     try {
@@ -131,9 +128,7 @@ public class SMTPRemoteSender {
         sendClose();
       }
       catch (IOException ioe) {
-        throw new RuntimeException(
-          "IOException occured while talking to remote domain: " + address
-            .getDomain());
+        throw new RuntimeException("IOException occured while talking to remote domain: " + address.getDomain());
       }
     }
     finally {
@@ -167,8 +162,7 @@ public class SMTPRemoteSender {
     //Check to see if a default smtp server is configured before performing
     //the DNS lookup.
     if (configurationManager.isDefaultSmtpServerEnabled()) {
-      DefaultSmtpServer[] defaultMXEntries = configurationManager
-        .getDefaultSmtpServers();
+      DefaultSmtpServer[] defaultMXEntries = configurationManager.getDefaultSmtpServers();
       for (int index = 0; index < defaultMXEntries.length; index++) {
 
         DefaultSmtpServer mxEntry = defaultMXEntries[index];
@@ -179,8 +173,7 @@ public class SMTPRemoteSender {
           return socket;
         }
         catch (Exception e) {
-          log.debug("Connection to SMTP Server: " + mxEntry
-            + " failed with exception: " + e);
+          log.debug("Connection to SMTP Server: " + mxEntry + " failed with exception: " + e);
         }
       }
     }
@@ -213,8 +206,7 @@ public class SMTPRemoteSender {
                 break;
               }
             }
-            else if (mx.getPriority() < nextPriority && mx
-              .getPriority() > priority) {
+            else if (mx.getPriority() < nextPriority && mx.getPriority() > priority) {
               nextPriority = mx.getPriority();
             }
           }
@@ -223,9 +215,7 @@ public class SMTPRemoteSender {
         }
       }
       catch (TextParseException e) {
-        throw new RuntimeException(
-          "TextParseException while looking up domian MX Entry: " + e
-            .getMessage());
+        throw new RuntimeException("TextParseException while looking up domian MX Entry: " + e.getMessage());
       }
 
     }
@@ -242,8 +232,7 @@ public class SMTPRemoteSender {
           port = Integer.parseInt(mxEntry.substring(indexPort + 1));
         }
         catch (Exception e) {
-          System.out.println("Invalid defaultsmtpserver port: " + mxEntry
-            .substring(indexPort + 1) + " - " + e);
+          System.out.println("Invalid defaultsmtpserver port: " + mxEntry.substring(indexPort + 1) + " - " + e);
         }
         if (indexPort == 0) {
           mxEntry = "localhost";
@@ -259,12 +248,10 @@ public class SMTPRemoteSender {
         return socket;
       }
       catch (Exception e) {
-        log.debug("Connection to SMTP Server: " + mxEntries[index]
-          + " failed with exception: " + e);
+        log.debug("Connection to SMTP Server: " + mxEntries[index] + " failed with exception: " + e);
       }
     }
-    throw new RuntimeException(
-      "Could not connect to any SMTP server for domain: " + domain);
+    throw new RuntimeException("Could not connect to any SMTP server for domain: " + domain);
   }
 
   /**
@@ -276,8 +263,7 @@ public class SMTPRemoteSender {
     //Check to make sure remote server introduced itself with appropriate message.
     String lastCode = null;
     if (!(lastCode = read()).startsWith("220")) {
-      throw new RuntimeException("Error talking to remote Server, code="
-        + lastCode);
+      throw new RuntimeException("Error talking to remote Server, code=" + lastCode);
     }
 
     // First try ehlo
@@ -286,45 +272,39 @@ public class SMTPRemoteSender {
       //Send HELO command to remote server.
       write("HELO " + configurationManager.getLocalDomains()[0]);
       if (!(lastCode = read()).startsWith("250")) {
-        throw new RuntimeException("Error talking to remote Server, code="
-          + lastCode);
+        throw new RuntimeException("Error talking to remote Server, code=" + lastCode);
       }
     }
     else if (username != null) {
       // The EHLO was ok.
       write("AUTH LOGIN");
       if (!(lastCode = read()).startsWith("334")) {
-        throw new RuntimeException("Error talking to remote Server, code="
-          + lastCode);
+        throw new RuntimeException("Error talking to remote Server, code=" + lastCode);
       }
 
       // Write the username.
       write(new String(Base64.encodeBase64(username.getBytes())));
       if (!(lastCode = read()).startsWith("334")) {
-        throw new RuntimeException("Error talking to remote Server, code="
-          + lastCode);
+        throw new RuntimeException("Error talking to remote Server, code=" + lastCode);
       }
 
       // Write the password.
       write(new String(Base64.encodeBase64(password.getBytes())));
       if (!(lastCode = read()).startsWith("235")) {
-        throw new RuntimeException("Error talking to remote Server, code="
-          + lastCode);
+        throw new RuntimeException("Error talking to remote Server, code=" + lastCode);
       }
     }
 
     //Send MAIL FROM: command
     write("MAIL FROM:<" + message.getFromAddress().getAddress() + ">");
     if (!(lastCode = read()).startsWith("250")) {
-      throw new RuntimeException("Error talking to remote Server, code="
-        + lastCode);
+      throw new RuntimeException("Error talking to remote Server, code=" + lastCode);
     }
 
     //Send RCTP TO: command
     write("RCPT TO:<" + address.getAddress() + ">");
     if (!(lastCode = read()).startsWith("250")) {
-      throw new RuntimeException("Error talking to remote Server, code="
-        + lastCode);
+      throw new RuntimeException("Error talking to remote Server, code=" + lastCode);
     }
   }
 
@@ -391,16 +371,14 @@ public class SMTPRemoteSender {
         log.debug("Read Input: " + inputText);
       }
       if (inputText.length() < 3) {
-        throw new RuntimeException(
-          "SMTP Response too short. Aborting Send. Response: " + inputText);
+        throw new RuntimeException("SMTP Response too short. Aborting Send. Response: " + inputText);
       }
 
       //Strip of the response code.
       responseCode = inputText.substring(0, 3);
 
       //Handle Multi-Line Responses.
-      while ((inputText.length() >= 4) && inputText.substring(3, 4).equals(
-        "-")) {
+      while ((inputText.length() >= 4) && inputText.substring(3, 4).equals("-")) {
         inputText = in.readLine().trim();
         if (log.isDebugEnabled()) {
           log.debug("Read Input: " + inputText);

@@ -59,8 +59,7 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
   private static Log log = LogFactory.getLog(Pop3Processor.class.getName());
 
   /** The ConfigurationManager */
-  private static ConfigurationManager configurationManager =
-    ConfigurationManager.getInstance();
+  private static ConfigurationManager configurationManager = ConfigurationManager.getInstance();
 
   /** Indicates if this thread should continue to run or shut down */
   private boolean running = true;
@@ -120,8 +119,7 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
         InetAddress remoteAddress = socket.getInetAddress();
         clientIp = remoteAddress.getHostAddress();
         if (log.isInfoEnabled()) {
-          log.info(remoteAddress.getHostName() + "(" + clientIp
-            + ") socket connected via POP3.");
+          log.info(remoteAddress.getHostName() + "(" + clientIp + ") socket connected via POP3.");
         }
 
         //Output the welcome message.
@@ -145,8 +143,7 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
 
         //Unlock the user's mailbox
         if (user != null) {
-          EmailAddress userAddress = new EmailAddress(user.getUsername(), user
-            .getDomain());
+          EmailAddress userAddress = new EmailAddress(user.getUsername(), user.getDomain());
           DeliveryService.getDeliveryService().unlockMailbox(userAddress);
         }
 
@@ -376,8 +373,7 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
    */
   private void handleStat() {
 
-    write("+OK " + user.getNumberOfMessage() + " " + user
-      .getSizeOfAllMessage());
+    write("+OK " + user.getNumberOfMessage() + " " + user.getSizeOfAllMessage());
   }
 
   /**
@@ -393,8 +389,7 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
       write("+OK " + numMessages + " messages (" + sizeMessage + " octets)");
 
       for (int index = 0; index < numMessages; index++) {
-        write((index + 1) + " " + user.getMessage(index + 1)
-          .getMessageLocation().length());
+        write((index + 1) + " " + user.getMessage(index + 1).getMessageLocation().length());
       }
       write(".");
     }
@@ -411,14 +406,12 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
 
       long numMessages = user.getNumberOfMessage();
 
-      if (messageNumber > numMessages || user.getMessage(messageNumber)
-        .isDeleted()) {
+      if (messageNumber > numMessages || user.getMessage(messageNumber).isDeleted()) {
         write(MESSAGE_NO_SUCH_MESSAGE);
         return;
       }
 
-      write("+OK " + messageNumber + " " + user.getMessage(messageNumber)
-        .getMessageLocation().length());
+      write("+OK " + messageNumber + " " + user.getMessage(messageNumber).getMessageLocation().length());
     }
   }
 
@@ -440,12 +433,10 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
     long numMessages = user.getNumberOfMessage();
 
     if (log.isDebugEnabled()) {
-      log.debug("Is Msg Deleted: " + user.getMessage(messageNumber)
-        .isDeleted());
+      log.debug("Is Msg Deleted: " + user.getMessage(messageNumber).isDeleted());
       log.debug("Message: " + messageNumber + " of " + numMessages);
     }
-    if (messageNumber > numMessages || user.getMessage(messageNumber)
-      .isDeleted()) {
+    if (messageNumber > numMessages || user.getMessage(messageNumber).isDeleted()) {
       write(MESSAGE_NO_SUCH_MESSAGE);
       return;
     }
@@ -455,8 +446,7 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
     BufferedReader fileIn = null;
     try {
       //Open an reader to read the file.
-      fileIn = new BufferedReader(new FileReader(user.getMessage(messageNumber)
-        .getMessageLocation()));
+      fileIn = new BufferedReader(new FileReader(user.getMessage(messageNumber).getMessageLocation()));
 
       //Write the file to the client.
       String currentLine = fileIn.readLine();
@@ -467,8 +457,7 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
       write(".");
     }
     catch (FileNotFoundException fnfe) {
-      log.error("Requested message for user " + user.getFullUsername()
-        + " could not be found on disk.", fnfe);
+      log.error("Requested message for user " + user.getFullUsername() + " could not be found on disk.", fnfe);
     }
     catch (IOException ioe) {
       log.error("Error retrieving message.", ioe);
@@ -562,12 +551,10 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
     long numMessages = user.getNumberOfMessage();
 
     if (log.isDebugEnabled()) {
-      log.debug("Is Msg Deleted: " + user.getMessage(messageNumber)
-        .isDeleted());
+      log.debug("Is Msg Deleted: " + user.getMessage(messageNumber).isDeleted());
       log.debug("Message: " + messageNumber + " of " + numMessages);
     }
-    if (messageNumber > numMessages || user.getMessage(messageNumber)
-      .isDeleted()) {
+    if (messageNumber > numMessages || user.getMessage(messageNumber).isDeleted()) {
       write(MESSAGE_NO_SUCH_MESSAGE);
       return;
     }
@@ -577,8 +564,7 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
     BufferedReader fileIn = null;
     try {
       //Open an reader to read the file.
-      fileIn = new BufferedReader(new FileReader(user.getMessage(messageNumber)
-        .getMessageLocation()));
+      fileIn = new BufferedReader(new FileReader(user.getMessage(messageNumber).getMessageLocation()));
 
       //Write the Message Header.
       String currentLine = fileIn.readLine();
@@ -603,8 +589,7 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
       write(".");
     }
     catch (FileNotFoundException fnfe) {
-      log.error("Requested message for user " + user.getFullUsername()
-        + " could not be found on disk.", fnfe);
+      log.error("Requested message for user " + user.getFullUsername() + " could not be found on disk.", fnfe);
     }
     catch (IOException ioe) {
       log.error("Error retrieving message.", ioe);
@@ -662,14 +647,12 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
 
       long numMessages = user.getNumberOfMessage();
 
-      if (messageNumber > numMessages || user.getMessage(messageNumber)
-        .isDeleted()) {
+      if (messageNumber > numMessages || user.getMessage(messageNumber).isDeleted()) {
         write(MESSAGE_NO_SUCH_MESSAGE);
         return;
       }
 
-      write(MESSAGE_OK + " " + messageNumber + " " + user.getMessage(
-        messageNumber).getUniqueId());
+      write(MESSAGE_OK + " " + messageNumber + " " + user.getMessage(messageNumber).getUniqueId());
     }
   }
 
@@ -754,33 +737,24 @@ public class Pop3Processor extends Thread implements ConnectionProcessor {
 
   //Message Constants
   //General Message
-  private static final String WELCOME_MESSAGE =
-    "+OK EricDaugherty's Java Pop Server Ready";
-  private static final String MESSAGE_DISCONNECT =
-    "+OK Pop server signing off.";
+  private static final String WELCOME_MESSAGE = "+OK EricDaugherty's Java Pop Server Ready";
+  private static final String MESSAGE_DISCONNECT = "+OK Pop server signing off.";
   private static final String MESSAGE_OK = "+OK";
-  private static final String MESSAGE_INVALID_COMMAND =
-    "-ERR Unknown command: ";
-  private static final String MESSAGE_TOO_FEW_ARGUMENTS =
-    "-ERR Too few arguments for this command.";
+  private static final String MESSAGE_INVALID_COMMAND = "-ERR Unknown command: ";
+  private static final String MESSAGE_TOO_FEW_ARGUMENTS = "-ERR Too few arguments for this command.";
 
   //Authentication Messages
   private static final String MESSAGE_NEED_USER_DOMAIN =
     "-ERR User names must contain the username and domain.  ex: \"root@mydomain.com\"";
-  private static final String MESSAGE_USER_ACCEPTED =
-    "+OK Password required for ";
+  private static final String MESSAGE_USER_ACCEPTED = "+OK Password required for ";
   private static final String MESSAGE_LOGIN_SUCCESSFUL = "+OK Login successful";
-  private static final String MESSAGE_USER_MAILBOX_LOCKED =
-    "-ERR User's Mailbox is locked";
-  private static final String MESSAGE_INVALID_LOGIN =
-    "-ERR Password supplied is incorrect for user: ";
+  private static final String MESSAGE_USER_MAILBOX_LOCKED = "-ERR User's Mailbox is locked";
+  private static final String MESSAGE_INVALID_LOGIN = "-ERR Password supplied is incorrect for user: ";
 
   //Other Messages
-  private static final String MESSAGE_NOT_A_NUMBER =
-    "-ERR Command requires a valid number as an argument.";
+  private static final String MESSAGE_NOT_A_NUMBER = "-ERR Command requires a valid number as an argument.";
   private static final String MESSAGE_NO_SUCH_MESSAGE = "-ERR No such message.";
-  private static final String MESSAGE_ALREADY_DELETED =
-    "-ERR Message already deleted.";
+  private static final String MESSAGE_ALREADY_DELETED = "-ERR Message already deleted.";
 
   //Command Constants
   private static final String COMMAND_QUIT = "QUIT";

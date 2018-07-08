@@ -89,8 +89,7 @@ public class Update extends Message {
    * 
    * @throws IOException The record could not be parsed.
    */
-  public void present(Name name, int type, Tokenizer tokenizer)
-    throws IOException {
+  public void present(Name name, int type, Tokenizer tokenizer) throws IOException {
     newPrereq(Record.fromString(name, type, dclass, 0, tokenizer, origin));
   }
 
@@ -126,8 +125,7 @@ public class Update extends Message {
    * 
    * @throws IOException The record could not be parsed.
    */
-  public void add(Name name, int type, long ttl, String record)
-    throws IOException {
+  public void add(Name name, int type, long ttl, String record) throws IOException {
     newUpdate(Record.fromString(name, type, dclass, ttl, record, origin));
   }
 
@@ -137,8 +135,7 @@ public class Update extends Message {
    * 
    * @throws IOException The record could not be parsed.
    */
-  public void add(Name name, int type, long ttl, Tokenizer tokenizer)
-    throws IOException {
+  public void add(Name name, int type, long ttl, Tokenizer tokenizer) throws IOException {
     newUpdate(Record.fromString(name, type, dclass, ttl, tokenizer, origin));
   }
 
@@ -198,8 +195,7 @@ public class Update extends Message {
    * 
    * @throws IOException The record could not be parsed.
    */
-  public void delete(Name name, int type, Tokenizer tokenizer)
-    throws IOException {
+  public void delete(Name name, int type, Tokenizer tokenizer) throws IOException {
     newUpdate(Record.fromString(name, type, DClass.NONE, 0, tokenizer, origin));
   }
 
@@ -234,8 +230,7 @@ public class Update extends Message {
    * 
    * @throws IOException The record could not be parsed.
    */
-  public void replace(Name name, int type, long ttl, String record)
-    throws IOException {
+  public void replace(Name name, int type, long ttl, String record) throws IOException {
     delete(name, type);
     add(name, type, ttl, record);
   }
@@ -247,8 +242,7 @@ public class Update extends Message {
    * 
    * @throws IOException The record could not be parsed.
    */
-  public void replace(Name name, int type, long ttl, Tokenizer tokenizer)
-    throws IOException {
+  public void replace(Name name, int type, long ttl, Tokenizer tokenizer) throws IOException {
     delete(name, type);
     add(name, type, ttl, tokenizer);
   }

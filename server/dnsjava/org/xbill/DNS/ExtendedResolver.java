@@ -356,8 +356,7 @@ public class ExtendedResolver implements Resolver {
    * @param listener The object containing the callbacks.
    * @return An identifier, which is also a parameter in the callback
    */
-  public Object sendAsync(final Message query,
-    final ResolverListener listener) {
+  public Object sendAsync(final Message query, final ResolverListener listener) {
     Resolution res = new Resolution(this, query);
     res.startAsync(listener);
     return res;

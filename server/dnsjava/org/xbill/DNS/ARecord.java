@@ -24,8 +24,7 @@ public class ARecord extends Record {
   }
 
   private static final int fromBytes(byte b1, byte b2, byte b3, byte b4) {
-    return (((b1 & 0xFF) << 24) | ((b2 & 0xFF) << 16) | ((b3 & 0xFF) << 8) | (b4
-      & 0xFF));
+    return (((b1 & 0xFF) << 24) | ((b2 & 0xFF) << 16) | ((b3 & 0xFF) << 8) | (b4 & 0xFF));
   }
 
   private static final int fromArray(byte[] array) {
@@ -65,8 +64,7 @@ public class ARecord extends Record {
       if (s.equals("@me@")) {
         address = InetAddress.getLocalHost();
         if (address.equals(InetAddress.getByName("127.0.0.1"))) {
-          String msg = "InetAddress.getLocalHost() is "
-            + "broken.  Don't use @me@.";
+          String msg = "InetAddress.getLocalHost() is " + "broken.  Don't use @me@.";
           throw new RuntimeException(msg);
         }
         addr = fromArray(address.getAddress());
@@ -79,8 +77,7 @@ public class ARecord extends Record {
     int[] array = Address.toArray(s);
     if (array == null)
       throw st.exception("invalid dotted quad");
-    addr = fromBytes((byte) array[0], (byte) array[1], (byte) array[2],
-      (byte) array[3]);
+    addr = fromBytes((byte) array[0], (byte) array[1], (byte) array[2], (byte) array[3]);
   }
 
   /** Converts rdata to a String */

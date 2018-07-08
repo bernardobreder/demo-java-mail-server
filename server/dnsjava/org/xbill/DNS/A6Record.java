@@ -31,8 +31,7 @@ public class A6Record extends Record {
    * @param suffix The address suffix
    * @param prefix The name of the prefix
    */
-  public A6Record(Name name, int dclass, long ttl, int prefixBits,
-    Inet6Address suffix, Name prefix) {
+  public A6Record(Name name, int dclass, long ttl, int prefixBits, Inet6Address suffix, Name prefix) {
     super(name, Type.A6, dclass, ttl);
     this.prefixBits = checkU8("prefixBits", prefixBits);
     this.suffix = suffix;
@@ -45,8 +44,7 @@ public class A6Record extends Record {
     int suffixbits = 128 - prefixBits;
     int suffixbytes = (suffixbits + 7) / 8;
     if (prefixBits < 128) {
-      suffix = new Inet6Address(128 - prefixBits, in.readByteArray(
-        suffixbytes));
+      suffix = new Inet6Address(128 - prefixBits, in.readByteArray(suffixbytes));
     }
     if (prefixBits > 0)
       prefix = new Name(in);

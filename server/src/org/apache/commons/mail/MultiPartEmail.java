@@ -96,8 +96,7 @@ public class MultiPartEmail extends Email {
    * @throws EmailException see javax.mail.internet.MimeBodyPart for definitions
    * @since 1.0
    */
-  public Email addPart(String partContent, String partContentType)
-    throws EmailException {
+  public Email addPart(String partContent, String partContentType) throws EmailException {
     BodyPart bodyPart = createBodyPart();
     try {
       bodyPart.setContent(partContent, partContentType);
@@ -136,8 +135,7 @@ public class MultiPartEmail extends Email {
    * @throws EmailException An error occured while adding the part.
    * @since 1.0
    */
-  public Email addPart(MimeMultipart multipart, int index)
-    throws EmailException {
+  public Email addPart(MimeMultipart multipart, int index) throws EmailException {
     BodyPart bodyPart = createBodyPart();
     try {
       bodyPart.setContent(multipart);
@@ -240,8 +238,7 @@ public class MultiPartEmail extends Email {
    * @throws EmailException see javax.mail.internet.MimeBodyPart for definitions
    * @since 1.0
    */
-  public MultiPartEmail attach(EmailAttachment attachment)
-    throws EmailException {
+  public MultiPartEmail attach(EmailAttachment attachment) throws EmailException {
     MultiPartEmail result = null;
 
     if (attachment == null) {
@@ -258,16 +255,15 @@ public class MultiPartEmail extends Email {
         if (!file.exists()) {
           throw new IOException("\"" + fileName + "\" does not exist");
         }
-        result = attach(new FileDataSource(file), attachment.getName(),
-          attachment.getDescription(), attachment.getDisposition());
+        result = attach(new FileDataSource(file), attachment.getName(), attachment.getDescription(), attachment
+          .getDisposition());
       }
       catch (IOException e) {
         throw new EmailException("Cannot attach file \"" + fileName + "\"", e);
       }
     }
     else {
-      result = attach(url, attachment.getName(), attachment.getDescription(),
-        attachment.getDisposition());
+      result = attach(url, attachment.getName(), attachment.getDescription(), attachment.getDisposition());
     }
 
     return result;
@@ -284,8 +280,7 @@ public class MultiPartEmail extends Email {
    * @throws EmailException see javax.mail.internet.MimeBodyPart for definitions
    * @since 1.0
    */
-  public MultiPartEmail attach(URL url, String name, String description)
-    throws EmailException {
+  public MultiPartEmail attach(URL url, String name, String description) throws EmailException {
     return attach(url, name, description, EmailAttachment.ATTACHMENT);
   }
 
@@ -300,8 +295,7 @@ public class MultiPartEmail extends Email {
    * @throws EmailException see javax.mail.internet.MimeBodyPart for definitions
    * @since 1.0
    */
-  public MultiPartEmail attach(URL url, String name, String description,
-    String disposition) throws EmailException {
+  public MultiPartEmail attach(URL url, String name, String description, String disposition) throws EmailException {
     // verify that the URL is valid
     try {
       InputStream is = url.openStream();
@@ -324,8 +318,7 @@ public class MultiPartEmail extends Email {
    * @throws EmailException see javax.mail.internet.MimeBodyPart for definitions
    * @since 1.0
    */
-  public MultiPartEmail attach(DataSource ds, String name, String description)
-    throws EmailException {
+  public MultiPartEmail attach(DataSource ds, String name, String description) throws EmailException {
     // verify that the DataSource is valid
     try {
       if (ds == null || ds.getInputStream() == null) {
@@ -350,8 +343,8 @@ public class MultiPartEmail extends Email {
    * @throws EmailException see javax.mail.internet.MimeBodyPart for definitions
    * @since 1.0
    */
-  public MultiPartEmail attach(DataSource ds, String name, String description,
-    String disposition) throws EmailException {
+  public MultiPartEmail attach(DataSource ds, String name, String description, String disposition)
+    throws EmailException {
     if (EmailUtils.isEmpty(name)) {
       name = ds.getName();
     }

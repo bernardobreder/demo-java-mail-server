@@ -20,8 +20,7 @@ public class hexdump {
    * @param offset The start of the data in the array.
    * @param length The length of the data in the array.
    */
-  public static String dump(String description, byte[] b, int offset,
-    int length) {
+  public static String dump(String description, byte[] b, int offset, int length) {
     StringBuffer sb = new StringBuffer();
 
     sb.append(length + "b");

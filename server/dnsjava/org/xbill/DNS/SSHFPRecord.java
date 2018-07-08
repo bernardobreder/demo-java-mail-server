@@ -47,8 +47,7 @@ public class SSHFPRecord extends Record {
    * @param digestType The public key's digest type.
    * @param fingerprint The public key's fingerprint.
    */
-  public SSHFPRecord(Name name, int dclass, long ttl, int alg, int digestType,
-    byte[] fingerprint) {
+  public SSHFPRecord(Name name, int dclass, long ttl, int alg, int digestType, byte[] fingerprint) {
     super(name, Type.SSHFP, dclass, ttl);
     this.alg = checkU8("alg", alg);
     this.digestType = checkU8("digestType", digestType);

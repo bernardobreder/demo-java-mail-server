@@ -50,8 +50,8 @@ public class TSIGRecord extends Record {
    *        responses.
    * @see TSIG
    */
-  public TSIGRecord(Name name, int dclass, long ttl, Name alg, Date timeSigned,
-    int fudge, byte[] signature, int originalID, int error, byte other[]) {
+  public TSIGRecord(Name name, int dclass, long ttl, Name alg, Date timeSigned, int fudge, byte[] signature,
+    int originalID, int error, byte other[]) {
     super(name, Type.TSIG, dclass, ttl);
     this.alg = checkName("alg", alg);
     this.timeSigned = timeSigned;
@@ -125,9 +125,8 @@ public class TSIGRecord extends Record {
           sb.append("<invalid BADTIME other data>");
         }
         else {
-          long time = ((other[0] & 0xFF) << 40) + ((other[1] & 0xFF) << 32)
-            + ((other[2] & 0xFF) << 24) + ((other[3] & 0xFF) << 16) + ((other[4]
-              & 0xFF) << 8) + ((other[5] & 0xFF));
+          long time = ((other[0] & 0xFF) << 40) + ((other[1] & 0xFF) << 32) + ((other[2] & 0xFF) << 24) + ((other[3]
+            & 0xFF) << 16) + ((other[4] & 0xFF) << 8) + ((other[5] & 0xFF));
           sb.append("<server time: ");
           sb.append(new Date(time * 1000));
           sb.append(">");

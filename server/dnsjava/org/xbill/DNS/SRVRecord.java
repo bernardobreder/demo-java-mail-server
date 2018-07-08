@@ -35,8 +35,7 @@ public class SRVRecord extends Record {
    * @param port The TCP/UDP port that the service uses
    * @param target The host running the service
    */
-  public SRVRecord(Name name, int dclass, long ttl, int priority, int weight,
-    int port, Name target) {
+  public SRVRecord(Name name, int dclass, long ttl, int priority, int weight, int port, Name target) {
     super(name, Type.SRV, dclass, ttl);
     this.priority = checkU16("priority", priority);
     this.weight = checkU16("weight", weight);

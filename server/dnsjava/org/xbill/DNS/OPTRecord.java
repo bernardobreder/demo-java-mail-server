@@ -65,8 +65,7 @@ public class OPTRecord extends Record {
    *        currently no defined options.
    * @see ExtendedFlags
    */
-  public OPTRecord(int payloadSize, int xrcode, int version, int flags,
-    List options) {
+  public OPTRecord(int payloadSize, int xrcode, int version, int flags, List options) {
     super(Name.root, Type.OPT, payloadSize, 0);
     checkU16("payloadSize", payloadSize);
     checkU8("xrcode", xrcode);

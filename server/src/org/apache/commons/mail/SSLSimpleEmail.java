@@ -27,13 +27,11 @@ public class SSLSimpleEmail {
 
   PrintWriter out;
 
-  public static void main(String[] args) throws UnknownHostException,
-    IOException {
-    new SSLSimpleEmail("smtp.gmail.com").send(new InputStreamReader(
-      new ByteArrayInputStream("Teste de email".getBytes())),
-      "user@mydomain.com", "bernardobreder@gmail.com");
-    SSLSocket socket = (SSLSocket) ((SSLSocketFactory) SSLSocketFactory
-      .getDefault()).createSocket(InetAddress.getByName("smtp.gmail.com"), 465);
+  public static void main(String[] args) throws UnknownHostException, IOException {
+    new SSLSimpleEmail("smtp.gmail.com").send(new InputStreamReader(new ByteArrayInputStream("Teste de email"
+      .getBytes())), "user@mydomain.com", "bernardobreder@gmail.com");
+    SSLSocket socket = (SSLSocket) ((SSLSocketFactory) SSLSocketFactory.getDefault()).createSocket(InetAddress
+      .getByName("smtp.gmail.com"), 465);
     socket.close();
   }
 
@@ -42,10 +40,8 @@ public class SSLSimpleEmail {
     localhost = InetAddress.getLocalHost();
   }
 
-  public boolean send(Reader msgFileReader, String from, String to)
-    throws IOException {
-    SSLSocket smtpPipe = (SSLSocket) ((SSLSocketFactory) SSLSocketFactory
-      .getDefault()).createSocket(mailHost, 465);
+  public boolean send(Reader msgFileReader, String from, String to) throws IOException {
+    SSLSocket smtpPipe = (SSLSocket) ((SSLSocketFactory) SSLSocketFactory.getDefault()).createSocket(mailHost, 465);
     try {
       InputStream inn;
       OutputStream outt;

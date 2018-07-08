@@ -37,8 +37,7 @@ public class CERTRecord extends Record {
     /** Certificate format defined by OID */
     public static final int OID = 254;
 
-    private static Mnemonic types = new Mnemonic("Certificate type",
-      Mnemonic.CASE_UPPER);
+    private static Mnemonic types = new Mnemonic("Certificate type", Mnemonic.CASE_UPPER);
 
     static {
       types.setMaximum(0xFFFF);
@@ -104,8 +103,7 @@ public class CERTRecord extends Record {
    * @param alg The algorithm of the associated KEYRecord, if present
    * @param cert Binary data representing the certificate
    */
-  public CERTRecord(Name name, int dclass, long ttl, int certType, int keyTag,
-    int alg, byte[] cert) {
+  public CERTRecord(Name name, int dclass, long ttl, int certType, int keyTag, int alg, byte[] cert) {
     super(name, Type.CERT, dclass, ttl);
     this.certType = checkU16("certType", certType);
     this.keyTag = checkU16("keyTag", keyTag);

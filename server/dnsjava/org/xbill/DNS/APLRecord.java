@@ -29,8 +29,7 @@ public class APLRecord extends Record {
     public final int prefixLength;
     public final Object address;
 
-    private Element(int family, boolean negative, Object address,
-      int prefixLength) {
+    private Element(int family, boolean negative, Object address, int prefixLength) {
       this.family = family;
       this.negative = negative;
       this.address = address;
@@ -94,8 +93,7 @@ public class APLRecord extends Record {
   private static boolean validatePrefixLength(int family, int prefixLength) {
     if (prefixLength < 0 || prefixLength >= 256)
       return false;
-    if ((family == AddressFamily.IPv4 && prefixLength > 32)
-      || (family == AddressFamily.IPv6 && prefixLength > 128))
+    if ((family == AddressFamily.IPv4 && prefixLength > 32) || (family == AddressFamily.IPv6 && prefixLength > 128))
       return false;
     return true;
   }
@@ -114,8 +112,7 @@ public class APLRecord extends Record {
         throw new IllegalArgumentException("illegal element");
       }
       Element element = (Element) o;
-      if (element.family != AddressFamily.IPv4
-        && element.family != AddressFamily.IPv6) {
+      if (element.family != AddressFamily.IPv4 && element.family != AddressFamily.IPv6) {
         throw new IllegalArgumentException("unknown family");
       }
       this.elements.add(element);
@@ -123,8 +120,7 @@ public class APLRecord extends Record {
     }
   }
 
-  private static byte[] parseAddress(byte[] in, int length)
-    throws WireParseException {
+  private static byte[] parseAddress(byte[] in, int length) throws WireParseException {
     if (in.length > length)
       throw new WireParseException("invalid address length");
     if (in.length == length)

@@ -89,8 +89,7 @@ public class ZoneTransferIn {
   private ZoneTransferIn() {
   }
 
-  private ZoneTransferIn(SimpleResolver sres, Name zone, int xfrtype,
-    long serial, boolean fallback) {
+  private ZoneTransferIn(SimpleResolver sres, Name zone, int xfrtype, long serial, boolean fallback) {
     res = sres;
     if (zone.isAbsolute())
       zname = zone;
@@ -99,8 +98,7 @@ public class ZoneTransferIn {
         zname = Name.concatenate(zone, Name.root);
       }
       catch (NameTooLongException e) {
-        throw new IllegalArgumentException("ZoneTransferIn: "
-          + "name too long");
+        throw new IllegalArgumentException("ZoneTransferIn: " + "name too long");
       }
     }
     qtype = xfrtype;
@@ -109,8 +107,7 @@ public class ZoneTransferIn {
     state = INITIALSOA;
   }
 
-  private static SimpleResolver newResolver(String host, int port, TSIG key)
-    throws UnknownHostException {
+  private static SimpleResolver newResolver(String host, int port, TSIG key) throws UnknownHostException {
     SimpleResolver sres = new SimpleResolver(host);
     if (port != 0)
       sres.setPort(port);
@@ -140,8 +137,7 @@ public class ZoneTransferIn {
    * @return The ZoneTransferIn object.
    * @throws UnknownHostException The host does not exist.
    */
-  public static ZoneTransferIn newAXFR(Name zone, String host, int port,
-    TSIG key) throws UnknownHostException {
+  public static ZoneTransferIn newAXFR(Name zone, String host, int port, TSIG key) throws UnknownHostException {
     return newAXFR(zone, newResolver(host, port, key));
   }
 
@@ -154,8 +150,7 @@ public class ZoneTransferIn {
    * @return The ZoneTransferIn object.
    * @throws UnknownHostException The host does not exist.
    */
-  public static ZoneTransferIn newAXFR(Name zone, String host, TSIG key)
-    throws UnknownHostException {
+  public static ZoneTransferIn newAXFR(Name zone, String host, TSIG key) throws UnknownHostException {
     return newAXFR(zone, newResolver(host, 0, key));
   }
 
@@ -169,8 +164,7 @@ public class ZoneTransferIn {
    * @param res The resolver to use when doing the transfer.
    * @return The ZoneTransferIn object.
    */
-  public static ZoneTransferIn newIXFR(Name zone, long serial, boolean fallback,
-    SimpleResolver res) {
+  public static ZoneTransferIn newIXFR(Name zone, long serial, boolean fallback, SimpleResolver res) {
     return new ZoneTransferIn(res, zone, Type.IXFR, serial, fallback);
   }
 
@@ -187,8 +181,8 @@ public class ZoneTransferIn {
    * @return The ZoneTransferIn object.
    * @throws UnknownHostException The host does not exist.
    */
-  public static ZoneTransferIn newIXFR(Name zone, long serial, boolean fallback,
-    String host, int port, TSIG key) throws UnknownHostException {
+  public static ZoneTransferIn newIXFR(Name zone, long serial, boolean fallback, String host, int port, TSIG key)
+    throws UnknownHostException {
     return newIXFR(zone, serial, fallback, newResolver(host, port, key));
   }
 
@@ -204,8 +198,8 @@ public class ZoneTransferIn {
    * @return The ZoneTransferIn object.
    * @throws UnknownHostException The host does not exist.
    */
-  public static ZoneTransferIn newIXFR(Name zone, long serial, boolean fallback,
-    String host, TSIG key) throws UnknownHostException {
+  public static ZoneTransferIn newIXFR(Name zone, long serial, boolean fallback, String host, TSIG key)
+    throws UnknownHostException {
     return newIXFR(zone, serial, fallback, newResolver(host, 0, key));
   }
 
@@ -220,8 +214,7 @@ public class ZoneTransferIn {
     query.getHeader().setOpcode(Opcode.QUERY);
     query.addRecord(question, Section.QUESTION);
     if (qtype == Type.IXFR) {
-      Record soa = new SOARecord(zname, DClass.IN, 0, Name.root, Name.root,
-        ixfr_serial, 0, 0, 0, 0);
+      Record soa = new SOARecord(zname, DClass.IN, 0, Name.root, Name.root, ixfr_serial, 0, 0, 0, 0);
       query.addRecord(soa, Section.AUTHORITY);
     }
     stream.send(query);
@@ -275,8 +268,7 @@ public class ZoneTransferIn {
       case FIRSTDATA:
         // If the transfer begins with 1 SOA, it's an AXFR.
         // If it begins with 2 SOAs, it's an IXFR.
-        if (qtype == Type.IXFR && type == Type.SOA && getSOASerial(
-          rec) == ixfr_serial) {
+        if (qtype == Type.IXFR && type == Type.SOA && getSOASerial(rec) == ixfr_serial) {
           rtype = Type.IXFR;
           ixfr = new ArrayList();
           logxfr("got incremental response");
@@ -326,8 +318,7 @@ public class ZoneTransferIn {
             break;
           }
           else if (soa_serial != current_serial) {
-            fail("IXFR out of sync: expected serial " + current_serial
-              + " , got " + soa_serial);
+            fail("IXFR out of sync: expected serial " + current_serial + " , got " + soa_serial);
           }
           else {
             state = IXFR_DELSOA;

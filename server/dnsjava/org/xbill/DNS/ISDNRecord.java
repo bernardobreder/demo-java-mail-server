@@ -30,8 +30,7 @@ public class ISDNRecord extends Record {
    * @param subAddress The subaddress, if any.
    * @throws IllegalArgumentException One of the strings is invalid.
    */
-  public ISDNRecord(Name name, int dclass, long ttl, String address,
-    String subAddress) {
+  public ISDNRecord(Name name, int dclass, long ttl, String address, String subAddress) {
     super(name, Type.ISDN, dclass, ttl);
     try {
       this.address = byteArrayFromString(address);

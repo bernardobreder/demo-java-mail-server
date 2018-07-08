@@ -31,8 +31,7 @@ public class KEYConverter {
     return (b[0] == 0 ? b.length - 1 : b.length);
   }
 
-  static BigInteger readBigInteger(DataInputStream in, int len)
-    throws IOException {
+  static BigInteger readBigInteger(DataInputStream in, int len) throws IOException {
     byte[] b = new byte[len];
     int n = in.read(b);
     if (n < len)
@@ -225,8 +224,7 @@ public class KEYConverter {
   }
 
   /** Builds a KEY record from a PublicKey */
-  public static KEYRecord buildRecord(Name name, int dclass, long ttl,
-    int flags, int proto, PublicKey key) {
+  public static KEYRecord buildRecord(Name name, int dclass, long ttl, int flags, int proto, PublicKey key) {
     byte[] data;
     byte alg;
 

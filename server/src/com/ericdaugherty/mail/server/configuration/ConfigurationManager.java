@@ -167,8 +167,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
    *        from.
    * @param userConfigurationFile the file to load the user configuration from.
    */
-  private ConfigurationManager(File generalConfigurationFile,
-    File userConfigurationFile) {
+  private ConfigurationManager(File generalConfigurationFile, File userConfigurationFile) {
     this.generalConfigurationFile = generalConfigurationFile;
     this.userConfigurationFile = userConfigurationFile;
   }
@@ -188,30 +187,25 @@ public class ConfigurationManager implements ConfigurationParameterContants {
    * @throws RuntimeException thrown if called more than once, the file does not
    *         exist, or there is an error loading the file.
    */
-  public static synchronized ConfigurationManager initialize(
-    String configurationDirectory) throws RuntimeException {
+  public static synchronized ConfigurationManager initialize(String configurationDirectory) throws RuntimeException {
     String generalConfigFilename = "mail.conf";
     String userConfigFilename = "user.conf";
 
     // Make sure we are not already configured.
     if (instance != null) {
-      throw new RuntimeException(
-        "Configurationmanager:initialize() called more than once!");
+      throw new RuntimeException("Configurationmanager:initialize() called more than once!");
     }
 
     // Verify the General config file exists.
-    File generalConfigFile = new File(configurationDirectory,
-      generalConfigFilename);
+    File generalConfigFile = new File(configurationDirectory, generalConfigFilename);
     if (!generalConfigFile.exists() || !generalConfigFile.isFile()) {
-      throw new RuntimeException("Invalid mail.conf ConfigurationFile! "
-        + generalConfigFile.getAbsolutePath());
+      throw new RuntimeException("Invalid mail.conf ConfigurationFile! " + generalConfigFile.getAbsolutePath());
     }
 
     // Verify the User config file exists.
     File userConfigFile = new File(configurationDirectory, userConfigFilename);
     if (!userConfigFile.exists() || !userConfigFile.isFile()) {
-      throw new RuntimeException("Invalid user.conf ConfigurationFile! "
-        + userConfigFile.getAbsolutePath());
+      throw new RuntimeException("Invalid user.conf ConfigurationFile! " + userConfigFile.getAbsolutePath());
     }
 
     // Go ahead and create the singleton instance.
@@ -235,8 +229,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
    */
   public static synchronized ConfigurationManager getInstance() {
     if (instance == null) {
-      throw new RuntimeException(
-        "ConfigurationManager can not be accessed before it is initialized!");
+      throw new RuntimeException("ConfigurationManager can not be accessed before it is initialized!");
     }
     return instance;
   }
@@ -437,8 +430,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
   }
 
   /** Emails Addresses that are allowed to relay mail. */
-  public void setRelayApprovedEmailAddresses(
-    String[] relayApprovedEmailAddresses) {
+  public void setRelayApprovedEmailAddresses(String[] relayApprovedEmailAddresses) {
     this.relayApprovedEmailAddresses = relayApprovedEmailAddresses;
   }
 
@@ -503,15 +495,13 @@ public class ConfigurationManager implements ConfigurationParameterContants {
     Properties properties = new Properties();
 
     try {
-      FileInputStream inputStream = new FileInputStream(
-        generalConfigurationFile);
+      FileInputStream inputStream = new FileInputStream(generalConfigurationFile);
       properties.load(inputStream);
     }
     catch (IOException e) {
       // All checks should be done before we get here, so there better
       // not be any errors.  If so, throw a RuntimeException.
-      throw new RuntimeException(
-        "Error Loading Properties File!  Unable to continue Operation.");
+      throw new RuntimeException("Error Loading Properties File!  Unable to continue Operation.");
     }
 
     //
@@ -522,8 +512,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
     localDomains = tokenize(domains.trim().toLowerCase());
     log.info("Loaded " + localDomains.length + " local domains.");
     if (domains.length() == 0) {
-      throw new RuntimeException(
-        "No Local Domains defined!  Can not run without local domains defined.");
+      throw new RuntimeException("No Local Domains defined!  Can not run without local domains defined.");
     }
 
     //
@@ -536,8 +525,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
       executeThreadCount = Integer.parseInt(threadsString);
     }
     catch (NumberFormatException nfe) {
-      log.warn("Invalid value for property: " + EXECUTE_THREADS
-        + ".  Using default value of 5.");
+      log.warn("Invalid value for property: " + EXECUTE_THREADS + ".  Using default value of 5.");
       executeThreadCount = 5;
     }
 
@@ -554,9 +542,8 @@ public class ConfigurationManager implements ConfigurationParameterContants {
         listenAddress = InetAddress.getByName(listenAddressString);
       }
       catch (UnknownHostException unknownHostException) {
-        throw new RuntimeException("Invalid value for property: "
-          + LISTEN_ADDRESS + ".  Server will listen on all addresses.  "
-          + unknownHostException);
+        throw new RuntimeException("Invalid value for property: " + LISTEN_ADDRESS
+          + ".  Server will listen on all addresses.  " + unknownHostException);
       }
     }
     else {
@@ -571,17 +558,14 @@ public class ConfigurationManager implements ConfigurationParameterContants {
     //
     // Load the SMTP Delivery Parameters
 
-    enablePOPBeforeSMTP = Boolean.valueOf(properties.getProperty(
-      RELAY_POP_BEFORE_SMTP, "false")).booleanValue();
+    enablePOPBeforeSMTP = Boolean.valueOf(properties.getProperty(RELAY_POP_BEFORE_SMTP, "false")).booleanValue();
     // Initialize the timeout Minutes parameter
-    String timoutString = properties.getProperty(RELAY_POP_BEFORE_SMTP_TIMEOUT,
-      "10");
+    String timoutString = properties.getProperty(RELAY_POP_BEFORE_SMTP_TIMEOUT, "10");
     try {
       setAuthenticationTimeoutMinutes(Long.parseLong(timoutString));
     }
     catch (NumberFormatException nfe) {
-      log.warn("Invalid value for property: " + RELAY_POP_BEFORE_SMTP_TIMEOUT
-        + ". Defaulting to 10.");
+      log.warn("Invalid value for property: " + RELAY_POP_BEFORE_SMTP_TIMEOUT + ". Defaulting to 10.");
       //Set the default to 10 minutes.
       setAuthenticationTimeoutMinutes(10);
     }
@@ -596,8 +580,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
 
     // Load default Server info.
 
-    String smtpServers = properties.getProperty(DEFAULT_SMTP_SERVERS, "")
-      .trim();
+    String smtpServers = properties.getProperty(DEFAULT_SMTP_SERVERS, "").trim();
     if (smtpServers.length() > 0) {
       defaultSmtpServerEnabled = true;
 
@@ -624,8 +607,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
         }
         else {
           defaultSmtpServers[i].setHost(server.substring(0, colon));
-          defaultSmtpServers[i].setPort(Integer.parseInt(server.substring(colon
-            + 1)));
+          defaultSmtpServers[i].setPort(Integer.parseInt(server.substring(colon + 1)));
         }
         if (defaultSmtpServers[i].getHost().length() == 0)
           defaultSmtpServers[i].setHost("localhost");
@@ -651,8 +633,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
         defaultUserEnabled = true;
       }
       catch (InvalidAddressException e) {
-        throw new RuntimeException("Invalid address for default user: "
-          + defaultUserString);
+        throw new RuntimeException("Invalid address for default user: " + defaultUserString);
       }
     }
     else {
@@ -660,8 +641,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
       defaultUserEnabled = false;
     }
 
-    String deliveryIntervalString = properties.getProperty(
-      SMTP_DELIVERY_INTERVAL, "10");
+    String deliveryIntervalString = properties.getProperty(SMTP_DELIVERY_INTERVAL, "10");
     try {
       //Convert to number and then convert to ms.
       setDeliveryIntervalSeconds(Long.parseLong(deliveryIntervalString));
@@ -672,23 +652,19 @@ public class ConfigurationManager implements ConfigurationParameterContants {
 
     // Set the Delivery Attempt Threshold.
     try {
-      deliveryAttemptThreshold = Integer.parseInt(properties.getProperty(
-        SMTP_DELIVERY_THRESHOLD, "10"));
+      deliveryAttemptThreshold = Integer.parseInt(properties.getProperty(SMTP_DELIVERY_THRESHOLD, "10"));
     }
     catch (NumberFormatException numberFormatException) {
-      log.warn("Invalid value for property: " + SMTP_DELIVERY_THRESHOLD
-        + ". Defaulting to 10.");
+      log.warn("Invalid value for property: " + SMTP_DELIVERY_THRESHOLD + ". Defaulting to 10.");
       deliveryAttemptThreshold = 10;
     }
 
     // Set the Maximum message Size
     try {
-      maximumMessageSize = Integer.parseInt(properties.getProperty(
-        SMTP_MAX_MESSAGE_SIZE, "5"));
+      maximumMessageSize = Integer.parseInt(properties.getProperty(SMTP_MAX_MESSAGE_SIZE, "5"));
     }
     catch (NumberFormatException numberFormatException) {
-      log.warn("Invalid value for property: " + SMTP_MAX_MESSAGE_SIZE
-        + ". Defaulting to 5.");
+      log.warn("Invalid value for property: " + SMTP_MAX_MESSAGE_SIZE + ". Defaulting to 5.");
       deliveryAttemptThreshold = 5;
     }
 
@@ -708,8 +684,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
     catch (IOException e) {
       // All checks should be done before we get here, so there better
       // not be any errors.  If so, throw a RuntimeException.
-      throw new RuntimeException(
-        "Error Loading Properties File!  Unable to continue Operation.");
+      throw new RuntimeException("Error Loading Properties File!  Unable to continue Operation.");
     }
 
     // Clear the modified flag so we know if we have to save the file
@@ -752,8 +727,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
         log.info("Changes to user.conf persisted to disk.");
       }
       catch (IOException e) {
-        log.error(
-          "Unable to store changes to user.conf!  Plain text passwords were not hashed!");
+        log.error("Unable to store changes to user.conf!  Plain text passwords were not hashed!");
       }
     }
 
@@ -802,8 +776,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
         value = Integer.parseInt(stringValue);
       }
       catch (NumberFormatException e) {
-        log.warn("Error parsing port string: " + stringValue
-          + " using default value: " + defaultValue);
+        log.warn("Error parsing port string: " + stringValue + " using default value: " + defaultValue);
       }
     }
     return value;
@@ -817,8 +790,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
    * @param properties the properties that contain the user parameters.
    * @return a new User instance.
    */
-  private User loadUser(String fullAddress, Properties properties)
-    throws InvalidAddressException {
+  private User loadUser(String fullAddress, Properties properties) throws InvalidAddressException {
     EmailAddress address = new EmailAddress(fullAddress);
     User user = new User(address);
 
@@ -829,21 +801,17 @@ public class ConfigurationManager implements ConfigurationParameterContants {
       password = PasswordManager.encryptPassword(password);
       properties.setProperty(USER_DEF_PREFIX + fullAddress, password);
       if (password == null) {
-        log.error("Error encrypting plaintext password from user.conf for user "
-          + fullAddress);
-        throw new RuntimeException("Error encrypting password for user: "
-          + fullAddress);
+        log.error("Error encrypting plaintext password from user.conf for user " + fullAddress);
+        throw new RuntimeException("Error encrypting password for user: " + fullAddress);
       }
       userConfModified = true;
     }
     user.setPassword(password);
 
     // Load the 'forward' addresses.
-    String forwardAddressesString = properties.getProperty(USER_PROPERTY_PREFIX
-      + fullAddress + USER_FILE_FORWARDS);
+    String forwardAddressesString = properties.getProperty(USER_PROPERTY_PREFIX + fullAddress + USER_FILE_FORWARDS);
     String[] forwardAddresses = new String[0];
-    if (forwardAddressesString != null && forwardAddressesString.trim()
-      .length() >= 0) {
+    if (forwardAddressesString != null && forwardAddressesString.trim().length() >= 0) {
       forwardAddresses = tokenize(forwardAddressesString);
     }
     ArrayList addressList = new ArrayList(forwardAddresses.length);
@@ -852,8 +820,8 @@ public class ConfigurationManager implements ConfigurationParameterContants {
         addressList.add(new EmailAddress(forwardAddresses[index]));
       }
       catch (InvalidAddressException e) {
-        log.warn("Forward address: " + forwardAddresses[index] + " for user "
-          + user.getFullUsername() + " is invalid and will be ignored.");
+        log.warn("Forward address: " + forwardAddresses[index] + " for user " + user.getFullUsername()
+          + " is invalid and will be ignored.");
       }
     }
 
@@ -861,8 +829,7 @@ public class ConfigurationManager implements ConfigurationParameterContants {
     emailAddresses = (EmailAddress[]) addressList.toArray(emailAddresses);
 
     if (log.isDebugEnabled())
-      log.debug(emailAddresses.length + " forward addresses load for user: "
-        + user.getFullUsername());
+      log.debug(emailAddresses.length + " forward addresses load for user: " + user.getFullUsername());
     user.setForwardAddresses(emailAddresses);
 
     return user;
@@ -893,21 +860,17 @@ public class ConfigurationManager implements ConfigurationParameterContants {
       while (true) {
         try {
           Thread.sleep(sleepTime);
-          if (generalConfigurationFile
-            .lastModified() > generalConfigurationFileTimestamp) {
+          if (generalConfigurationFile.lastModified() > generalConfigurationFileTimestamp) {
             log.info("General Configuration File Changed, reloading...");
             loadGeneralProperties();
           }
-          if (userConfigurationFile
-            .lastModified() > userConfigurationFileTimestamp) {
+          if (userConfigurationFile.lastModified() > userConfigurationFileTimestamp) {
             log.info("User Configuration File Changed, reloading...");
             loadUserProperties();
           }
         }
         catch (Throwable throwable) {
-          log.error(
-            "Error in ConfigurationWatcher thread.  Thread will continue to execute. "
-              + throwable, throwable);
+          log.error("Error in ConfigurationWatcher thread.  Thread will continue to execute. " + throwable, throwable);
         }
       }
     }
@@ -915,21 +878,14 @@ public class ConfigurationManager implements ConfigurationParameterContants {
 
   private static final String LF = "\r\n";
 
-  private static final String USER_PROPERTIES_HEADER =
-    "# Java Email Server (JES) User Configuration" + LF + "#" + LF
-      + "# All users are defined in this file.  To add a user, follow" + LF
-      + "# the following pattern:" + LF
-      + "# user.<username@domain>=<plain text password>" + LF + "#" + LF
-      + "# The plain text password will be converted to a hash when the file"
-      + LF + "# is first loaded by the server." + LF + "#" + LF
-      + "# Additional configuration such as forward addresses can be specified as:"
-      + LF
-      + "# userprop.<username@domain>.forwardAddresses=<Comma list of forward addresses>"
-      + LF + "#" + LF
-      + "# When a message is received for a local user, the user's address will be replaced"
-      + LF
-      + "# with the addresses in the forwardAddresses property.  If you also wish to have"
-      + LF
-      + "# a copy delivered to the local user, you may add the user's local address to"
-      + LF + "# the forwardAddresses property" + LF + "";
+  private static final String USER_PROPERTIES_HEADER = "# Java Email Server (JES) User Configuration" + LF + "#" + LF
+    + "# All users are defined in this file.  To add a user, follow" + LF + "# the following pattern:" + LF
+    + "# user.<username@domain>=<plain text password>" + LF + "#" + LF
+    + "# The plain text password will be converted to a hash when the file" + LF + "# is first loaded by the server."
+    + LF + "#" + LF + "# Additional configuration such as forward addresses can be specified as:" + LF
+    + "# userprop.<username@domain>.forwardAddresses=<Comma list of forward addresses>" + LF + "#" + LF
+    + "# When a message is received for a local user, the user's address will be replaced" + LF
+    + "# with the addresses in the forwardAddresses property.  If you also wish to have" + LF
+    + "# a copy delivered to the local user, you may add the user's local address to" + LF
+    + "# the forwardAddresses property" + LF + "";
 }

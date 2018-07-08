@@ -55,8 +55,7 @@ public class HMAC {
       digest = MessageDigest.getInstance(digestName);
     }
     catch (NoSuchAlgorithmException e) {
-      throw new IllegalArgumentException("unknown digest algorithm "
-        + digestName);
+      throw new IllegalArgumentException("unknown digest algorithm " + digestName);
     }
     init(key);
   }

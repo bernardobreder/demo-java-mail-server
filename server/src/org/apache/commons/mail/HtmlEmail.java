@@ -178,8 +178,7 @@ public class HtmlEmail extends MultiPartEmail {
 
     setTextMsg(msg);
 
-    StringBuffer htmlMsgBuf = new StringBuffer(msg.length() + HTML_MESSAGE_START
-      .length() + HTML_MESSAGE_END.length());
+    StringBuffer htmlMsgBuf = new StringBuffer(msg.length() + HTML_MESSAGE_START.length() + HTML_MESSAGE_END.length());
 
     htmlMsgBuf.append(HTML_MESSAGE_START).append(msg).append(HTML_MESSAGE_END);
 
@@ -259,13 +258,11 @@ public class HtmlEmail extends MultiPartEmail {
       // NOTE: Comparing URLs with URL.equals() is a blocking operation
       // in the case of a network failure therefore we use
       // url.toExternalForm().equals() here.
-      if (url.toExternalForm().equals(urlDataSource.getURL()
-        .toExternalForm())) {
+      if (url.toExternalForm().equals(urlDataSource.getURL().toExternalForm())) {
         return ii.getCid();
       }
       else {
-        throw new EmailException("embedded name '" + name
-          + "' is already bound to URL " + urlDataSource.getURL()
+        throw new EmailException("embedded name '" + name + "' is already bound to URL " + urlDataSource.getURL()
           + "; existing names cannot be rebound");
       }
     }
@@ -304,8 +301,7 @@ public class HtmlEmail extends MultiPartEmail {
    * @since 1.1
    */
   public String embed(File file) throws EmailException {
-    String cid = EmailUtils.randomAlphabetic(HtmlEmail.CID_LENGTH)
-      .toLowerCase();
+    String cid = EmailUtils.randomAlphabetic(HtmlEmail.CID_LENGTH).toLowerCase();
     return embed(file, cid);
   }
 
@@ -346,8 +342,7 @@ public class HtmlEmail extends MultiPartEmail {
       filePath = file.getCanonicalPath();
     }
     catch (IOException ioe) {
-      throw new EmailException("couldn't get canonical path for " + file
-        .getName(), ioe);
+      throw new EmailException("couldn't get canonical path for " + file.getName(), ioe);
     }
 
     // check if a FileDataSource for this name has already been attached;
@@ -362,16 +357,14 @@ public class HtmlEmail extends MultiPartEmail {
         existingFilePath = fileDataSource.getFile().getCanonicalPath();
       }
       catch (IOException ioe) {
-        throw new EmailException("couldn't get canonical path for file "
-          + fileDataSource.getFile().getName()
+        throw new EmailException("couldn't get canonical path for file " + fileDataSource.getFile().getName()
           + "which has already been embedded", ioe);
       }
       if (filePath.equals(existingFilePath)) {
         return ii.getCid();
       }
       else {
-        throw new EmailException("embedded name '" + file.getName()
-          + "' is already bound to file " + existingFilePath
+        throw new EmailException("embedded name '" + file.getName() + "' is already bound to file " + existingFilePath
           + "; existing names cannot be rebound");
       }
     }
@@ -402,8 +395,7 @@ public class HtmlEmail extends MultiPartEmail {
    * @see #embed(DataSource, String, String)
    * @since 1.1
    */
-  public String embed(DataSource dataSource, String name)
-    throws EmailException {
+  public String embed(DataSource dataSource, String name) throws EmailException {
     // check if the DataSource has already been attached;
     // if so, return the cached CID value.
     if (inlineEmbeds.containsKey(name)) {
@@ -414,14 +406,12 @@ public class HtmlEmail extends MultiPartEmail {
         return ii.getCid();
       }
       else {
-        throw new EmailException("embedded DataSource '" + name
-          + "' is already bound to name " + ii.getDataSource().toString()
-          + "; existing names cannot be rebound");
+        throw new EmailException("embedded DataSource '" + name + "' is already bound to name " + ii.getDataSource()
+          .toString() + "; existing names cannot be rebound");
       }
     }
 
-    String cid = EmailUtils.randomAlphabetic(HtmlEmail.CID_LENGTH)
-      .toLowerCase();
+    String cid = EmailUtils.randomAlphabetic(HtmlEmail.CID_LENGTH).toLowerCase();
     return embed(dataSource, name, cid);
   }
 
@@ -437,8 +427,7 @@ public class HtmlEmail extends MultiPartEmail {
    *         null or empty
    * @since 1.1
    */
-  public String embed(DataSource dataSource, String name, String cid)
-    throws EmailException {
+  public String embed(DataSource dataSource, String name, String cid) throws EmailException {
     if (EmailUtils.isEmpty(name)) {
       throw new EmailException("name cannot be null or empty");
     }
@@ -513,8 +502,7 @@ public class HtmlEmail extends MultiPartEmail {
         }
       }
     }
-    else if (EmailUtils.isNotEmpty(this.text) && EmailUtils.isNotEmpty(
-      this.html)) {
+    else if (EmailUtils.isNotEmpty(this.text) && EmailUtils.isNotEmpty(this.html)) {
       // If both HTML and TEXT bodies are provided, create a alternative
       // container and add it to the root container
       bodyContainer = new MimeMultipart("alternative");
@@ -527,8 +515,7 @@ public class HtmlEmail extends MultiPartEmail {
 
       // apply default charset if one has been set
       if (EmailUtils.isNotEmpty(this.charset)) {
-        msgHtml.setContent(this.html, Email.TEXT_HTML + "; charset="
-          + this.charset);
+        msgHtml.setContent(this.html, Email.TEXT_HTML + "; charset=" + this.charset);
       }
       else {
         msgHtml.setContent(this.html, Email.TEXT_HTML);
@@ -547,8 +534,7 @@ public class HtmlEmail extends MultiPartEmail {
 
       // apply default charset if one has been set
       if (EmailUtils.isNotEmpty(this.charset)) {
-        msgText.setContent(this.text, Email.TEXT_PLAIN + "; charset="
-          + this.charset);
+        msgText.setContent(this.text, Email.TEXT_PLAIN + "; charset=" + this.charset);
       }
       else {
         msgText.setContent(this.text, Email.TEXT_PLAIN);

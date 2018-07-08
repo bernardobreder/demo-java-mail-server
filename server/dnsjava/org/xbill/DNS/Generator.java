@@ -49,8 +49,8 @@ public class Generator {
    */
   public static boolean supportedType(int type) {
     Type.check(type);
-    return (type == Type.PTR || type == Type.CNAME || type == Type.DNAME
-      || type == Type.A || type == Type.AAAA || type == Type.NS);
+    return (type == Type.PTR || type == Type.CNAME || type == Type.DNAME || type == Type.A || type == Type.AAAA
+      || type == Type.NS);
   }
 
   /**
@@ -71,8 +71,8 @@ public class Generator {
    * @throws IllegalArgumentException The type does not support generation.
    * @throws IllegalArgumentException The dclass is not a valid class.
    */
-  public Generator(long start, long end, long step, String namePattern,
-    int type, int dclass, long ttl, String rdataPattern, Name origin) {
+  public Generator(long start, long end, long step, String namePattern, int type, int dclass, long ttl,
+    String rdataPattern, Name origin) {
     if (start < 0 || end < 0 || start > end || step <= 0)
       throw new IllegalArgumentException("invalid range specification");
     if (!supportedType(type))

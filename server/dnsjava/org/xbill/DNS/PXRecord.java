@@ -31,8 +31,7 @@ public class PXRecord extends Record {
    * @param map822 The RFC 822 component of the mail address.
    * @param mapX400 The X.400 component of the mail address.
    */
-  public PXRecord(Name name, int dclass, long ttl, int preference, Name map822,
-    Name mapX400) {
+  public PXRecord(Name name, int dclass, long ttl, int preference, Name map822, Name mapX400) {
     super(name, Type.PX, dclass, ttl);
 
     this.preference = checkU16("preference", preference);

@@ -220,8 +220,7 @@ public class Tokenizer {
    * @throws TextParseException The input was invalid.
    * @throws IOException An I/O error occurred.
    */
-  public Token get(boolean wantWhitespace, boolean wantComment)
-    throws IOException {
+  public Token get(boolean wantWhitespace, boolean wantComment) throws IOException {
     int type;
     int c;
 

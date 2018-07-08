@@ -72,8 +72,7 @@ public class SMTPMessage implements Serializable {
   private static Log log = LogFactory.getLog(SMTPMessage.class.getName());
 
   /** The ConfigurationManager */
-  private static ConfigurationManager configurationManager =
-    ConfigurationManager.getInstance();
+  private static ConfigurationManager configurationManager = ConfigurationManager.getInstance();
 
   private Date timeReceived;
   private Date scheduledDelivery;
@@ -178,27 +177,24 @@ public class SMTPMessage implements Serializable {
    * Moves the message to the 'failed' Directory.
    */
   public void moveToFailedFolder() throws Exception {
-    File failedDir = new File(configurationManager.getMailDirectory()
-      + File.separator + "failed");
+    File failedDir = new File(configurationManager.getMailDirectory() + File.separator + "failed");
 
     // If the directory does not exist, create it.
     if (!failedDir.exists()) {
-      log.info("failed directory does not exist.  Creating: " + failedDir
-        .getAbsolutePath());
+      log.info("failed directory does not exist.  Creating: " + failedDir.getAbsolutePath());
       if (!failedDir.mkdirs()) {
-        log.error("Error creating failed directory: " + failedDir
-          .getAbsolutePath() + ".  No incoming mail will be accepted!");
+        log.error("Error creating failed directory: " + failedDir.getAbsolutePath()
+          + ".  No incoming mail will be accepted!");
         throw new Exception("Unable to create failed Directory.");
       }
     }
 
     File messageLocation = getMessageLocation();
-    String newLocation = configurationManager.getMailDirectory()
-      + File.separator + "failed" + File.separator + messageLocation.getName();
+    String newLocation = configurationManager.getMailDirectory() + File.separator + "failed" + File.separator
+      + messageLocation.getName();
     if (!messageLocation.renameTo(new File(newLocation))) {
       log.error("moveToFailedFolder failed.  Message was not renamed.");
-      throw new Exception(
-        "moveToFailedFolder failed.  Message was not renamed.");
+      throw new Exception("moveToFailedFolder failed.  Message was not renamed.");
     }
   }
 
@@ -207,16 +203,14 @@ public class SMTPMessage implements Serializable {
    */
   public void save() throws Exception {
 
-    File smtpDirectory = new File(configurationManager.getMailDirectory()
-      + File.separator + "smtp");
+    File smtpDirectory = new File(configurationManager.getMailDirectory() + File.separator + "smtp");
 
     // If the directory does not exist, create it.
     if (!smtpDirectory.exists()) {
-      log.info("SMTP Mail directory does not exist.  Creating: " + smtpDirectory
-        .getAbsolutePath());
+      log.info("SMTP Mail directory does not exist.  Creating: " + smtpDirectory.getAbsolutePath());
       if (!smtpDirectory.mkdirs()) {
-        log.error("Error creating SMTP Mail directory: " + smtpDirectory
-          .getAbsolutePath() + ".  No incoming mail will be accepted!");
+        log.error("Error creating SMTP Mail directory: " + smtpDirectory.getAbsolutePath()
+          + ".  No incoming mail will be accepted!");
         throw new Exception("Unable to create SMTP Mail Directory.");
       }
     }
@@ -255,8 +249,7 @@ public class SMTPMessage implements Serializable {
         }
       }
       catch (IOException e) {
-        log.warn("Unable to close spool file for SMTPMessage " + messageLocation
-          .getAbsolutePath());
+        log.warn("Unable to close spool file for SMTPMessage " + messageLocation.getAbsolutePath());
       }
     }
   }
@@ -277,11 +270,9 @@ public class SMTPMessage implements Serializable {
     try {
       String version = reader.readLine();
       if (log.isDebugEnabled())
-        log.debug("Loading SMTP Message " + messageFile.getName() + " version "
-          + version);
+        log.debug("Loading SMTP Message " + messageFile.getName() + " version " + version);
       if (!FILE_VERSION.equals(version)) {
-        log.error("Error loading SMTP Message.  Can not handle file version: "
-          + version);
+        log.error("Error loading SMTP Message.  Can not handle file version: " + version);
         throw new IOException("Invalid file version: " + version);
       }
       // Initialize a new message with the right file location
@@ -304,13 +295,11 @@ public class SMTPMessage implements Serializable {
       return message;
     }
     catch (InvalidAddressException invalidAddressException) {
-      throw new IOException(
-        "Unable to parse the address from the stored file.");
+      throw new IOException("Unable to parse the address from the stored file.");
     }
     catch (NumberFormatException numberFormatException) {
-      throw new IOException(
-        "Unable to parse the data from the stored file into a number.  "
-          + numberFormatException.toString());
+      throw new IOException("Unable to parse the data from the stored file into a number.  " + numberFormatException
+        .toString());
     }
     finally {
       if (reader != null) {
@@ -363,11 +352,9 @@ public class SMTPMessage implements Serializable {
       return addressList;
     }
     catch (InvalidAddressException invalidAddressException) {
-      log.error(
-        "Unable to parse to address read from database.  Full String is: "
-          + addresses, invalidAddressException);
-      throw new RuntimeException(
-        "Error parsing address.  Message Delivery Failed.");
+      log.error("Unable to parse to address read from database.  Full String is: " + addresses,
+        invalidAddressException);
+      throw new RuntimeException("Error parsing address.  Message Delivery Failed.");
     }
   }
 }

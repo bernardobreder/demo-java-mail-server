@@ -43,8 +43,7 @@ public class DNSOutput {
     long max = 1;
     max <<= bits;
     if (val < 0 || val > max) {
-      throw new IllegalArgumentException(val + " out of range for " + bits
-        + " bit value");
+      throw new IllegalArgumentException(val + " out of range for " + bits + " bit value");
     }
   }
 

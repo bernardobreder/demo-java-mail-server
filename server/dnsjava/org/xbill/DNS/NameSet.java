@@ -45,8 +45,7 @@ class NameSet {
 
   private final Object lookupType(Object typelist, int type) {
     if (type == Type.ANY)
-      throw new IllegalArgumentException(
-        "type ANY passed to NameSet.lookupType()");
+      throw new IllegalArgumentException("type ANY passed to NameSet.lookupType()");
     synchronized (typelist) {
       if (typelist instanceof LinkedList) {
         LinkedList list = (LinkedList) typelist;

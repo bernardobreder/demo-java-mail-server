@@ -233,8 +233,8 @@ public class Message implements Cloneable {
    * @see Section
    */
   public boolean findRRset(Name name, int type) {
-    return (findRRset(name, type, Section.ANSWER) || findRRset(name, type,
-      Section.AUTHORITY) || findRRset(name, type, Section.ADDITIONAL));
+    return (findRRset(name, type, Section.ANSWER) || findRRset(name, type, Section.AUTHORITY) || findRRset(name, type,
+      Section.ADDITIONAL));
   }
 
   /**
@@ -278,8 +278,7 @@ public class Message implements Cloneable {
    * @see TSIG
    */
   public boolean isSigned() {
-    return (tsigState == TSIG_SIGNED || tsigState == TSIG_VERIFIED
-      || tsigState == TSIG_FAILED);
+    return (tsigState == TSIG_SIGNED || tsigState == TSIG_VERIFIED || tsigState == TSIG_FAILED);
   }
 
   /**
@@ -332,8 +331,8 @@ public class Message implements Cloneable {
   }
 
   private static boolean sameSet(Record r1, Record r2) {
-    return (r1.getRRsetType() == r2.getRRsetType() && r1.getDClass() == r2
-      .getDClass() && r1.getName().equals(r2.getName()));
+    return (r1.getRRsetType() == r2.getRRsetType() && r1.getDClass() == r2.getDClass() && r1.getName().equals(r2
+      .getName()));
   }
 
   /**
@@ -355,8 +354,8 @@ public class Message implements Cloneable {
       if (hash.contains(name)) {
         for (int j = sets.size() - 1; j >= 0; j--) {
           RRset set = (RRset) sets.get(j);
-          if (set.getType() == recs[i].getRRsetType() && set
-            .getDClass() == recs[i].getDClass() && set.getName().equals(name)) {
+          if (set.getType() == recs[i].getRRsetType() && set.getDClass() == recs[i].getDClass() && set.getName().equals(
+            name)) {
             set.addRR(recs[i]);
             newset = false;
             break;
@@ -387,8 +386,7 @@ public class Message implements Cloneable {
   }
 
   /* Returns the number of records not successfully rendered. */
-  private int sectionToWire(DNSOutput out, int section, Compression c,
-    int maxLength) {
+  private int sectionToWire(DNSOutput out, int section, Compression c, int maxLength) {
     int n = sections[section].size();
     int pos = out.current();
     int rendered = 0;
@@ -449,8 +447,7 @@ public class Message implements Cloneable {
     }
 
     if (tsigkey != null) {
-      TSIGRecord tsigrec = tsigkey.generate(this, out.toByteArray(), tsigerror,
-        querytsig);
+      TSIGRecord tsigrec = tsigkey.generate(this, out.toByteArray(), tsigerror, querytsig);
 
       if (newheader == null)
         newheader = (Header) header.clone();

@@ -31,9 +31,11 @@
 package com.ericdaugherty.mail.server;
 
 // Java imports
-import java.io.*;
-import java.lang.reflect.Method;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Properties;
 
 // Log4j imports
@@ -44,9 +46,9 @@ import org.apache.commons.logging.LogFactory;
 import com.ericdaugherty.mail.server.configuration.ConfigurationManager;
 import com.ericdaugherty.mail.server.configuration.ConfigurationParameterContants;
 import com.ericdaugherty.mail.server.services.general.ServiceListener;
-import com.ericdaugherty.mail.server.services.smtp.SMTPSender;
-import com.ericdaugherty.mail.server.services.smtp.SMTPProcessor;
 import com.ericdaugherty.mail.server.services.pop3.Pop3Processor;
+import com.ericdaugherty.mail.server.services.smtp.SMTPProcessor;
+import com.ericdaugherty.mail.server.services.smtp.SMTPSender;
 
 /**
  * This class is the entrypoint for the Mail Server application. It creates
@@ -103,8 +105,7 @@ public class Mail {
    */
   public static void shutdown() {
 
-    log.warn(
-      "Shutting down Mail Server.  Server will shut down in 60 seconds.");
+    log.warn("Shutting down Mail Server.  Server will shut down in 60 seconds.");
 
     popListener.shutdown();
     smtpListener.shutdown();
@@ -143,8 +144,7 @@ public class Mail {
       initializeLogging(directory);
 
       // Initialize the Configuration Manager.
-      ConfigurationManager configurationManager = ConfigurationManager
-        .initialize(directory);
+      ConfigurationManager configurationManager = ConfigurationManager.initialize(directory);
 
       //Start the threads.
       int port;
@@ -152,18 +152,18 @@ public class Mail {
 
       //Start the Pop3 Thread.
       port = configurationManager.getPop3Port();
-      if (log.isDebugEnabled())
+      if (log.isDebugEnabled()) {
         log.debug("Starting POP3 Service on port: " + port);
-      popListener = new ServiceListener(port, Pop3Processor.class,
-        executeThreads);
+      }
+      popListener = new ServiceListener(port, Pop3Processor.class, executeThreads);
       new Thread(popListener, "POP3").start();
 
       //Start SMTP Threads.
       port = configurationManager.getSmtpPort();
-      if (log.isDebugEnabled())
+      if (log.isDebugEnabled()) {
         log.debug("Starting SMTP Service on port: " + port);
-      smtpListener = new ServiceListener(port, SMTPProcessor.class,
-        executeThreads);
+      }
+      smtpListener = new ServiceListener(port, SMTPProcessor.class, executeThreads);
       new Thread(smtpListener, "SMTP").start();
 
       //Start the SMTPSender thread (This thread actually delivers the mail recieved
@@ -207,13 +207,11 @@ public class Mail {
     }
     // Otherwise, use the default, which is 'mail.conf' in the current directory.
     else if ((directoryFile = new File(directory)).exists()) {
-      System.out.println("Configuration Directory not specified.  Using \""
-        + directoryFile.getAbsolutePath() + "\"");
+      System.out.println("Configuration Directory not specified.  Using \"" + directoryFile.getAbsolutePath() + "\"");
     }
     // If no file was specified and the default does not exist, printing out a usage line.
     else {
-      System.out.println(
-        "Usage:  java com.ericdaugherty.mail.server.Mail <configuration directory>");
+      System.out.println("Usage:  java com.ericdaugherty.mail.server.Mail <configuration directory>");
       throw new RuntimeException("Unable to load the configuration file.");
     }
 
@@ -237,14 +235,11 @@ public class Mail {
       try {
         // Get a reference to the org.apache.log4j.PropertyConfigurator.configureAndWatch( String filename )
         // method.
-        Class propertyConfigurator = Class.forName(
-          "org.apache.log4j.PropertyConfigurator");
-        Method configureMethod = propertyConfigurator.getMethod(
-          "configureAndWatch", new Class[] { String.class });
+        Class<?> propertyConfigurator = Class.forName("org.apache.log4j.PropertyConfigurator");
+        Method configureMethod = propertyConfigurator.getMethod("configureAndWatch", new Class[] { String.class });
 
         // Invoke the method using the config file we verified.
-        configureMethod.invoke(null, new Object[] { logConfigurationFile
-          .getAbsolutePath() });
+        configureMethod.invoke(null, new Object[] { logConfigurationFile.getAbsolutePath() });
 
         log = LogFactory.getLog(Mail.class);
 
@@ -258,19 +253,15 @@ public class Mail {
       }
       catch (NoSuchMethodException noSuchMethodException) {
         // log4j is not available.
-        System.err.println(
-          "Found log4j Class but method configureAndWatch(String) is not available.");
+        System.err.println("Found log4j Class but method configureAndWatch(String) is not available.");
       }
       catch (IllegalAccessException illegalAccessException) {
         // log4j is not available.
-        System.err.println(
-          "Found log4j Class but method configureAndWatch(String) caused an IllegalAccessException.");
+        System.err.println("Found log4j Class but method configureAndWatch(String) caused an IllegalAccessException.");
       }
       catch (InvocationTargetException invocationTargetException) {
-        Throwable targetException = invocationTargetException
-          .getTargetException();
-        System.err.println("Error occured while configuring log4j: "
-          + targetException);
+        Throwable targetException = invocationTargetException.getTargetException();
+        System.err.println("Error occured while configuring log4j: " + targetException);
       }
 
       // If log4j was not configured, initialize the default logger.
@@ -297,33 +288,28 @@ public class Mail {
 
       try {
         Properties logConfigurationProperties = new Properties();
-        logConfigurationProperties.load(new FileInputStream(
-          logConfigurationFile));
+        logConfigurationProperties.load(new FileInputStream(logConfigurationFile));
 
-        threshold = logConfigurationProperties.getProperty(
-          ConfigurationParameterContants.LOGGING_DEFAULT_THRESHOLD,
+        threshold = logConfigurationProperties.getProperty(ConfigurationParameterContants.LOGGING_DEFAULT_THRESHOLD,
           DEFAULT_THRESHOLD);
         threshold = threshold.trim();
-        if (!threshold.equals("debug") && !threshold.equals("info")
-          && !threshold.equals("warn") && !threshold.equals("error")
-          && !threshold.equals("fatal")) {
-          System.err.println("Invalid value for property "
-            + ConfigurationParameterContants.LOGGING_DEFAULT_THRESHOLD + ": "
-            + threshold);
+        if (!threshold.equals("debug") && !threshold.equals("info") && !threshold.equals("warn") && !threshold.equals(
+          "error") && !threshold.equals("fatal")) {
+          System.err.println("Invalid value for property " + ConfigurationParameterContants.LOGGING_DEFAULT_THRESHOLD
+            + ": " + threshold);
           threshold = DEFAULT_THRESHOLD;
         }
       }
       catch (IOException ioException) {
-        System.err.println("Error loading properties from: "
-          + logConfigurationFile.getAbsolutePath() + ". " + ioException);
+        System.err.println("Error loading properties from: " + logConfigurationFile.getAbsolutePath() + ". "
+          + ioException);
         threshold = DEFAULT_THRESHOLD;
       }
     }
 
     // commons-logging will default to a logging configuration.
     // see http://jakarta.apache.org/commons/logging/api/org/apache/commons/logging/package-summary.html
-    System.setProperty("org.apache.commons.logging.simplelog.defaultlog",
-      threshold);
+    System.setProperty("org.apache.commons.logging.simplelog.defaultlog", threshold);
     log = LogFactory.getLog(Mail.class);
     log.warn("log.conf file not found.  Using default log configuration.");
   }

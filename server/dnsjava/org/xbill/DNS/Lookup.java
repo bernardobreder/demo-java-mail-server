@@ -165,8 +165,7 @@ public final class Lookup {
    * @param domains The default search path.
    * @throws TextParseException A name in the array is not a valid DNS name.
    */
-  public static synchronized void setDefaultSearchPath(String[] domains)
-    throws TextParseException {
+  public static synchronized void setDefaultSearchPath(String[] domains) throws TextParseException {
     if (domains == null) {
       defaultSearchPath = null;
       return;
@@ -217,8 +216,7 @@ public final class Lookup {
     Type.check(type);
     DClass.check(dclass);
     if (!Type.isRR(type) && type != Type.ANY)
-      throw new IllegalArgumentException("Cannot query for "
-        + "meta-types other than ANY");
+      throw new IllegalArgumentException("Cannot query for " + "meta-types other than ANY");
     this.name = name;
     this.type = type;
     this.dclass = dclass;

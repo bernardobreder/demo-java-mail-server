@@ -104,8 +104,7 @@ public interface ConfigurationParameterContants {
    * longer be able to send SMTP mail to remote domains. This option defaults to
    * 10 minutes.
    */
-  public static final String RELAY_POP_BEFORE_SMTP_TIMEOUT =
-    "relay.popbeforesmtp.timeout";
+  public static final String RELAY_POP_BEFORE_SMTP_TIMEOUT = "relay.popbeforesmtp.timeout";
 
   /**
    * This is the label for the UI

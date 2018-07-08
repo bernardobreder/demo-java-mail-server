@@ -167,14 +167,13 @@ final class EmailUtils {
    * 
    * @since Commons Lang v2.1, svn 201930
    */
-  private static String random(int count, int start, int end, boolean letters,
-    boolean numbers, char[] chars, Random random) {
+  private static String random(int count, int start, int end, boolean letters, boolean numbers, char[] chars,
+    Random random) {
     if (count == 0) {
       return "";
     }
     else if (count < 0) {
-      throw new IllegalArgumentException("Requested random string length "
-        + count + " is less than 0.");
+      throw new IllegalArgumentException("Requested random string length " + count + " is less than 0.");
     }
 
     if ((start == 0) && (end == 0)) {
@@ -200,9 +199,8 @@ final class EmailUtils {
         ch = chars[random.nextInt(gap) + start];
       }
 
-      if ((letters && numbers && Character.isLetterOrDigit(ch)) || (letters
-        && Character.isLetter(ch)) || (numbers && Character.isDigit(ch))
-        || (!letters && !numbers)) {
+      if ((letters && numbers && Character.isLetterOrDigit(ch)) || (letters && Character.isLetter(ch)) || (numbers
+        && Character.isDigit(ch)) || (!letters && !numbers)) {
         buffer.append(ch);
       }
       else {
@@ -221,8 +219,7 @@ final class EmailUtils {
    * @throws IOException writing the MimeMessage failed
    * @throws MessagingException writing the MimeMessage failed
    */
-  static void writeMimeMessage(File resultFile, MimeMessage mimeMessage)
-    throws IOException, MessagingException {
+  static void writeMimeMessage(File resultFile, MimeMessage mimeMessage) throws IOException, MessagingException {
     FileOutputStream fos = null;
 
     if (mimeMessage == null) {

@@ -48,8 +48,7 @@ public class CERTConverter {
   /**
    * Builds a CERT record from a Certificate associated with a key also in DNS
    */
-  public static CERTRecord buildRecord(Name name, int dclass, long ttl,
-    Certificate cert, int tag, int alg) {
+  public static CERTRecord buildRecord(Name name, int dclass, long ttl, Certificate cert, int tag, int alg) {
     int type;
     byte[] data;
 
@@ -71,8 +70,7 @@ public class CERTConverter {
   }
 
   /** Builds a CERT record from a Certificate */
-  public static CERTRecord buildRecord(Name name, int dclass, long ttl,
-    Certificate cert) {
+  public static CERTRecord buildRecord(Name name, int dclass, long ttl, Certificate cert) {
     return buildRecord(name, dclass, ttl, cert, 0, 0);
   }
 

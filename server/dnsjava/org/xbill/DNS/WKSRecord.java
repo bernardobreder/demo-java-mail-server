@@ -149,8 +149,7 @@ public class WKSRecord extends Record {
     /** WIDEBAND EXPAK */
     public static final int WB_EXPAK = 79;
 
-    private static Mnemonic protocols = new Mnemonic("IP protocol",
-      Mnemonic.CASE_LOWER);
+    private static Mnemonic protocols = new Mnemonic("IP protocol", Mnemonic.CASE_LOWER);
 
     static {
       protocols.setMaximum(0xFF);
@@ -466,8 +465,7 @@ public class WKSRecord extends Record {
     /** LINK */
     public static final int LINK = 245;
 
-    private static Mnemonic services = new Mnemonic("TCP/UDP service",
-      Mnemonic.CASE_LOWER);
+    private static Mnemonic services = new Mnemonic("TCP/UDP service", Mnemonic.CASE_LOWER);
 
     static {
       services.setMaximum(0xFFFF);
@@ -591,8 +589,7 @@ public class WKSRecord extends Record {
    * @param protocol The IP protocol number
    * @param services An array of supported services, represented by port number.
    */
-  public WKSRecord(Name name, int dclass, long ttl, InetAddress address,
-    int protocol, int[] services) {
+  public WKSRecord(Name name, int dclass, long ttl, InetAddress address, int protocol, int[] services) {
     super(name, Type.WKS, dclass, ttl);
     this.address = address.getAddress();
     this.protocol = checkU8("protocol", protocol);

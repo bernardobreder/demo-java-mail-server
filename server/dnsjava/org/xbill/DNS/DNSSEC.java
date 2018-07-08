@@ -52,8 +52,7 @@ public class DNSSEC {
     /** Private algorithm, specified by OID */
     public static final int PRIVATEOID = 254;
 
-    private static Mnemonic algs = new Mnemonic("DNSSEC algorithm",
-      Mnemonic.CASE_UPPER);
+    private static Mnemonic algs = new Mnemonic("DNSSEC algorithm", Mnemonic.CASE_UPPER);
 
     static {
       algs.setMaximum(0xFF);
@@ -172,8 +171,7 @@ public class DNSSEC {
    * @param previous If this is a response, the signature from the query.
    * @return The data to be cryptographically signed or verified.
    */
-  public static byte[] digestMessage(SIGRecord sig, Message msg,
-    byte[] previous) {
+  public static byte[] digestMessage(SIGRecord sig, Message msg, byte[] previous) {
     DNSOutput out = new DNSOutput();
     digestSIG(out, sig);
 

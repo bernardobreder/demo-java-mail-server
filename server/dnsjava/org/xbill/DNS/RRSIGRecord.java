@@ -41,11 +41,9 @@ public class RRSIGRecord extends SIGBase {
    * @param signer The owner of the signing key
    * @param signature Binary data representing the signature
    */
-  public RRSIGRecord(Name name, int dclass, long ttl, int covered, int alg,
-    long origttl, Date expire, Date timeSigned, int footprint, Name signer,
-    byte[] signature) {
-    super(name, Type.RRSIG, dclass, ttl, covered, alg, origttl, expire,
-      timeSigned, footprint, signer, signature);
+  public RRSIGRecord(Name name, int dclass, long ttl, int covered, int alg, long origttl, Date expire, Date timeSigned,
+    int footprint, Name signer, byte[] signature) {
+    super(name, Type.RRSIG, dclass, ttl, covered, alg, origttl, expire, timeSigned, footprint, signer, signature);
   }
 
 }

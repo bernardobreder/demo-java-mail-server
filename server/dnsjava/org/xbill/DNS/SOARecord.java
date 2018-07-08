@@ -36,8 +36,8 @@ public class SOARecord extends Record {
    * @param expire The amount of time until a secondary expires a zone
    * @param minimum The minimum TTL for records in the zone
    */
-  public SOARecord(Name name, int dclass, long ttl, Name host, Name admin,
-    long serial, long refresh, long retry, long expire, long minimum) {
+  public SOARecord(Name name, int dclass, long ttl, Name host, Name admin, long serial, long refresh, long retry,
+    long expire, long minimum) {
     super(name, Type.SOA, dclass, ttl);
     this.host = checkName("host", host);
     this.admin = checkName("admin", admin);

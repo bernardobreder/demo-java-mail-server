@@ -86,8 +86,7 @@ public final class Address {
    * @return The string representation
    */
   public static String toDottedQuad(byte[] addr) {
-    return ((addr[0] & 0xFF) + "." + (addr[1] & 0xFF) + "." + (addr[2] & 0xFF)
-      + "." + (addr[3] & 0xFF));
+    return ((addr[0] & 0xFF) + "." + (addr[1] & 0xFF) + "." + (addr[2] & 0xFF) + "." + (addr[3] & 0xFF));
   }
 
   /**
@@ -100,8 +99,7 @@ public final class Address {
     return (addr[0] + "." + addr[1] + "." + addr[2] + "." + addr[3]);
   }
 
-  private static Record[] lookupHostName(String name)
-    throws UnknownHostException {
+  private static Record[] lookupHostName(String name) throws UnknownHostException {
     try {
       Record[] records = new Lookup(name).run();
       if (records == null)
@@ -135,8 +133,7 @@ public final class Address {
    * @return All matching IP addresses
    * @exception UnknownHostException The hostname does not have any addresses
    */
-  public static InetAddress[] getAllByName(String name)
-    throws UnknownHostException {
+  public static InetAddress[] getAllByName(String name) throws UnknownHostException {
     if (isDottedQuad(name))
       return InetAddress.getAllByName(name);
     Record[] records = lookupHostName(name);
@@ -155,8 +152,7 @@ public final class Address {
    * @return The associated host name
    * @exception UnknownHostException There is no hostname for the address
    */
-  public static String getHostName(InetAddress addr)
-    throws UnknownHostException {
+  public static String getHostName(InetAddress addr) throws UnknownHostException {
     Name name = ReverseMap.fromAddress(addr);
     Record[] records = new Lookup(name, Type.PTR).run();
     if (records == null)

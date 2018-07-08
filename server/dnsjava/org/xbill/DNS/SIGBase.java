@@ -25,9 +25,8 @@ abstract class SIGBase extends Record {
   protected SIGBase() {
   }
 
-  public SIGBase(Name name, int type, int dclass, long ttl, int covered,
-    int alg, long origttl, Date expire, Date timeSigned, int footprint,
-    Name signer, byte[] signature) {
+  public SIGBase(Name name, int type, int dclass, long ttl, int covered, int alg, long origttl, Date expire,
+    Date timeSigned, int footprint, Name signer, byte[] signature) {
     super(name, type, dclass, ttl);
     Type.check(covered);
     TTL.check(origttl);

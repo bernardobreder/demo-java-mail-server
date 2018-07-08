@@ -46,9 +46,8 @@ public class LOCRecord extends Record {
    * @param hPrecision The horizontal precision of the data, in m.
    * @param vPrecision The vertical precision of the data, in m.
    */
-  public LOCRecord(Name name, int dclass, long ttl, double latitude,
-    double longitude, double altitude, double size, double hPrecision,
-    double vPrecision) {
+  public LOCRecord(Name name, int dclass, long ttl, double latitude, double longitude, double altitude, double size,
+    double hPrecision, double vPrecision) {
     super(name, Type.LOC, dclass, ttl);
     this.latitude = (long) (latitude * 3600 * 1000 + (1L << 31));
     this.longitude = (long) (longitude * 3600 * 1000 + (1L << 31));
@@ -114,8 +113,8 @@ public class LOCRecord extends Record {
     return value;
   }
 
-  private long parseDouble(Tokenizer st, String type, boolean required,
-    long min, long max, long defaultValue) throws IOException {
+  private long parseDouble(Tokenizer st, String type, boolean required, long min, long max, long defaultValue)
+    throws IOException {
     Tokenizer.Token token = st.get();
     if (token.isEOL()) {
       if (required)
@@ -144,13 +143,10 @@ public class LOCRecord extends Record {
 
     latitude = parsePosition(st, "latitude");
     longitude = parsePosition(st, "longitude");
-    altitude = parseDouble(st, "altitude", true, -10000000, 4284967295L, 0)
-      + 10000000;
+    altitude = parseDouble(st, "altitude", true, -10000000, 4284967295L, 0) + 10000000;
     size = parseDouble(st, "size", false, 0, 9000000000L, 100);
-    hPrecision = parseDouble(st, "horizontal precision", false, 0, 9000000000L,
-      1000000);
-    vPrecision = parseDouble(st, "vertical precision", false, 0, 9000000000L,
-      1000);
+    hPrecision = parseDouble(st, "horizontal precision", false, 0, 9000000000L, 1000000);
+    vPrecision = parseDouble(st, "vertical precision", false, 0, 9000000000L, 1000);
   }
 
   private String positionToString(long value, char pos, char neg) {

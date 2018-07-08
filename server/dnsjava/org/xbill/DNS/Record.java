@@ -60,8 +60,7 @@ public abstract class Record implements Cloneable, Comparable {
       return knownRecords[type];
 
     /* Construct the class name by putting the type before "Record". */
-    String s = Record.class.getPackage().getName() + "." + Type.string(type)
-      .replace('-', '_') + "Record";
+    String s = Record.class.getPackage().getName() + "." + Type.string(type).replace('-', '_') + "Record";
     try {
       Class c = Class.forName(s);
       Constructor m = c.getDeclaredConstructor(emptyClassArray);
@@ -79,8 +78,7 @@ public abstract class Record implements Cloneable, Comparable {
     return knownRecords[type];
   }
 
-  private static final Record getEmptyRecord(Name name, int type, int dclass,
-    long ttl) {
+  private static final Record getEmptyRecord(Name name, int type, int dclass, long ttl) {
     Record rec = getTypedObject(type);
     rec = rec.getObject();
     rec.name = name;
@@ -95,8 +93,8 @@ public abstract class Record implements Cloneable, Comparable {
    */
   abstract void rrFromWire(DNSInput in) throws IOException;
 
-  private static Record newRecord(Name name, int type, int dclass, long ttl,
-    int length, DNSInput in) throws IOException {
+  private static Record newRecord(Name name, int type, int dclass, long ttl, int length, DNSInput in)
+    throws IOException {
     Record rec;
     int recstart;
     rec = getEmptyRecord(name, type, dclass, ttl);
@@ -129,8 +127,7 @@ public abstract class Record implements Cloneable, Comparable {
    * @param data The rdata of the record, in uncompressed DNS wire format. Only
    *        the first length bytes are used.
    */
-  public static Record newRecord(Name name, int type, int dclass, long ttl,
-    int length, byte[] data) {
+  public static Record newRecord(Name name, int type, int dclass, long ttl, int length, byte[] data) {
     if (!name.isAbsolute())
       throw new RelativeNameException(name);
     Type.check(type);
@@ -160,8 +157,7 @@ public abstract class Record implements Cloneable, Comparable {
    * @param data The complete rdata of the record, in uncompressed DNS wire
    *        format.
    */
-  public static Record newRecord(Name name, int type, int dclass, long ttl,
-    byte[] data) {
+  public static Record newRecord(Name name, int type, int dclass, long ttl, byte[] data) {
     return newRecord(name, type, dclass, ttl, data.length, data);
   }
 
@@ -200,8 +196,7 @@ public abstract class Record implements Cloneable, Comparable {
     return newRecord(name, type, dclass, 0);
   }
 
-  static Record fromWire(DNSInput in, int section, boolean isUpdate)
-    throws IOException {
+  static Record fromWire(DNSInput in, int section, boolean isUpdate) throws IOException {
     int type, dclass;
     long ttl;
     int length;
@@ -364,8 +359,7 @@ public abstract class Record implements Cloneable, Comparable {
   /**
    * Converts a String into a byte array.
    */
-  protected static byte[] byteArrayFromString(String s)
-    throws TextParseException {
+  protected static byte[] byteArrayFromString(String s) throws TextParseException {
     byte[] array = s.getBytes();
     boolean escaped = false;
     boolean hasEscapes = false;
@@ -472,8 +466,8 @@ public abstract class Record implements Cloneable, Comparable {
    * @return The new record
    * @throws IOException The text format was invalid.
    */
-  public static Record fromString(Name name, int type, int dclass, long ttl,
-    Tokenizer st, Name origin) throws IOException {
+  public static Record fromString(Name name, int type, int dclass, long ttl, Tokenizer st, Name origin)
+    throws IOException {
     Record rec;
 
     if (!name.isAbsolute())
@@ -516,8 +510,7 @@ public abstract class Record implements Cloneable, Comparable {
    * @return The new record
    * @throws IOException The text format was invalid.
    */
-  public static Record fromString(Name name, int type, int dclass, long ttl,
-    String s, Name origin) throws IOException {
+  public static Record fromString(Name name, int type, int dclass, long ttl, String s, Name origin) throws IOException {
     return fromString(name, type, dclass, ttl, new Tokenizer(s), origin);
   }
 
@@ -698,24 +691,21 @@ public abstract class Record implements Cloneable, Comparable {
   /* Checks that an int contains an unsigned 8 bit value */
   static int checkU8(String field, int val) {
     if (val < 0 || val > 0xFF)
-      throw new IllegalArgumentException("\"" + field + "\" " + val
-        + "must be an unsigned 8 " + "bit value");
+      throw new IllegalArgumentException("\"" + field + "\" " + val + "must be an unsigned 8 " + "bit value");
     return val;
   }
 
   /* Checks that an int contains an unsigned 16 bit value */
   static int checkU16(String field, int val) {
     if (val < 0 || val > 0xFFFF)
-      throw new IllegalArgumentException("\"" + field + "\" " + val
-        + "must be an unsigned 16 " + "bit value");
+      throw new IllegalArgumentException("\"" + field + "\" " + val + "must be an unsigned 16 " + "bit value");
     return val;
   }
 
   /* Checks that a long contains an unsigned 32 bit value */
   static long checkU32(String field, long val) {
     if (val < 0 || val > 0xFFFFFFFFL)
-      throw new IllegalArgumentException("\"" + field + "\" " + val
-        + "must be an unsigned 32 " + "bit value");
+      throw new IllegalArgumentException("\"" + field + "\" " + val + "must be an unsigned 32 " + "bit value");
     return val;
   }
 

@@ -24,8 +24,8 @@ abstract class U16NameBase extends Record {
     super(name, type, dclass, ttl);
   }
 
-  protected U16NameBase(Name name, int type, int dclass, long ttl, int u16Field,
-    String u16Description, Name nameField, String nameDescription) {
+  protected U16NameBase(Name name, int type, int dclass, long ttl, int u16Field, String u16Description, Name nameField,
+    String nameDescription) {
     super(name, type, dclass, ttl);
     this.u16Field = checkU16(u16Description, u16Field);
     this.nameField = checkName(nameDescription, nameField);

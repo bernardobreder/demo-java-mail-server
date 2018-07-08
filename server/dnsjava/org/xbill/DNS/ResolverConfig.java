@@ -31,8 +31,7 @@ public class ResolverConfig {
     if (servers == null || searchlist == null) {
       String OS = System.getProperty("os.name");
       if (OS.indexOf("Windows") != -1) {
-        if (OS.indexOf("95") != -1 || OS.indexOf("98") != -1 || OS.indexOf(
-          "ME") != -1)
+        if (OS.indexOf("95") != -1 || OS.indexOf("98") != -1 || OS.indexOf("ME") != -1)
           find95();
         else
           findNT();

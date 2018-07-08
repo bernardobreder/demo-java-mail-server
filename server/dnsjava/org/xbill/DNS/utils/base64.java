@@ -13,8 +13,7 @@ import java.io.*;
 
 public class base64 {
 
-  private static final String Base64 =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+  private static final String Base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
   private base64() {
   }
@@ -68,8 +67,7 @@ public class base64 {
    * @param addClose Whether to add a close parenthesis or not
    * @return A String representing the formatted output
    */
-  public static String formatString(byte[] b, int lineLength, String prefix,
-    boolean addClose) {
+  public static String formatString(byte[] b, int lineLength, String prefix, boolean addClose) {
     String s = toString(b);
     StringBuffer sb = new StringBuffer();
     for (int i = 0; i < s.length(); i += lineLength) {

@@ -43,8 +43,7 @@ public class KEYRecord extends KEYBase {
     /** Any protocol */
     public static final int ANY = 255;
 
-    private static Mnemonic protocols = new Mnemonic("KEY protocol",
-      Mnemonic.CASE_UPPER);
+    private static Mnemonic protocols = new Mnemonic("KEY protocol", Mnemonic.CASE_UPPER);
 
     static {
       protocols.setMaximum(0xFF);
@@ -184,8 +183,7 @@ public class KEYRecord extends KEYBase {
     /** Signatory value 15 */
     public static final int SIG15 = 15;
 
-    private static Mnemonic flags = new Mnemonic("KEY flags",
-      Mnemonic.CASE_UPPER);
+    private static Mnemonic flags = new Mnemonic("KEY flags", Mnemonic.CASE_UPPER);
 
     static {
       flags.setMaximum(0xFFFF);
@@ -305,8 +303,7 @@ public class KEYRecord extends KEYBase {
    * @param alg The key's algorithm
    * @param key Binary data representing the key
    */
-  public KEYRecord(Name name, int dclass, long ttl, int flags, int proto,
-    int alg, byte[] key) {
+  public KEYRecord(Name name, int dclass, long ttl, int flags, int proto, int alg, byte[] key) {
     super(name, Type.KEY, dclass, ttl, flags, proto, alg, key);
   }
 

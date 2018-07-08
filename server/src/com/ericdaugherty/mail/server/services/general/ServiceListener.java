@@ -86,8 +86,7 @@ public class ServiceListener implements Runnable {
   /**
    * Creates a new instance and stores the initial paramters.
    */
-  public ServiceListener(int port, Class connectionProcessorClass,
-    int threads) {
+  public ServiceListener(int port, Class connectionProcessorClass, int threads) {
 
     this.port = port;
     this.connectionProcessorClass = connectionProcessorClass;
@@ -106,8 +105,7 @@ public class ServiceListener implements Runnable {
     if (log.isDebugEnabled())
       log.debug("Starting ServiceListener on port: " + port);
 
-    InetAddress listenAddress = ConfigurationManager.getInstance()
-      .getListenAddress();
+    InetAddress listenAddress = ConfigurationManager.getInstance().getListenAddress();
     try {
       if (listenAddress == null) {
         // listen to the given port
@@ -124,8 +122,7 @@ public class ServiceListener implements Runnable {
         address = listenAddress.getHostAddress();
       }
 
-      log.error("Could not create ServiceListener on address: " + address
-        + " port: " + port
+      log.error("Could not create ServiceListener on address: " + address + " port: " + port
         + ".  No connections will be accepted on this port!");
       return;
     }
@@ -144,21 +141,18 @@ public class ServiceListener implements Runnable {
 
       for (int index = 0; index < threads; index++) {
         //Create the handler now to speed up connection time.
-        processor = (ConnectionProcessor) connectionProcessorClass
-          .newInstance();
+        processor = (ConnectionProcessor) connectionProcessorClass.newInstance();
         processors[index] = processor;
 
         processor.setSocket(serverSocket);
 
         //Create, name, and start a new thread to handle this request.
-        threadPool[index] = new Thread(processor, threadNameBase + ":"
-          + ++threadCount);
+        threadPool[index] = new Thread(processor, threadNameBase + ":" + ++threadCount);
         threadPool[index].start();
       }
     }
     catch (Exception e) {
-      log.error("ServiceListener Connection failed on port: " + port
-        + ".  Error: " + e);
+      log.error("ServiceListener Connection failed on port: " + port + ".  Error: " + e);
     }
   }
 

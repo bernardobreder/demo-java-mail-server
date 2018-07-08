@@ -29,8 +29,7 @@ public final class Opcode {
   /** A dynamic update message */
   public static final int UPDATE = 5;
 
-  private static Mnemonic opcodes = new Mnemonic("DNS Opcode",
-    Mnemonic.CASE_UPPER);
+  private static Mnemonic opcodes = new Mnemonic("DNS Opcode", Mnemonic.CASE_UPPER);
 
   static {
     opcodes.setMaximum(0xF);

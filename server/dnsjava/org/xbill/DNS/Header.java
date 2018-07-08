@@ -120,8 +120,7 @@ public class Header {
    */
   public void setID(int id) {
     if (opcode > 0xFF)
-      throw new IllegalArgumentException("DNS message ID " + id
-        + "is out of range");
+      throw new IllegalArgumentException("DNS message ID " + id + "is out of range");
     this.id = id;
   }
 
@@ -139,8 +138,7 @@ public class Header {
    */
   public void setRcode(int value) {
     if (opcode > 0xF)
-      throw new IllegalArgumentException("DNS Rcode " + value
-        + "is out of range");
+      throw new IllegalArgumentException("DNS Rcode " + value + "is out of range");
     rcode = value;
   }
 
@@ -160,8 +158,7 @@ public class Header {
    */
   public void setOpcode(int value) {
     if (opcode > 0xF)
-      throw new IllegalArgumentException("DNS Opcode " + value
-        + "is out of range");
+      throw new IllegalArgumentException("DNS Opcode " + value + "is out of range");
     opcode = value;
   }
 
@@ -176,8 +173,7 @@ public class Header {
 
   void setCount(int field, int value) {
     if (value > 0xFF)
-      throw new IllegalArgumentException("DNS section count " + value
-        + "is out of range");
+      throw new IllegalArgumentException("DNS section count " + value + "is out of range");
     counts[field] = value;
   }
 

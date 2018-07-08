@@ -105,8 +105,7 @@ public class User {
   public boolean isPasswordValid(String plainTextPassword) {
     if (log.isDebugEnabled())
       log.debug("Authenticating User: " + getFullUsername());
-    boolean result = getPassword().equals(PasswordManager.encryptPassword(
-      plainTextPassword));
+    boolean result = getPassword().equals(PasswordManager.encryptPassword(plainTextPassword));
     if (log.isDebugEnabled() && !result)
       log.debug("Authentication Failed for User: " + getFullUsername());
 
@@ -166,8 +165,7 @@ public class User {
       return forwardAddresses;
     }
     else {
-      return new EmailAddress[] { new EmailAddress(getUsername(),
-        getDomain()) };
+      return new EmailAddress[] { new EmailAddress(getUsername(), getDomain()) };
     }
   }
 
@@ -190,8 +188,7 @@ public class User {
 
       for (int index = 0; index < numMessage; index++) {
         currentMessage = new Message();
-        currentMessage.setMessageLocation(new File(directory,
-          fileNames[index]));
+        currentMessage.setMessageLocation(new File(directory, fileNames[index]));
         messages[index] = currentMessage;
       }
     }
@@ -238,21 +235,18 @@ public class User {
   public File getUserDirectory() {
 
     String mailDirectory = configurationManager.getMailDirectory();
-    File directory = new File(mailDirectory + File.separator + "users"
-      + File.separator + getFullUsername());
+    File directory = new File(mailDirectory + File.separator + "users" + File.separator + getFullUsername());
 
     if (!directory.exists()) {
       if (log.isInfoEnabled())
-        log.info("Directory for user: " + getFullUsername()
-          + "does not exist, creating...");
+        log.info("Directory for user: " + getFullUsername() + "does not exist, creating...");
       directory.mkdirs();
     }
 
     if (!directory.isDirectory()) {
-      log.error("User Directory: " + directory.getAbsolutePath() + " for user: "
-        + getFullUsername() + " does not exist.");
-      throw new RuntimeException("User's Directory path: " + directory
-        .getAbsolutePath() + " is not a directory!");
+      log.error("User Directory: " + directory.getAbsolutePath() + " for user: " + getFullUsername()
+        + " does not exist.");
+      throw new RuntimeException("User's Directory path: " + directory.getAbsolutePath() + " is not a directory!");
     }
 
     return directory;

@@ -131,8 +131,7 @@ public class NSECRecord extends Record {
     return (Arrays.binarySearch(types, type) >= 0);
   }
 
-  static void mapToWire(DNSOutput out, int[] array, int mapbase, int mapstart,
-    int mapend) {
+  static void mapToWire(DNSOutput out, int[] array, int mapbase, int mapstart, int mapend) {
     int mapmax = array[mapend - 1] & 0xFF;
     int maplength = (mapmax / 8) + 1;
     int[] map = new int[maplength];
