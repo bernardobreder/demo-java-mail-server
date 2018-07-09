@@ -262,9 +262,7 @@ public class SMTPRemoteSender {
 
     //Check to make sure remote server introduced itself with appropriate message.
     String lastCode = null;
-    if (!(lastCode = read()).startsWith("220")) {
-      throw new RuntimeException("Error talking to remote Server, code=" + lastCode);
-    }
+    read(220, "Error talking to remote Server");
 
     // First try ehlo
     write("EHLO " + configurationManager.getLocalDomains()[0]);
@@ -316,9 +314,7 @@ public class SMTPRemoteSender {
 
     //Send Data command
     write("DATA");
-    if (!read().startsWith("354")) {
-      throw new RuntimeException("Error talking to remote Server");
-    }
+    read(354, "Error talking to remote Server");
 
     //Get the data to write.
     List dataLines = message.getDataLines();
@@ -332,17 +328,19 @@ public class SMTPRemoteSender {
     //Send the command end data transmission.
     write(".");
 
-    if (!read().startsWith("250")) {
-      throw new RuntimeException("Error talking to remote Server");
+    read(250, "Error talking to remote Server");
+  }
+
+  private void read(int expectedCode, String messageError) {
+    String string = read();
+    if (!string.startsWith(Integer.toString(expectedCode))) {
+      throw new RuntimeException("[" + string + "] " + messageError);
     }
   }
 
   private void sendClose() {
-
     write("QUIT");
-    if (!read().startsWith("221")) {
-      throw new RuntimeException("Error talking to remote Server");
-    }
+    read(221, "Error talking to remote Server");
   }
 
   /**
@@ -397,7 +395,6 @@ public class SMTPRemoteSender {
    * Writes the specified output message to the client.
    */
   private void write(String message) {
-
     out.print(message + "\r\n");
     out.flush();
   }

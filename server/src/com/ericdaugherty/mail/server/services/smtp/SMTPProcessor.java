@@ -122,7 +122,7 @@ public class SMTPProcessor implements ConnectionProcessor {
         socket = serverSocket.accept();
 
         //Set the socket to timeout after 10 seconds
-        socket.setSoTimeout(10 * 1000);
+        socket.setSoTimeout(60 * 1000);
 
         //Prepare the input and output streams.
         out = new PrintWriter(socket.getOutputStream(), true);

@@ -36,7 +36,7 @@ public class SimpleResolver implements Resolver {
   private boolean useTCP, ignoreTruncation;
   private byte EDNSlevel = -1;
   private TSIG tsig;
-  private int timeoutValue = 10 * 1000;
+  private int timeoutValue = 60 * 1000;
 
   private static final short DEFAULT_UDPSIZE = 512;
   private static final short EDNS_UDPSIZE = 1280;

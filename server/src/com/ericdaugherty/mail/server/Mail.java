@@ -280,7 +280,7 @@ public class Mail {
    */
   private static void initializeDefaultLogging(File logConfigurationFile) {
 
-    String DEFAULT_THRESHOLD = "info";
+    String DEFAULT_THRESHOLD = "fine";
     String threshold = DEFAULT_THRESHOLD;
 
     // See if the default threshold is defined in the log.conf file.
@@ -306,11 +306,11 @@ public class Mail {
         threshold = DEFAULT_THRESHOLD;
       }
     }
-
     // commons-logging will default to a logging configuration.
     // see http://jakarta.apache.org/commons/logging/api/org/apache/commons/logging/package-summary.html
     System.setProperty("org.apache.commons.logging.simplelog.defaultlog", threshold);
     log = LogFactory.getLog(Mail.class);
     log.warn("log.conf file not found.  Using default log configuration.");
   }
+
 }

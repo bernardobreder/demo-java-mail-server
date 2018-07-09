@@ -80,7 +80,6 @@ public class SMTPSender implements Runnable {
    * thread.
    */
   public void run() {
-
     while (running) {
 
       try {
@@ -96,7 +95,7 @@ public class SMTPSender implements Runnable {
 
           for (int index = 0; index < numFiles; index++) {
             try {
-              deliver(SMTPMessage.load(files[index].getAbsolutePath()));
+              deliver(readMessage(files, index));
             }
             catch (Throwable throwable) {
               log.error("An error occured attempting to deliver an SMTP Message: " + throwable, throwable);
@@ -105,26 +104,7 @@ public class SMTPSender implements Runnable {
           }
         }
 
-        //Rest the specified sleep time.  If it is greater than 10 seconds
-        //Wake up every 10 seconds to check to see if the thread is shutting
-        //down.
-        long sleepTime = configurationManager.getDeliveryIntervealMilliseconds();
-        if (configurationManager.getDeliveryIntervealMilliseconds() < 10000) {
-          Thread.sleep(sleepTime);
-        }
-        else {
-          long totalSleepTime = sleepTime;
-          while (totalSleepTime > 0 && running) {
-            if (totalSleepTime > 10000) {
-              totalSleepTime -= 10000;
-              Thread.sleep(10000);
-            }
-            else {
-              Thread.sleep(totalSleepTime);
-              totalSleepTime = 0;
-            }
-          }
-        }
+        sleep();
       }
       catch (InterruptedException ie) {
         log.error("Sleeping Thread was interrupted.");
@@ -134,6 +114,35 @@ public class SMTPSender implements Runnable {
       }
     }
     log.warn("SMTPSender shut down gracefully.");
+  }
+
+  /**
+   * Rest the specified sleep time. If it is greater than 10 seconds Wake up
+   * every 10 seconds to check to see if the thread is shutting down.
+   */
+  public void sleep() throws InterruptedException {
+    long sleepTime = configurationManager.getDeliveryIntervealMilliseconds();
+    int sleepDeltaTime = 1000;
+    if (configurationManager.getDeliveryIntervealMilliseconds() < sleepDeltaTime) {
+      Thread.sleep(sleepTime);
+    }
+    else {
+      long totalSleepTime = sleepTime;
+      while (totalSleepTime > 0 && running) {
+        if (totalSleepTime > sleepDeltaTime) {
+          totalSleepTime -= sleepDeltaTime;
+          Thread.sleep(sleepDeltaTime);
+        }
+        else {
+          Thread.sleep(totalSleepTime);
+          totalSleepTime = 0;
+        }
+      }
+    }
+  }
+
+  private SMTPMessage readMessage(File[] files, int index) throws Exception {
+    return SMTPMessage.load(files[index].getAbsolutePath());
   }
 
   /**
